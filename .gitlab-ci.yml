@@ -11,6 +11,7 @@ build-npm-dev:
   stage: build
   script:
     - npm install
+    - npm run dev
   tags: 
     - build-2
   artifacts:
@@ -39,11 +40,9 @@ test-cypress:
     - build-npm-dev
   dependencies:
     - build-npm-dev
-  before_script:
-    - apt-get install xvfb
   script:
-    - npm run dev
     - npx cypress install
     - npx cypress run
+    - npm stop
   tags:
     - build-2
