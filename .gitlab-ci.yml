@@ -38,7 +38,7 @@ test-eslint:
   dependencies:
     - build-npm-dev
   script:
-    - eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
+    - npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
   tags:
     - build-2
   artifacts:
