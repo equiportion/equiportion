@@ -42,6 +42,6 @@ test-cypress:
   script:
     - npx cypress install
     - npm run dev & npx cypress run
-    - npm stop
+    - ^C
   tags:
     - infra-2
