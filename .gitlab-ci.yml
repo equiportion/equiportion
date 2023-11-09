@@ -11,12 +11,22 @@ build-npm-dev:
   stage: build
   script:
     - npm install
-    - npm run build
   tags: 
     - build-2
+  artifacts:
+    paths:
+      - node_modules/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}--npm-dev
+    paths:
+      - node_modules/
 
 test-eslint:
   stage: test
+  needs:
+    - build-npm-dev
+  dependencies:
+    - build-npm-dev
   script:
     - npm run lint
   tags:
@@ -24,6 +34,10 @@ test-eslint:
 
 test-cypress:
   stage: test
+  needs:
+    - buidl-npm-dev
+  dependencies:
+    - build-npm-dev
   script:
     - npx cypress run
   tags:
