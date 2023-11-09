@@ -10,13 +10,19 @@ build-npm-dev:
   script:
     - npm install
     - npm run build
+  tags: 
+    - build-2
 
 test-eslint:
   stage: test
   script:
-  - npm run lint
+    - npm run lint
+  tags:
+    - checker-2
 
 test-cypress:
   stage: test
   script:
     - npx cypress run
+  tags:
+    - checker-2
