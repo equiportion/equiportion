@@ -33,17 +33,6 @@ test-eslint:
   tags:
     - build-2
 
-start-server:
-  stage: test
-  needs:
-    - build-npm-dev
-  dependencies:
-    - build-npm-dev
-  script:
-    - npm run dev
-  tags:
-    - build-2  
-
 test-cypress:
   stage: test
   needs:
@@ -52,9 +41,7 @@ test-cypress:
     - build-npm-dev
   script:
     - npx cypress install
-    - npm install wait-on
-    - npx wait-on http-get://localhost:5173
-    - npx cypress run
+    - npm run dev && npx cypress run
     - npm stop
   tags:
     - infra-2
