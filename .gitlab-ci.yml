@@ -53,3 +53,6 @@ test-cypress:
     - npm run dev & npx cypress run
   tags:
     - build-2
+  artifacts:
+    reports:
+      junit: results/cypress.xml

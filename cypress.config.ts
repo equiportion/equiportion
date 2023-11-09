@@ -11,5 +11,10 @@ export default defineConfig({
       framework: 'vue',
       bundler: 'vite'
     }
-  }
+  },
+  reporter: 'junit',
+  reporterOptions: {
+    mochaFile: 'results/cypress.xml',
+    toConsole: false,
+  },
 })
