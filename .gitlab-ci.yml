@@ -16,6 +16,7 @@ build-npm-dev:
   artifacts:
     paths:
       - node_modules/
+      - .cache/
   cache:
     key: ${CI_COMMIT_REF_SLUG}--npm-dev
     paths:
