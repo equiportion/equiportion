@@ -39,8 +39,6 @@ test-cypress:
     - build-npm-dev
   dependencies:
     - build-npm-dev
-  before_script:
-    - apt-get install xvfb
   script:
     - npx cypress install
     - npx cypress run
