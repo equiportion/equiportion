@@ -16,7 +16,6 @@ build-npm-dev:
   artifacts:
     paths:
       - node_modules/
-      - .cache/
   cache:
     key: ${CI_COMMIT_REF_SLUG}--npm-dev
     paths:
@@ -40,6 +39,7 @@ test-cypress:
   dependencies:
     - build-npm-dev
   script:
+    - npx cypress install
     - npx cypress run
   tags:
     - build-2
