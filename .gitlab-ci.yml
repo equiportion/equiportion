@@ -16,10 +16,6 @@ build-npm-dev:
   artifacts:
     paths:
       - node_modules/
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}--npm-dev
-    paths:
-      - node_modules/
 
 test-eslint:
   stage: test
