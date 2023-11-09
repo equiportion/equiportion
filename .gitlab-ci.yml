@@ -11,7 +11,6 @@ build-npm-dev:
   stage: build
   script:
     - npm install
-    - npm run dev
   tags: 
     - build-2
   artifacts:
@@ -33,6 +32,17 @@ test-eslint:
     - npm run lint
   tags:
     - build-2
+
+  start-server:
+  stage: test
+  needs:
+    - build-npm-dev
+  dependencies:
+    - build-npm-dev
+  script:
+    - npm run dev
+  tags:
+    - build-2  
 
 test-cypress:
   stage: test
