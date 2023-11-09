@@ -52,8 +52,6 @@ test-cypress:
     - build-npm-dev
   script:
     - npx cypress install
-    - npm install wait-on
-    - wait-on http://localhost:5173
     - npx cypress run
     - npm stop
   tags:
