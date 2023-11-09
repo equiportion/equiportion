@@ -42,6 +42,7 @@ test-cypress:
   before_script:
     - apt-get install xvfb
   script:
+    - npm run dev
     - npx cypress install
     - npx cypress run
   tags:
