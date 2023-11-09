@@ -33,7 +33,7 @@ test-eslint:
   tags:
     - build-2
 
-  start-server:
+start-server:
   stage: test
   needs:
     - build-npm-dev
