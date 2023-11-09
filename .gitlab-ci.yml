@@ -20,7 +20,7 @@ build-npm-dev:
     key: ${CI_COMMIT_REF_SLUG}--npm-dev
     paths:
       - node_modules/
-      - .cache/Cypress
+      - ~/.cache/
 
 test-eslint:
   stage: test
