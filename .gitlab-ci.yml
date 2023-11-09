@@ -41,7 +41,6 @@ test-cypress:
     - build-npm-dev
   script:
     - npx cypress install
-    - npm run dev & npx cypress run
-    - kill -9 $(pidof npm run dev)
+    - npm run dev & npx cypress run & pkill 
   tags:
     - infra-2
