@@ -12,8 +12,12 @@ build-npm-dev:
   script:
     - npm install
   tags: 
-    - checker-2
+    - build-2
   artifacts:
+    paths:
+      - node_modules/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}--npm-dev
     paths:
       - node_modules/
 
@@ -26,7 +30,7 @@ test-eslint:
   script:
     - npm run lint
   tags:
-    - checker-2
+    - build-2
 
 test-cypress:
   stage: test
@@ -37,4 +41,4 @@ test-cypress:
   script:
     - npx cypress run
   tags:
-    - checker-2
+    - build-2
