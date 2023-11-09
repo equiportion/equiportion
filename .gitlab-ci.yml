@@ -1,0 +1,62 @@
+#
+# CI-CD Pipeline für das PSE Matrix-basierte Micropayments
+#
+
+image: node:latest
+
+stages:
+- build
+- test
+
+#
+# Build stage
+#
+
+build-npm-dev:
+  stage: build
+  script:
+    - npm install
+  tags: 
+    - build-2
+  artifacts:
+    paths:
+      - node_modules/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}--npm-dev
+    paths:
+      - node_modules/
+      - ~/.cache/
+
+#
+# Test stage
+#
+
+test-eslint:
+  stage: test
+  needs:
+    - build-npm-dev
+  dependencies:
+    - build-npm-dev
+  script:
+    - npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      junit: eslint-report.xml
+
+test-cypress:
+  stage: test
+  image: cypress/base:latest
+  needs:
+    - build-npm-dev
+  dependencies:
+    - build-npm-dev
+  script:
+    - npx cypress install
+    - npm run dev & npx cypress run
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      junit: cypress-report.xml
