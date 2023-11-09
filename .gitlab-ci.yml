@@ -1,0 +1,22 @@
+#
+# CI
+#
+stages:
+- build
+- test
+
+build-npm-dev:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+
+test-eslint:
+  stage: test
+  script:
+  - npm run lint
+
+test-cypress:
+  stage: test
+  script:
+    - npx cypress run
