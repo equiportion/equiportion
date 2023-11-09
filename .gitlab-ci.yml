@@ -20,6 +20,7 @@ build-npm-dev:
     key: ${CI_COMMIT_REF_SLUG}--npm-dev
     paths:
       - node_modules/
+      - .cache/Cypress
 
 test-eslint:
   stage: test
@@ -38,6 +39,8 @@ test-cypress:
     - build-npm-dev
   dependencies:
     - build-npm-dev
+  before_script:
+    - apk add xvfb
   script:
     - npx cypress install
     - npx cypress run
