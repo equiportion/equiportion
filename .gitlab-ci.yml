@@ -38,9 +38,12 @@ test-eslint:
   dependencies:
     - build-npm-dev
   script:
-    - npm run lint
+    - npm run lint --format junit --output-file results/eslint-report.xml
   tags:
     - build-2
+  artifacts:
+    reports:
+      junit: results/eslint-report.xml
 
 test-cypress:
   stage: test
@@ -55,4 +58,4 @@ test-cypress:
     - build-2
   artifacts:
     reports:
-      junit: results/cypress.xml
+      junit: results/cypress-report.xml
