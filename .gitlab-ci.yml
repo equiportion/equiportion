@@ -1,11 +1,16 @@
 #
-# CI
+# CI-CD Pipeline für das PSE Matrix-basierte Micropayments
 #
+
 image: cypress/base:latest
 
 stages:
 - build
 - test
+
+#
+# Build stage
+#
 
 build-npm-dev:
   stage: build
@@ -21,6 +26,10 @@ build-npm-dev:
     paths:
       - node_modules/
       - ~/.cache/
+
+#
+# Test stage
+#
 
 test-eslint:
   stage: test
@@ -43,4 +52,4 @@ test-cypress:
     - npx cypress install
     - npm run dev & npx cypress run
   tags:
-    - infra-2
+    - build-2
