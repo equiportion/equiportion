@@ -2,7 +2,7 @@
 # CI-CD Pipeline für das PSE Matrix-basierte Micropayments
 #
 
-image: cypress/base:latest
+image: node:latest
 
 stages:
 - build
@@ -47,6 +47,7 @@ test-eslint:
 
 test-cypress:
   stage: test
+  image: cypress/base:latest
   needs:
     - build-npm-dev
   dependencies:
