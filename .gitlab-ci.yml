@@ -12,7 +12,7 @@ build-npm-dev:
   script:
     - npm install
   tags: 
-    - build-2
+    - checker-2
   artifacts:
     paths:
       - node_modules/
