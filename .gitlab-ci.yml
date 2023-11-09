@@ -57,4 +57,4 @@ test-cypress:
     - npx cypress run
     - npm stop
   tags:
-    - build-2
+    - infra-2
