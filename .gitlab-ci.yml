@@ -36,7 +36,8 @@ build-production:
   tags:
     - build-2
   artifacts:
-    paths: dist/
+    paths:
+      - dist/
 
 #
 # Test stage
