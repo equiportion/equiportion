@@ -90,9 +90,9 @@ deploy-production:
     - apt-get update -y
     - apt-get install lftp -y
   script:
-    - echo $FTP_HOST
-    - echo $FTP_PORT
-    - echo $FTP_USERNAME
+    - echo "Host= '$FTP_HOST'"
+    - echo "Port= '$FTP_PORT'"
+    - echo "username= '$FTP_USERNAME'"
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH; bye"
   environment:
     name: production
