@@ -87,7 +87,8 @@ deploy-production:
     - job: build-production
       artifacts: true
   before_script:
-    - apt-get install lftp
+    - apt-get update -y
+    - apt-get install lftp -y
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH; bye"
   environment:
