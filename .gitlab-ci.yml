@@ -90,5 +90,5 @@ deploy-production:
     - apt-get install lftp
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH; bye"
-  environments:
+  environment:
     name: production    
