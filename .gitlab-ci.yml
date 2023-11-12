@@ -134,7 +134,7 @@ stop-review:
     - apt-get update -y
     - apt-get install lftp -y
   script:
-    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/; bye"
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
   tags:
     - build-2
 
