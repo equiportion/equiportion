@@ -77,6 +77,29 @@ cypress:
 # Deploy Stage
 #
 
+deploy-review:
+  stage: deploy
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: $APPURL/$CI_COMMIT_REF_SLUG
+    auto_stop_in: 1 week
+    on_stop: stop-review
+  only:
+    - branches
+  except:
+    - main
+  script:
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
+
+stop-review:
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+  when: manual
+  script:
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/; bye"
+
+
 deploy-production:
   stage: deploy
   needs:
@@ -93,7 +116,8 @@ deploy-production:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH; bye"
   environment:
     name: production
+    url: $APPURL
   only:
     - main
   tags:
-    - build-2    
+    - build-2
