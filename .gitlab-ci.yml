@@ -13,7 +13,7 @@ stages:
 # Build stage
 #
 
-install-npm:
+install-npm-dependencies:
   stage: build
   script:
     - npm install
@@ -28,7 +28,7 @@ install-npm:
       - node_modules/
       - ~/.cache/
 
-build-production:
+build-app:
   stage: build
   script:
     - npm install
@@ -46,9 +46,9 @@ build-production:
 eslint:
   stage: test
   needs:
-    - install-npm
+    - install-npm-dependencies
   dependencies:
-    - install-npm
+    - install-npm-dependencies
   script:
     - npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
   tags:
@@ -61,9 +61,9 @@ cypress:
   stage: test
   image: cypress/base:latest
   needs:
-    - install-npm
+    - install-npm-dependencies
   dependencies:
-    - install-npm
+    - install-npm-dependencies
   script:
     - npx cypress install
     - npm run dev & npx cypress run
@@ -84,20 +84,38 @@ deploy-review:
     url: $APPURL/$CI_COMMIT_REF_SLUG
     auto_stop_in: 1 week
     on_stop: stop-review
+  needs:
+    - job: eslint
+      artifacts: false
+    - job: cypress
+      artifacts: false
+    - job: build-app
+      artifacts: true
   only:
     - branches
   except:
     - main
+  before_script:
+    - apt-get update -y
+    - apt-get install lftp -y
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
+  tags:
+    - build-2
+
 
 stop-review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
   when: manual
+  before_script:
+    - apt-get update -y
+    - apt-get install lftp -y
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/; bye"
+  tags:
+    - build-2
 
 
 deploy-production:
@@ -107,7 +125,7 @@ deploy-production:
       artifacts: false
     - job: cypress
       artifacts: false
-    - job: build-production
+    - job: build-app
       artifacts: true
   before_script:
     - apt-get update -y
