@@ -28,7 +28,20 @@ install-npm-dependencies:
       - node_modules/
       - ~/.cache/
 
-build-app:
+build-review:
+  stage: build
+  script:
+    - >
+      sed -i "s#base: '/'#base: '/$CI_COMMIT_REF_SLUG/'#g" vite.config.ts
+    - npm install
+    - npm run build
+  tags:
+    - build-2
+  artifacts:
+    paths:
+      - dist/
+
+build-production:
   stage: build
   script:
     - npm install
@@ -89,7 +102,7 @@ deploy-review:
       artifacts: false
     - job: cypress
       artifacts: false
-    - job: build-app
+    - job: build-production
       artifacts: true
   only:
     - branches
@@ -125,7 +138,7 @@ deploy-production:
       artifacts: false
     - job: cypress
       artifacts: false
-    - job: build-app
+    - job: build-production
       artifacts: true
   before_script:
     - apt-get update -y
