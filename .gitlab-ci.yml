@@ -40,6 +40,10 @@ build-review:
   artifacts:
     paths:
       - dist/
+  except: 
+    - main
+  only:
+    - branches
 
 build-production:
   stage: build
@@ -51,6 +55,8 @@ build-production:
   artifacts:
     paths:
       - dist/
+  only:
+    - main
 
 #
 # Test stage
@@ -102,7 +108,7 @@ deploy-review:
       artifacts: false
     - job: cypress
       artifacts: false
-    - job: build-production
+    - job: build-review
       artifacts: true
   only:
     - branches
