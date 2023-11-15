@@ -29,7 +29,7 @@ function emitClick(event: Event) {
         <div class="flex items-center justify-between">
           <!-- Logo on the left sisde -->
           <LogoWide class="hidden lg:flex" />
-          <LogoSquare class="flex lg:hidden" />
+          <LogoSquare class="hidden md:flex lg:hidden" />
 
           <!-- Buttons, Search and Profile Picture on the right side -->
           <div class="flex items-center justify-end gap-4">
