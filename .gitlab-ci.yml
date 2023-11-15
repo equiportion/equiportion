@@ -104,10 +104,6 @@ deploy-review:
     auto_stop_in: 1 week
     on_stop: stop-review
   needs:
-    - job: eslint
-      artifacts: false
-    - job: cypress
-      artifacts: false
     - job: build-review
       artifacts: true
   only:
