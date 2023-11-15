@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-import {LoginMatrixClient} from '@/logic/controller/LoginMatrixClient';
 import router from '@/router';
 
 //TODO: check if homeserver already saved
-router.push('/login/homeserver');
+//router.push('/login/homeserver');
 </script>
 <template>
   <MainLayout>
