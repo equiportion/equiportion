@@ -24,7 +24,7 @@ class Room{
     return this.roomDescription;
   }
 
-  public getRoomPictrueUrl(): string {
+  public getRoomPictureUrl(): string {
     return this.roomPictureUrl;
   }
 
