@@ -34,7 +34,7 @@ function emitClick(event: Event) {
           <!-- Buttons, Search and Profile Picture on the right side -->
           <div class="flex items-center justify-end gap-4">
             <!-- Link to room overview -->
-            <RouterLink
+            <RouterLink id="home-button"
               :to="{name: 'home'}"
               class="block shrink-0 rounded-full bg-white p-2.5 text-gray-600 shadow-sm hover:text-gray-700 w-10 h-10"
             >
@@ -53,10 +53,10 @@ function emitClick(event: Event) {
             <!-- profile pic & dropdown -->
             <DropdownMenu>
               <template #trigger>
-                <MenuProfilePicture />
+                <MenuProfilePicture id="profile-picture" />
               </template>
 
-              <DropdownButton> Abmelden </DropdownButton>
+              <DropdownButton id="logout-button"> Abmelden </DropdownButton>
             </DropdownMenu>
           </div>
         </div>
