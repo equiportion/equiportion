@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-import router from '@/router';
+// import router from '@/router';
 
 //TODO: check if homeserver already saved
 //router.push('/login/homeserver');
