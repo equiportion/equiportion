@@ -1,5 +1,11 @@
 <script setup lang="ts">
-//TODO: implement login
+import {LoginMatrixClient} from '@/logic/controller/LoginMatrixClient';
+import router from '@/router';
+
+const loginMatrixClient = new LoginMatrixClient();
+if (!(await loginMatrixClient.isHomeserverUrlValid())) {
+  router.push({name: 'enter-homeserver'});
+}
 </script>
 
 <template>

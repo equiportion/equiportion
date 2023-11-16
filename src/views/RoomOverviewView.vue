@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-// import router from '@/router';
+import useAuthenticatedPage from '@/composables/useAuthenticatedMatrixClient.js';
 
-//TODO: check if homeserver already saved
-//router.push('/login/homeserver');
+const {getAuthenticatedMatrixClient} = useAuthenticatedPage();
 </script>
 <template>
   <MainLayout>
@@ -18,3 +17,4 @@ import MainLayout from '@/layouts/MainLayout.vue';
     </div>
   </MainLayout>
 </template>
+@/composables/useAuthenticatedMatrixClient
