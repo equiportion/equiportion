@@ -2,7 +2,7 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import useAuthenticatedPage from '@/composables/useAuthenticatedMatrixClient.js';
 
-const {getAuthenticatedMatrixClient} = useAuthenticatedPage();
+//const {getAuthenticatedMatrixClient} = useAuthenticatedPage();
 </script>
 <template>
   <MainLayout>
