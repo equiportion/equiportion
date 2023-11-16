@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
+import useAuthenticatedPage from '@/composables/useAuthenticatedMatrixClient.js';
+
+const {getAuthenticatedMatrixClient} = useAuthenticatedPage();
 </script>
 <template>
   <MainLayout>
@@ -14,3 +17,4 @@ import MainLayout from '@/layouts/MainLayout.vue';
     </div>
   </MainLayout>
 </template>
+@/composables/useAuthenticatedMatrixClient
