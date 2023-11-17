@@ -30,9 +30,8 @@ const props = defineProps({
     default: '',
   },
   error: {
-    type: Boolean,
+    type: String,
     required: false,
-    default: false,
   },
   label: {
     type: String,

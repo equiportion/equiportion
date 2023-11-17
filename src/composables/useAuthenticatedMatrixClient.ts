@@ -8,9 +8,9 @@ export default function useAuthenticatedMatrixClient() {
     return authenticatedMatrixClient;
   }
 
-  if (!authenticatedMatrixClient.isAuthenticated()) {
+  if (!authenticatedMatrixClient.isValid()) {
     router.push({name: 'login'});
   }
 
-  return [getAuthenticatedMatrixClient];
+  return {getAuthenticatedMatrixClient};
 }

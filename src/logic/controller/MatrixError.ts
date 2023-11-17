@@ -11,7 +11,7 @@ class MatrixError extends Error {
   }
 
   public log() {
-    console.log(this.errcode + ': ' + this.error);
+    console.error(this.errcode + ': ' + this.error);
   }
 }
 

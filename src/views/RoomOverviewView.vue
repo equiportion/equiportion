@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import MainLayout from '@/layouts/MainLayout.vue';
-import useAuthenticatedPage from '@/composables/useAuthenticatedMatrixClient.js';
 
-//const {getAuthenticatedMatrixClient} = useAuthenticatedPage();
+const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
+
+const authenticatedMatrixClient = getAuthenticatedMatrixClient();
 </script>
 <template>
   <MainLayout>
