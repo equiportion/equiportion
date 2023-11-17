@@ -8,36 +8,34 @@ import LoginStepsBar from '@/views/partials/LoginStepsBar.vue';
 
 import {MatrixClient} from '@/logic/controller/MatrixClient';
 import router from '@/router';
+import {getCookie, setCookie} from '@/logic/utils/cookies';
+import cookieNames from '@/logic/constants/cookieNames';
 
 const loading = ref(false);
-const homeserverUrl = ref(MatrixClient.getHomeserverUrlCookie() ?? '');
+const homeserverUrl = ref(getCookie(cookieNames.homeserverUrl) ?? '');
 const error = ref();
 
 async function continueToLogin() {
   loading.value = true;
 
-  await validateHomeserverUrl();
-
-  loading.value = false;
-}
-
-async function validateHomeserverUrl() {
   const matrixClient = new MatrixClient(homeserverUrl.value);
 
   if (await matrixClient.isHomeserverUrlValid()) {
     error.value = undefined;
 
-    MatrixClient.setHomeserverUrlCookie(homeserverUrl.value);
+    setCookie(cookieNames.homeserverUrl, homeserverUrl.value);
     router.push({name: 'login'});
   } else {
     error.value = 'Ungültige Homeserver-URL';
   }
+
+  loading.value = false;
 }
 </script>
 
 <template>
   <LoginProcessBase>
-    <div class="mt-8 flex flex-col gap-6 w-full">
+    <form @submit.prevent="continueToLogin" class="mt-8 flex flex-col gap-6 w-full">
       <LoginStepsBar :active="1" />
       <div>
         <InputFieldWithLabelAndError
@@ -56,6 +54,6 @@ async function validateHomeserverUrl() {
           Weiter zum Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>
-    </div>
+    </form>
   </LoginProcessBase>
 </template>
