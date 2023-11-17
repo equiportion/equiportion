@@ -3,7 +3,6 @@ import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixCl
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
-
 const authenticatedMatrixClient = getAuthenticatedMatrixClient();
 </script>
 <template>
@@ -19,4 +18,3 @@ const authenticatedMatrixClient = getAuthenticatedMatrixClient();
     </div>
   </MainLayout>
 </template>
-@/composables/useAuthenticatedMatrixClient
