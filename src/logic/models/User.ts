@@ -5,9 +5,9 @@ class User{
   private name: string;
   private matrixId: string;
   private profilePictureURL: string;
-  private paymentInformation: string;
+  private paymentInformation: Map<string, string>;
   
-  constructor(name: string, matrixID: string, profilePictureURL: string, paymentInformation: string, rooms: Room[]) {
+  constructor(name: string, matrixID: string, profilePictureURL: string, paymentInformation: Map<string, string>, rooms: Room[]) {
     this.name = name;
     this.matrixId = matrixID;
     this.profilePictureURL = profilePictureURL;
@@ -15,19 +15,19 @@ class User{
     this.rooms = rooms;
   }
 
-  getRooms() {
+  getRooms(): Room[] {
     return this.rooms;
   }
-  getName() {
+  getName(): string {
     return this.name;
   }
-  getMatrixId() {
+  getMatrixId(): string {
     return this.matrixId;
   }
-  getProfilePictureUrl() {
+  getProfilePictureUrl(): string {
     return this.profilePictureURL;
   }
-  getPaymentInformation() {
+  getPaymentInformation(): Map<string, string> {
     return this.paymentInformation;
   }
 }
