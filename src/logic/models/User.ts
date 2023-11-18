@@ -1,6 +1,6 @@
 import Room from '@/logic/models/Room';
 
-class User{
+export default class User{
   private rooms: Room[];
   private name: string;
   private matrixId: string;
