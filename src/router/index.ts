@@ -3,7 +3,7 @@ import RoomOverviewView from '../views/RoomOverviewView.vue';
 import LandingPageView from '@/views/LandingPageView.vue';
 import LoginView from '@/views/LoginView.vue';
 import EnterHomeserverView from '@/views/EnterHomeserverView.vue';
-import PaymentInformationView from '@/views/PaymentInformationView.vue';
+import PaymentInformationView from '@/views/partials/PaymentInformationView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
