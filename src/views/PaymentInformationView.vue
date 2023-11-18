@@ -2,17 +2,28 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import User from '@/logic/models/User';
 import Room from '@/logic/models/Room';
+import { ref } from "vue";
+
+
 const providers:string[] = ["Paypal", "IBAN"];
-function getPaymentInformation(provider:string): string {
-  const room1:Room = new Room("", "", "", "");
-  const room2:Room = new Room("", "", "", "");
-  const rooms:Room[] = [room1, room2];
-  const map:Map<string, string> = new Map();
-  map.set("Paypal", "my-paypal");
-  map.set("IBAN", "my-iban");
-  const user:User = new User("", "", "", map, rooms);
+const value = ref('');
+
+const room1:Room = new Room("", "", "", "");
+const room2:Room = new Room("", "", "", "");
+const rooms:Room[] = [room1, room2];
+const map:Map<string, string> = new Map();
+map.set("Paypal", "my-paypal");
+map.set("IBAN", "my-iban");
+const user:User = new User("", "", "", map, rooms);
+
+function getPaymentInformationPlaceholder(provider:string): string {
     return user.getPaymentInformation(provider);
 }
+
+function setPaymentInformationPlaceholder(provider:string, value:string) {
+  user.setPaymentInformation(provider, value);  
+}
+
 </script>
 <template>
     <MainLayout>
@@ -31,8 +42,8 @@ function getPaymentInformation(provider:string): string {
         <div class="flex flex-row justify-center flex-grow gap-2" v-for="provider in providers" :key="provider">
           <div class ="flex flex-column justify-center flex-grow gap-2">
             <span class="font-semibold">{{ provider }}</span>
-            <span>{{ getPaymentInformation(provider) }}</span>
-            <button @click="/*TODO*/"><i class="fa-solid fa-users"></i></button>
+            <input type="text" :placeholder="getPaymentInformationPlaceholder(provider)" v-model="value">
+            {{ setPaymentInformationPlaceholder(provider, value) }}
           </div>
         </div>     
       </div>
