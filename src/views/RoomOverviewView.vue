@@ -10,7 +10,7 @@ import ProfileImage from '@/components/media/ProfileImage.vue';
         <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Willkommen zurück, Max Muster!</h1>
 
         <p class="mt-1.5 text-sm text-gray-500">
-          Du hast 1.000.000.000 € Schulden - beginne, Geld zurückzuzahlen!
+          Du hast 1.000.000 € Schulden - beginne, Geld zurückzuzahlen!
         </p>
       </div>
     </div>
