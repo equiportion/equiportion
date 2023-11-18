@@ -6,6 +6,7 @@ import MenuDivider from '@/layouts/partials/MenuDivider.vue';
 import MenuProfilePicture from '@/layouts/partials/MenuProfilePicture.vue';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
+import DropdownLink from '@/components/dropdowns/DropdownLink.vue';
 
 import LogoWide from '@/components/brand/LogoWide.vue';
 import LogoSquare from '@/components/brand/LogoSquare.vue';
@@ -55,7 +56,7 @@ function emitClick(event: Event) {
               <template #trigger>
                 <MenuProfilePicture id="profile-picture" />
               </template>
-
+              <DropdownLink to="/profile" id="profil-ansicht">Profil</DropdownLink>
               <DropdownButton id="logout-button"> Abmelden </DropdownButton>
             </DropdownMenu>
           </div>
