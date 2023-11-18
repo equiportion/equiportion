@@ -43,7 +43,7 @@ async function login() {
 
 <template>
   <LoginProcessBase>
-    <div class="mt-8 flex flex-col gap-6 w-full">
+    <form @submit.prevent="login" class="mt-8 flex flex-col gap-6 w-full">
       <LoginStepsBar :active="2" />
 
       <span class="text-center"
@@ -82,6 +82,6 @@ async function login() {
           Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>
-    </div>
+    </form>
   </LoginProcessBase>
 </template>

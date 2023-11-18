@@ -1,6 +1,6 @@
 import axios, {AxiosError, type AxiosInstance} from 'axios';
 import {MatrixError} from '@/logic/controller/MatrixError';
-import {getCookie, setCookie} from '@/logic/utils/cookies';
+import {getCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import {InvalidHomeserverUrlError} from '@/logic/controller/InvalidHomeserverUrlError';
 
@@ -12,7 +12,7 @@ class MatrixClient {
     if (homeserverUrl != undefined) {
       this.homeserverUrl = homeserverUrl;
     } else {
-      this.homeserverUrl = MatrixClient.getHomeserverUrlCookie();
+      this.homeserverUrl = getCookie(cookieNames.homeserverUrl);
     }
 
     this.axiosInstance = axios.create({
@@ -33,11 +33,10 @@ class MatrixClient {
       await this.getRequest('/_matrix/client/versions');
       return true;
     } catch (error) {
-      if (error instanceof InvalidHomeserverUrlError) {
-        return false;
-      } else {
+      if (!(error instanceof InvalidHomeserverUrlError)) {
         console.error(error);
       }
+      return false;
     }
   }
 
@@ -74,16 +73,6 @@ class MatrixClient {
       }
     } else {
       throw error;
-    }
-  }
-
-  public static getHomeserverUrlCookie() {
-    return getCookie(cookieNames.homeserverUrl);
-  }
-
-  public static setHomeserverUrlCookie(homeserverUrl: string) {
-    if (homeserverUrl) {
-      setCookie(cookieNames.homeserverUrl, homeserverUrl);
     }
   }
 }
