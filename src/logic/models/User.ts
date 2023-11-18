@@ -15,19 +15,22 @@ class User{
     this.rooms = rooms;
   }
 
-  getRooms(): Room[] {
+  public getRooms(): Room[] {
     return this.rooms;
   }
-  getName(): string {
+  public getName(): string {
     return this.name;
   }
-  getMatrixId(): string {
+  public getMatrixId(): string {
     return this.matrixId;
   }
-  getProfilePictureUrl(): string {
+  public getProfilePictureUrl(): string {
     return this.profilePictureURL;
   }
-  getPaymentInformation(): Map<string, string> {
-    return this.paymentInformation;
-  }
+  public getPaymentInformation(provider:string): string {
+    if (this.paymentInformation.has(provider)) {
+      return this.paymentInformation.get(provider)!;
+    } else {
+      return "";
+    }
 }
