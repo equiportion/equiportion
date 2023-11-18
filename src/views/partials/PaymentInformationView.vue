@@ -2,11 +2,12 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import User from '@/logic/models/User';
 import Room from '@/logic/models/Room';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import { ref } from "vue";
 
 
 const providers:string[] = ["Paypal", "IBAN"];
-const value = ref('');
+const value = ref({});
 
 const room1:Room = new Room("", "", "", "");
 const room2:Room = new Room("", "", "", "");
@@ -21,7 +22,7 @@ function getPaymentInformationPlaceholder(provider:string): string {
 }
 
 function setPaymentInformationPlaceholder(provider:string, value:string) {
-  user.setPaymentInformation(provider, value);  
+  //TODO
 }
 
 </script>
@@ -41,9 +42,8 @@ function setPaymentInformationPlaceholder(provider:string, value:string) {
       <div class="flex flex-col flex-grow gap-2">
         <div class="flex flex-row justify-center flex-grow gap-2" v-for="provider in providers" :key="provider">
           <div class ="flex flex-column justify-center flex-grow gap-2">
-            <span class="font-semibold">{{ provider }}</span>
-            <input type="text" :placeholder="getPaymentInformationPlaceholder(provider)" v-model="value">
-            {{ setPaymentInformationPlaceholder(provider, value) }}
+            <InputFieldWithLabelAndError type="text" :label="provider" :placeholder="getPaymentInformationPlaceholder(provider)" v-model="value[provider]" class="w-full"/>
+            {{ setPaymentInformationPlaceholder(provider, value[provider]) }}
           </div>
         </div>     
       </div>
