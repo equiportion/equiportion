@@ -1,23 +1,18 @@
 import Room from '@/logic/models/Room';
 
 export default class User{
-  private rooms: Room[];
   private name: string;
   private matrixId: string;
   private profilePictureURL: string;
   private paymentInformation: Map<string, string>;
   
-  constructor(name: string, matrixID: string, profilePictureURL: string, paymentInformation: Map<string, string>, rooms: Room[]) {
+  constructor(name: string, matrixID: string, profilePictureURL: string, paymentInformation: Map<string, string>) {
     this.name = name;
     this.matrixId = matrixID;
     this.profilePictureURL = profilePictureURL;
     this.paymentInformation = paymentInformation;
-    this.rooms = rooms;
   }
 
-  public getRooms(): Room[] {
-    return this.rooms;
-  }
   public getName(): string {
     return this.name;
   }
