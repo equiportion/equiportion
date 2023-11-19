@@ -7,7 +7,7 @@ import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
 import LoginStepsBar from '@/views/partials/LoginStepsBar.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
-import {LoginMatrixClient} from '@/logic/controller/LoginMatrixClient';
+import LoginMatrixClient from '@/logic/controller/LoginMatrixClient';
 import router from '@/router';
 
 const loading = ref(false);

@@ -1,5 +1,30 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
+import {setCookie} from '@/logic/utils/cookies';
+import cookieNames from '@/logic/constants/cookieNames';
+import Room from '@/logic/models/Room';
+import MatrixError from '@/logic/controller/MatrixError';
+
+//TODO: remove afterwards
+// setCookie(cookieNames.homeserverUrl, 'https://matrix.scc.kit.edu');
+// setCookie(cookieNames.accessToken, 'syt_dWZnZmc_NYfdWvvyYJLQAtfRweYU_11wYpY');
+const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
+const authenticatedMatrixClient = getAuthenticatedMatrixClient();
+
+const rooms: Room[] = [];
+
+loadRooms();
+
+async function loadRooms() {
+  const roomsJson = await authenticatedMatrixClient.sync();
+
+  for (const roomId in roomsJson) {
+    rooms.push(new Room(roomId, roomsJson[roomId]));
+  }
+
+  console.log(rooms);
+}
 </script>
 <template>
   <MainLayout>

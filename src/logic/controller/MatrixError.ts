@@ -15,4 +15,4 @@ class MatrixError extends Error {
   }
 }
 
-export {MatrixError};
+export default MatrixError;
