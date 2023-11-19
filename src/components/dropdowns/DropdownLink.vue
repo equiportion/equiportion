@@ -8,12 +8,12 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div
-    class="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-    role="menuitem"
-  >
-    <RouterLink :to="props.to">
+  <RouterLink :to="props.to">
+    <div
+      class="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 w-full"
+      role="menuitem"
+    >
       <slot />
-    </RouterLink>
-  </div>
+    </div>
+  </RouterLink>
 </template>
