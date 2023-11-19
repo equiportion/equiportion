@@ -14,4 +14,3 @@ import MainLayout from '@/layouts/MainLayout.vue';
     </div>
   </MainLayout>
 </template>
-@/logic/controller/clients/MatrixError

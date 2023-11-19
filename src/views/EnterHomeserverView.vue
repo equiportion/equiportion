@@ -57,4 +57,3 @@ async function continueToLogin() {
     </form>
   </LoginProcessBase>
 </template>
-@/logic/controller/clients/MatrixClient

@@ -85,4 +85,3 @@ async function login() {
     </form>
   </LoginProcessBase>
 </template>
-@/logic/controller/clients/LoginMatrixClient
