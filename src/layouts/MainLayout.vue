@@ -25,7 +25,7 @@ function emitClick(event: Event) {
 
 <template>
   <div @click="emitClick($event)">
-    <header class="bg-gray-50">
+    <header class="fixed top-0 bg-gray-50 w-full">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <!-- Logo on the left sisde -->
@@ -35,7 +35,8 @@ function emitClick(event: Event) {
           <!-- Buttons, Search and Profile Picture on the right side -->
           <div class="flex items-center justify-end gap-4">
             <!-- Link to room overview -->
-            <RouterLink id="home-button"
+            <RouterLink
+              id="home-button"
               :to="{name: 'home'}"
               class="block shrink-0 rounded-full bg-white p-2.5 text-gray-600 shadow-sm hover:text-gray-700 w-10 h-10"
             >
@@ -64,6 +65,8 @@ function emitClick(event: Event) {
       </div>
     </header>
 
-    <slot />
+    <main class="w-full pt-[104px]">
+      <slot />
+    </main>
   </div>
 </template>
