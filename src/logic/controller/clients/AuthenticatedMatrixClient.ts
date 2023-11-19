@@ -3,16 +3,20 @@ import {getCookie, setCookie} from '@/logic/utils/cookies';
 import MatrixClient from '@/logic/controller/clients/MatrixClient';
 import MatrixError from '@/logic/controller/MatrixError';
 import router from '@/router';
+import InitialSyncFilter from '../filters/InitialSyncFilter';
+import Room from '@/logic/models/Room';
 
 class AuthenticatedMatrixClient extends MatrixClient {
   private accessToken?: string;
+  private nextBatch?: string;
 
-  private rooms = {};
+  private rooms: {[key: string]: Room};
 
   constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
+    this.rooms = {};
   }
 
   public async isValid(): Promise<boolean> {
@@ -41,14 +45,23 @@ class AuthenticatedMatrixClient extends MatrixClient {
     router.push({name: 'login'});
   }
 
-  public async sync() {
+  private async initialSync() {
     try {
       const data = {
-        full_state: true,
+        filter: new InitialSyncFilter(),
       };
 
       const response = await this.getRequest('/_matrix/client/v3/sync', data);
-      return response!.data.rooms.join;
+      this.nextBatch = response?.data.next_batch;
+
+      const joinedRooms = response!.data.rooms.join;
+      for (const roomId in joinedRooms) {
+        if (this.rooms[roomId]) {
+          this.rooms[roomId].update(joinedRooms[roomId]);
+        } else {
+          this.rooms[roomId] = new Room(roomId, joinedRooms[roomId]);
+        }
+      }
     } catch (error) {
       if (error instanceof MatrixError) {
         error.log();
@@ -58,6 +71,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     return {};
+  }
+
+  public async sync() {
+    if (!this.nextBatch) {
+      this.initialSync();
+    }
   }
 }
 

@@ -13,29 +13,40 @@ class Room {
     console.log('Room: ' + this.roomId + ' -----------------------------------');
     console.log(data);
     const stateEvents = data.state.events;
+    const timelineEvents = data.timeline.events;
 
     for (const stateEvent of stateEvents) {
       const type = stateEvent.type;
       const content = stateEvent.content;
 
-      // switch (type) {
-      //   case 'm.room.member':
-      //     break;
-      //   case 'm.room.name':
-      //     console.log(type);
-      //     this.roomName = content.name;
-      //     break;
-      //   case 'm.room.avatar':
-      //     console.log(type);
-      //     this.roomPictureUrl = content.url;
-      //     break;
-      //   case 'm.room.topic':
-      //     console.log(type);
-      //     this.roomDescription = content.topic;
-      //     break;
-      //   default:
-      //     break;
-      // }
+      this.parseEvent(type, content);
+    }
+
+    for (const timelineEvent of timelineEvents) {
+      const type = timelineEvent.type;
+      const content = timelineEvent.content;
+
+      this.parseEvent(type, content);
+    }
+  }
+
+  public update(data: any) {}
+
+  private parseEvent(type: string, content: any) {
+    switch (type) {
+      case 'm.room.member':
+        break;
+      case 'm.room.name':
+        this.roomName = content.name;
+        break;
+      case 'm.room.avatar':
+        this.roomPictureUrl = content.url;
+        break;
+      case 'm.room.topic':
+        this.roomDescription = content.topic;
+        break;
+      default:
+        break;
     }
   }
 

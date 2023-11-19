@@ -4,20 +4,17 @@ import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixCl
 import {setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import Room from '@/logic/models/Room';
-import MatrixError from '@/logic/controller/MatrixError.js';
 
 //TODO: remove afterwards
-// setCookie(cookieNames.homeserverUrl, 'https://matrix.scc.kit.edu');
-// setCookie(cookieNames.accessToken, 'syt_dWZnZmc_NYfdWvvyYJLQAtfRweYU_11wYpY');
+setCookie(cookieNames.homeserverUrl, 'https://matrix.scc.kit.edu');
+setCookie(cookieNames.accessToken, 'syt_dWZnZmc_XuYZjgStFlmGvbRgdtAS_1MUAXr');
 const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
 const authenticatedMatrixClient = getAuthenticatedMatrixClient();
-
-const rooms: Room[] = [];
 
 loadRooms();
 
 async function loadRooms() {
-  const roomsJson = await authenticatedMatrixClient.sync();
+  const roomsJson = await authenticatedMatrixClient.initialSync();
 
   for (const roomId in roomsJson) {
     rooms.push(new Room(roomId, roomsJson[roomId]));
