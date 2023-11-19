@@ -4,7 +4,7 @@ import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixCl
 import {setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import Room from '@/logic/models/Room';
-import MatrixError from '@/logic/controller/MatrixError';
+import MatrixError from '@/logic/controller/MatrixError.js';
 
 //TODO: remove afterwards
 // setCookie(cookieNames.homeserverUrl, 'https://matrix.scc.kit.edu');
@@ -39,3 +39,4 @@ async function loadRooms() {
     </div>
   </MainLayout>
 </template>
+@/logic/controller/clients/MatrixError

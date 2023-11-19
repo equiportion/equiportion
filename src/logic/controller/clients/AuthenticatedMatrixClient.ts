@@ -1,6 +1,6 @@
 import cookieNames from '@/logic/constants/cookieNames';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
-import MatrixClient from '@/logic/controller/MatrixClient';
+import MatrixClient from '@/logic/controller/clients/MatrixClient';
 import MatrixError from '@/logic/controller/MatrixError';
 import router from '@/router';
 

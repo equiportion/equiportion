@@ -1,4 +1,4 @@
-import MatrixClient from '@/logic/controller/MatrixClient';
+import MatrixClient from '@/logic/controller/clients/MatrixClient';
 import MatrixError from '@/logic/controller/MatrixError';
 import {setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
