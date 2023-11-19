@@ -12,8 +12,7 @@ export default function useAuthenticatedMatrixClient() {
 
   async function redirectIfUnauthenticated() {
     if (!(await authenticatedMatrixClient.isValid())) {
-      //TODO: should push to 'welcome'
-      router.push({name: 'login'});
+      router.push({name: 'landing-page'});
     }
   }
 
