@@ -1,5 +1,5 @@
-import {MatrixClient} from '@/logic/controller/MatrixClient';
-import {MatrixError} from '@/logic/controller/MatrixError';
+import MatrixClient from '@/logic/controller/clients/MatrixClient';
+import MatrixError from '@/logic/controller/MatrixError';
 import {setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 
@@ -38,4 +38,4 @@ class LoginMatrixClient extends MatrixClient {
   }
 }
 
-export {LoginMatrixClient};
+export default LoginMatrixClient;

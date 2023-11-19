@@ -1,33 +1,64 @@
-class Room{
+class Room {
+  private roomName?: string;
+  private roomId: string;
+  private roomDescription?: string;
+  private roomPictureUrl?: string;
 
-  constructor(roomName: string, roomId: string, roomDescription: string, roomPictureUrl: string) {
-    this.roomName = roomName;
+  constructor(roomId: string, data: Object) {
     this.roomId = roomId;
-    this.roomDescription = roomDescription;
-    this.roomPictureUrl = roomPictureUrl;
+    this.update(data);
   }
 
-  private roomName: string;
-  private roomId: string;
-  private roomDescription: string;
-  private roomPictureUrl: string;
+  public update(data: any) {
+    const stateEvents = data.state.events;
+    const timelineEvents = data.timeline.events;
 
-  public getRoomName(): string {
+    for (const stateEvent of stateEvents) {
+      const type = stateEvent.type;
+      const content = stateEvent.content;
+
+      this.parseEvent(type, content);
+    }
+
+    for (const timelineEvent of timelineEvents) {
+      const type = timelineEvent.type;
+      const content = timelineEvent.content;
+
+      this.parseEvent(type, content);
+    }
+  }
+
+  private parseEvent(type: string, content: any) {
+    switch (type) {
+      case 'm.room.name':
+        this.roomName = content.name;
+        break;
+      case 'm.room.avatar':
+        this.roomPictureUrl = content.url;
+        break;
+      case 'm.room.topic':
+        this.roomDescription = content.topic;
+        break;
+      default:
+        break;
+    }
+  }
+
+  public getRoomName() {
     return this.roomName;
   }
 
-  public getRoomId(): string {
+  public getRoomId() {
     return this.roomId;
   }
 
-  public getRoomDescription(): string {
+  public getRoomDescription() {
     return this.roomDescription;
   }
 
-  public getRoomPictureUrl(): string {
+  public getRoomPictureUrl() {
     return this.roomPictureUrl;
   }
-
 }
 
-export default Room
+export default Room;

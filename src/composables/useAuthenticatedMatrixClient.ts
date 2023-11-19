@@ -1,4 +1,4 @@
-import {AuthenticatedMatrixClient} from '@/logic/controller/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
 import router from '@/router';
 
 export default function useAuthenticatedMatrixClient() {
