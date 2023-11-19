@@ -3,7 +3,7 @@ import RoomOverviewView from '../views/RoomOverviewView.vue';
 import LandingPageView from '@/views/LandingPageView.vue';
 import LoginView from '@/views/LoginView.vue';
 import EnterHomeserverView from '@/views/EnterHomeserverView.vue';
-import PaymentInformationView from '@/views/partials/PaymentInformationView.vue';
+import ProfilePageView from '@/views/ProfilePageView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,9 +29,9 @@ const router = createRouter({
       component: EnterHomeserverView,
     },
     {
-      path: '/payment-information',
-      name: 'payment-information',
-      component: PaymentInformationView,
+      path: '/profile',
+      name: 'profile',
+      component: ProfilePageView,
     }
   ],
 });
