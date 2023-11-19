@@ -1,11 +1,16 @@
 import type RoomEventFilter from './RoomEventFilter';
-import type StateFilter from './StateFilter';
+import StateFilter from './StateFilter';
 
 class RoomFilter {
-  private accountData: RoomEventFilter;
-  private rooms: string[];
-  private state: StateFilter;
-  private timeline: RoomEventFilter;
+  private rooms?: string[];
+  private state?: StateFilter;
+  private timeline?: RoomEventFilter;
+
+  constructor(rooms?: string[], state?: StateFilter, timeline?: RoomEventFilter) {
+    this.rooms = rooms;
+    this.state = state;
+    this.timeline = timeline;
+  }
 }
 
 export default RoomFilter;
