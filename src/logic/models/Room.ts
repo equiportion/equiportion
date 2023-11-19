@@ -6,12 +6,10 @@ class Room {
 
   constructor(roomId: string, data: Object) {
     this.roomId = roomId;
-    this.init(data);
+    this.update(data);
   }
 
-  private init(data: any) {
-    console.log('Room: ' + this.roomId + ' -----------------------------------');
-    console.log(data);
+  public update(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
 
@@ -30,12 +28,8 @@ class Room {
     }
   }
 
-  public update(data: any) {}
-
   private parseEvent(type: string, content: any) {
     switch (type) {
-      case 'm.room.member':
-        break;
       case 'm.room.name':
         this.roomName = content.name;
         break;

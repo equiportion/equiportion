@@ -5,18 +5,20 @@ import MatrixError from '@/logic/controller/MatrixError';
 import router from '@/router';
 import InitialSyncFilter from '../filters/InitialSyncFilter';
 import Room from '@/logic/models/Room';
+import {ref, type Ref} from 'vue';
 
 class AuthenticatedMatrixClient extends MatrixClient {
   private accessToken?: string;
   private nextBatch?: string;
 
-  private rooms: {[key: string]: Room};
+  //TODO: make rooms reactive
+  private rooms: Ref<{[key: string]: Room}>;
 
   constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
-    this.rooms = {};
+    this.rooms = ref({});
   }
 
   public async isValid(): Promise<boolean> {
@@ -45,21 +47,21 @@ class AuthenticatedMatrixClient extends MatrixClient {
     router.push({name: 'login'});
   }
 
-  private async initialSync() {
+  public async sync() {
     try {
       const data = {
-        filter: new InitialSyncFilter(),
+        since: this.nextBatch ?? '',
       };
 
       const response = await this.getRequest('/_matrix/client/v3/sync', data);
       this.nextBatch = response?.data.next_batch;
 
-      const joinedRooms = response!.data.rooms.join;
+      const joinedRooms = response?.data.rooms.join;
       for (const roomId in joinedRooms) {
-        if (this.rooms[roomId]) {
-          this.rooms[roomId].update(joinedRooms[roomId]);
+        if (this.rooms.value[roomId]) {
+          this.rooms.value[roomId].update(joinedRooms[roomId]);
         } else {
-          this.rooms[roomId] = new Room(roomId, joinedRooms[roomId]);
+          this.rooms.value[roomId] = new Room(roomId, joinedRooms[roomId]);
         }
       }
     } catch (error) {
@@ -69,14 +71,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
         console.error(error);
       }
     }
-
-    return {};
   }
 
-  public async sync() {
-    if (!this.nextBatch) {
-      this.initialSync();
-    }
+  public getRooms() {
+    return this.rooms;
   }
 }
 
