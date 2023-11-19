@@ -10,6 +10,13 @@ class Filter {
     this.eventFields = eventFields;
     this.room = room;
   }
+
+  public toJson() {
+    return {
+      event_fields: this.eventFields,
+      room: this.room?.toJson(),
+    };
+  }
 }
 
 export default Filter;

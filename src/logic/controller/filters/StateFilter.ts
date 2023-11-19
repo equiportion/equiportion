@@ -8,6 +8,14 @@ class StateFilter {
     this.rooms = rooms;
     this.types = types;
   }
+
+  public toJson() {
+    return {
+      limit: this.limit,
+      rooms: this.rooms,
+      types: this.types,
+    };
+  }
 }
 
 export default StateFilter;

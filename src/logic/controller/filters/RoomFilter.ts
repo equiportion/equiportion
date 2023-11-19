@@ -11,6 +11,14 @@ class RoomFilter {
     this.state = state;
     this.timeline = timeline;
   }
+
+  public toJson() {
+    return {
+      rooms: this.rooms,
+      state: this.state?.toJson(),
+      timeline: this.timeline?.toJson(),
+    };
+  }
 }
 
 export default RoomFilter;
