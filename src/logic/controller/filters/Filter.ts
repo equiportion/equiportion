@@ -4,9 +4,8 @@ import type RoomFilter from './RoomFilter';
 //Modeled according to https://spec.matrix.org/v1.8/client-server-api/#api-endpoints
 
 class Filter {
-  private static initialSyncFilter = new Filter();
+  public static initialSyncFilter = new Filter();
 
-  private accountData: EventFilter;
   private eventFields: string[];
   private room: RoomFilter;
 
@@ -18,7 +17,3 @@ class Filter {
 }
 
 export default Filter;
-
-export {
-  Filter.initialSyncFilter
-}
