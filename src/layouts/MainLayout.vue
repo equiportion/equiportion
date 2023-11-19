@@ -27,10 +27,9 @@ function emitClick(event: Event) {
   <div @click="emitClick($event)">
     <header class="fixed top-0 bg-gray-50 w-full">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-end lg:justify-between">
           <!-- Logo on the left sisde -->
-          <LogoWide class="hidden lg:flex" />
-          <LogoSquare class="hidden md:flex lg:hidden" />
+          <LogoWide class="hidden lg:flex h-10" />
 
           <!-- Buttons, Search and Profile Picture on the right side -->
           <div class="flex items-center justify-end gap-4">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LogoSquare from '@/components/brand/LogoSquare.vue';
+import LogoSquareWhite from '@/components/brand/LogoSquareWhite.vue';
 
 const headingText = 'Willkommen bei EquiPortion!';
 const descriptionText =
@@ -19,7 +20,7 @@ const descriptionText =
 
         <div class="hidden lg:relative lg:block lg:p-12">
           <a class="block text-white" href="/">
-            <LogoSquare class="h-8 sm:h-10" />
+            <LogoSquareWhite class="h-8 sm:h-10" />
           </a>
 
           <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
@@ -41,7 +42,7 @@ const descriptionText =
               class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-white text-blue-600 sm:h-20 sm:w-20"
               href="/"
             >
-              <LogoSquare class="h-8 sm:h-10" />
+              <LogoSquare />
             </a>
 
             <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">

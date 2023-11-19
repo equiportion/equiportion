@@ -1,4 +1,5 @@
 <script setup lang="ts"></script>
+
 <template>
-  <img src="@/assets/LogoWide.svg" alt="Logo" />
+  <img src="@/assets/LogoSquareWhite.svg" alt="Logo" />
 </template>
