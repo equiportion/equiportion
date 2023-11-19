@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import MainLayout from '@/layouts/MainLayout.vue';
+
+useAuthenticatedMatrixClient();
 </script>
 <template>
   <MainLayout>

@@ -43,8 +43,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.accessToken = '';
     setCookie(cookieNames.accessToken, '');
 
-    //TODO: should push to 'welcome'
-    router.push({name: 'login'});
+    router.push({name: 'landing-page'});
   }
 
   public async sync() {
