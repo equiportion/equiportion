@@ -1,6 +1,4 @@
-import Room from '@/logic/models/Room';
-
-export default class User{
+class User{
   private name: string;
   private matrixId: string;
   private profilePictureURL: string;
@@ -30,3 +28,5 @@ export default class User{
     }
   }
 }
+
+export default User;
