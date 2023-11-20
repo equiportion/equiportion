@@ -29,7 +29,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const userInfo = response?.data;
     const loggedInUser = new User(userInfo.user_id, this);
     this.loggedInUser.value = loggedInUser;
-    console.log(this.loggedInUser.value);
 
     await this.sync();
   }
