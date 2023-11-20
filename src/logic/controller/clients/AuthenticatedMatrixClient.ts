@@ -33,13 +33,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     await this.sync();
   }
 
-  public logout() {
-    this.accessToken = '';
-    setCookie(cookieNames.accessToken, '');
-
-    router.push({name: 'landing-page'});
-  }
-
   public async sync() {
     const data = {
       since: this.nextBatch ?? '',

@@ -12,6 +12,9 @@ import LogoWide from '@/components/brand/LogoWide.vue';
 import LogoSquare from '@/components/brand/LogoSquare.vue';
 
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
+import cookieNames from '@/logic/constants/cookieNames';
+import {setCookie} from '@/logic/utils/cookies';
+import router from '@/router';
 const {emitGlobal} = useGlobalEventBus();
 
 // TODO Suche implementieren
@@ -20,6 +23,12 @@ const searchInputValue = ref('');
 function emitClick(event: Event) {
   const eventTarget = event.target! as HTMLElement;
   emitGlobal('click', {'no-close': eventTarget.closest('.no-close') !== null});
+}
+
+function logout() {
+  setCookie(cookieNames.accessToken, '');
+
+  router.push({name: 'landing-page'});
 }
 </script>
 
@@ -57,7 +66,7 @@ function emitClick(event: Event) {
                 <MenuProfilePicture id="profile-picture" />
               </template>
               <DropdownLink to="/profile" id="profil-ansicht">Profil</DropdownLink>
-              <DropdownButton id="logout-button"> Abmelden </DropdownButton>
+              <DropdownButton @click="logout" id="logout-button"> Abmelden </DropdownButton>
             </DropdownMenu>
           </div>
         </div>
