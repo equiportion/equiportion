@@ -1,8 +1,8 @@
 class Room {
-  private roomName?: string;
+  private name?: string;
   private roomId: string;
-  private roomDescription?: string;
-  private roomPictureUrl?: string;
+  private topic?: string;
+  private avatarUrl?: string;
 
   constructor(roomId: string, data: Object) {
     this.roomId = roomId;
@@ -31,33 +31,33 @@ class Room {
   private parseEvent(type: string, content: any) {
     switch (type) {
       case 'm.room.name':
-        this.roomName = content.name;
+        this.name = content.name;
         break;
       case 'm.room.avatar':
-        this.roomPictureUrl = content.url;
+        this.avatarUrl = content.url;
         break;
       case 'm.room.topic':
-        this.roomDescription = content.topic;
+        this.topic = content.topic;
         break;
       default:
         break;
     }
   }
 
-  public getRoomName() {
-    return this.roomName;
+  public getName() {
+    return this.name;
   }
 
   public getRoomId() {
     return this.roomId;
   }
 
-  public getRoomDescription() {
-    return this.roomDescription;
+  public getTopic() {
+    return this.topic;
   }
 
-  public getRoomPictureUrl() {
-    return this.roomPictureUrl;
+  public getAvatarUrl() {
+    return this.avatarUrl;
   }
 }
 
