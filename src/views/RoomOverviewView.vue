@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import MainLayout from '@/layouts/MainLayout.vue';
-//TODO: revert changes
-const authenticatedMatrixClient = useAuthenticatedMatrixClient().getAuthenticatedMatrixClient();
-const loggedInUser = authenticatedMatrixClient.getLoggedInUser();
 </script>
 <template>
   <MainLayout>
@@ -16,7 +12,5 @@ const loggedInUser = authenticatedMatrixClient.getLoggedInUser();
         </p>
       </div>
     </div>
-    <div>Logged in User:</div>
-    <div>{{ loggedInUser }}</div>
   </MainLayout>
 </template>
