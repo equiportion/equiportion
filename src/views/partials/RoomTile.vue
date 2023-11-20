@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import ProfileImage from '@/components/media/ProfileImage.vue';
+
+defineProps({
+  room: {
+    type: Object,
+    required: true,
+  },
+});
 </script>
 <template>
   <div
@@ -8,7 +15,7 @@ import ProfileImage from '@/components/media/ProfileImage.vue';
     <ProfileImage class="rounded-full w-16 h-16 lg:w-32 lg:h-32"></ProfileImage>
 
     <div class="lg:ml-5 flex flex-col gap-2">
-      <h2 class="text-2xl font-bold w-full text-center lg:text-start">PSE</h2>
+      <h2 class="text-2xl font-bold w-full text-center lg:text-start">{{ room.name }}</h2>
 
       <div
         class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"

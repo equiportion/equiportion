@@ -1,6 +1,22 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoomTile from '@/views/partials/RoomTile.vue';
+
+import {ref} from 'vue';
+
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
+const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
+const authenticatedMatrixClient = getAuthenticatedMatrixClient();
+
+const rooms = ref({});
+const loading = ref(true);
+
+async function loadRooms() {
+  rooms.value = await authenticatedMatrixClient.getRooms().value;
+  loading.value = false;
+}
+
+loadRooms();
 </script>
 <template>
   <MainLayout>
@@ -16,7 +32,15 @@ import RoomTile from '@/views/partials/RoomTile.vue';
 
     <!--Rooms-->
     <div class="flex flex-col items-center gap-2 p-2 lg:p-5">
-      <RoomTile room="sldjflköajsdöfjalksdj" />
+      <span class="text-3xl text-gray-300" v-if="loading">
+        <i class="fa-solid fa-spinner animate-spin"></i>
+      </span>
+      <span class="text-sm text-gray-300" v-if="Object.keys(rooms).length <= 0 && !loading">
+        Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
+      </span>
+      <template v-for="room in rooms" :key="room.id">
+        <RoomTile :room="room" />
+      </template>
     </div>
     <!--End of rooms-->
   </MainLayout>
