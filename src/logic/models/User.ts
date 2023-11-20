@@ -2,17 +2,17 @@ import MatrixError from '@/logic/controller/MatrixError';
 import type AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
 
 class User {
-  private name?: string;
-  private matrixId?: string;
-  private profilePictureURL?: string;
+  private displayname?: string;
+  private userId?: string;
+  private avatarUrl?: string;
   private paymentInformation?: Map<string, string>;
 
   constructor(
-    matrixId: string,
+    userId: string,
     authenticatedMatrixClient: AuthenticatedMatrixClient,
     paymentInformation?: Map<string, string>
   ) {
-    this.matrixId = matrixId;
+    this.userId = userId;
     this.paymentInformation = paymentInformation;
     this.update(authenticatedMatrixClient);
   }
@@ -20,11 +20,11 @@ class User {
   public async update(authenticatedMatrixClient: AuthenticatedMatrixClient) {
     try {
       const response = await authenticatedMatrixClient.getRequest(
-        '/_matrix/client/v3/profile/' + this.matrixId
+        '/_matrix/client/v3/profile/' + this.userId
       );
 
-      this.name = response?.data.displayname;
-      this.profilePictureURL = response?.data.avatar_url;
+      this.displayname = response?.data.displayname;
+      this.avatarUrl = response?.data.avatar_url;
     } catch (error) {
       if (error instanceof MatrixError) {
         error.log();
@@ -34,14 +34,14 @@ class User {
     }
   }
 
-  public getName() {
-    return this.name;
+  public getDisplayname() {
+    return this.displayname;
   }
-  public getMatrixId() {
-    return this.matrixId;
+  public getUserId() {
+    return this.userId;
   }
-  public getProfilePictureUrl() {
-    return this.profilePictureURL;
+  public getAvatarUrl() {
+    return this.avatarUrl;
   }
   public getPaymentInformation(provider: string) {
     if (this.paymentInformation?.has(provider)) {
