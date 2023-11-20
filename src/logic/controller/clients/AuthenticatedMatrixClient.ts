@@ -1,42 +1,36 @@
 import cookieNames from '@/logic/constants/cookieNames';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
 import MatrixClient from '@/logic/controller/clients/MatrixClient';
-import MatrixError from '@/logic/controller/MatrixError';
 import router from '@/router';
-import InitialSyncFilter from '../filters/InitialSyncFilter';
 import Room from '@/logic/models/Room';
 import {ref, type Ref} from 'vue';
+import User from '@/logic/models/User';
+import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 
 class AuthenticatedMatrixClient extends MatrixClient {
   private accessToken?: string;
   private nextBatch?: string;
 
-  //TODO: make rooms reactive
-  private rooms: Ref<{[key: string]: Room}>;
+  private rooms: Ref<{[key: string]: Room}> = ref({});
+  private loggedInUser: Ref<User | undefined> = ref();
 
   constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
-    this.rooms = ref({});
   }
 
-  public async isValid(): Promise<boolean> {
-    if (!(await super.isHomeserverUrlValid()) || !this.accessToken) {
-      return false;
+  public async initiate() {
+    if (!(await super.isHomeserverUrlValid())) {
+      throw new InvalidHomeserverUrlError();
     }
 
-    try {
-      await this.getRequest('/_matrix/client/v3/account/whoami');
-      return true;
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        error.log();
-      } else {
-        console.error(error);
-      }
-      return false;
-    }
+    const response = await this.getRequest('/_matrix/client/v3/account/whoami');
+    const userInfo = response?.data;
+    const loggedInUser = new User(userInfo.user_id, this);
+    this.loggedInUser.value = loggedInUser;
+
+    await this.sync();
   }
 
   public logout() {
@@ -47,33 +41,29 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   public async sync() {
-    try {
-      const data = {
-        since: this.nextBatch ?? '',
-      };
+    const data = {
+      since: this.nextBatch ?? '',
+    };
 
-      const response = await this.getRequest('/_matrix/client/v3/sync', data);
-      this.nextBatch = response?.data.next_batch;
+    const response = await this.getRequest('/_matrix/client/v3/sync', data);
+    this.nextBatch = response?.data.next_batch;
 
-      const joinedRooms = response?.data.rooms.join;
-      for (const roomId in joinedRooms) {
-        if (this.rooms.value[roomId]) {
-          this.rooms.value[roomId].update(joinedRooms[roomId]);
-        } else {
-          this.rooms.value[roomId] = new Room(roomId, joinedRooms[roomId]);
-        }
-      }
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        error.log();
+    const joinedRooms = response?.data.rooms.join;
+    for (const roomId in joinedRooms) {
+      if (this.rooms.value[roomId]) {
+        this.rooms.value[roomId].update(joinedRooms[roomId]);
       } else {
-        console.error(error);
+        this.rooms.value[roomId] = new Room(roomId, joinedRooms[roomId]);
       }
     }
   }
 
   public getRooms() {
     return this.rooms;
+  }
+
+  public getLoggedInUser() {
+    return this.loggedInUser;
   }
 }
 
