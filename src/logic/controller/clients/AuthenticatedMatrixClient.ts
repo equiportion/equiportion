@@ -1,17 +1,18 @@
 import cookieNames from '@/logic/constants/cookieNames';
-import {getCookie, setCookie} from '@/logic/utils/cookies';
+import {getCookie} from '@/logic/utils/cookies';
 import MatrixClient from '@/logic/controller/clients/MatrixClient';
-import router from '@/router';
 import Room from '@/logic/models/Room';
 import {ref, type Ref} from 'vue';
 import User from '@/logic/models/User';
 import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
+import type MatrixEvent from '../events/MatrixEvent';
 
 class AuthenticatedMatrixClient extends MatrixClient {
   private accessToken?: string;
   private nextBatch?: string;
 
   private rooms: Ref<{[key: string]: Room}> = ref({});
+  private oldestRoom: Ref<Room | undefined> = ref();
   private loggedInUser: Ref<User | undefined> = ref();
 
   constructor() {
@@ -27,8 +28,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     const response = await this.getRequest('/_matrix/client/v3/account/whoami');
     const userInfo = response?.data;
-    const loggedInUser = new User(userInfo.user_id, this);
-    this.loggedInUser.value = loggedInUser;
+    this.loggedInUser.value = new User(userInfo.user_id, this);
 
     await this.sync();
   }
@@ -49,10 +49,45 @@ class AuthenticatedMatrixClient extends MatrixClient {
         this.rooms.value[roomId] = new Room(roomId, joinedRooms[roomId]);
       }
     }
+
+    this.updateOldestRoom();
+
+    await this.loggedInUser.value?.update(this);
+    await this.loggedInUser.value?.retrievePaymentInformations(this);
+  }
+
+  public async publishEvent(event: MatrixEvent) {
+    const response = await this.putRequest(event.getPutUrl(), event.getContent());
+    return response;
+  }
+
+  private updateOldestRoom() {
+    let maxAge, oldestRoom;
+
+    for (const roomId in this.rooms.value) {
+      const room = this.rooms.value[roomId];
+
+      if (maxAge === undefined) {
+        maxAge = room.getAge();
+        oldestRoom = room;
+        continue;
+      }
+
+      if (room.getAge() > maxAge) {
+        maxAge = room.getAge();
+        oldestRoom = room;
+      }
+    }
+
+    this.oldestRoom.value = oldestRoom;
   }
 
   public getRooms() {
     return this.rooms;
+  }
+
+  public getOldestRoom() {
+    return this.oldestRoom;
   }
 
   public getLoggedInUser() {

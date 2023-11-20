@@ -1,3 +1,0 @@
-interface IPaymentInformation {
-  //TODO 
-}

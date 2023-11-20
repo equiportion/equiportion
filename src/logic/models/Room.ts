@@ -1,8 +1,11 @@
 class Room {
-  private name?: string;
   private roomId: string;
+
+  private name?: string;
   private topic?: string;
   private avatarUrl?: string;
+
+  private age?: number;
 
   constructor(roomId: string, data: Object) {
     this.roomId = roomId;
@@ -14,42 +17,39 @@ class Room {
     const timelineEvents = data.timeline.events;
 
     for (const stateEvent of stateEvents) {
-      const type = stateEvent.type;
-      const content = stateEvent.content;
-
-      this.parseEvent(type, content);
+      this.processEvent(stateEvent);
     }
 
     for (const timelineEvent of timelineEvents) {
-      const type = timelineEvent.type;
-      const content = timelineEvent.content;
-
-      this.parseEvent(type, content);
+      this.processEvent(timelineEvent);
     }
   }
 
-  private parseEvent(type: string, content: any) {
-    switch (type) {
+  private processEvent(event: any) {
+    switch (event.type) {
+      case 'm.room.create':
+        this.age = event.unsigned.age;
+        break;
       case 'm.room.name':
-        this.name = content.name;
+        this.name = event.content.name;
         break;
       case 'm.room.avatar':
-        this.avatarUrl = content.url;
+        this.avatarUrl = event.content.url;
         break;
       case 'm.room.topic':
-        this.topic = content.topic;
+        this.topic = event.content.topic;
         break;
       default:
         break;
     }
   }
 
-  public getName() {
-    return this.name;
-  }
-
   public getRoomId() {
     return this.roomId;
+  }
+
+  public getName() {
+    return this.name;
   }
 
   public getTopic() {
@@ -58,6 +58,10 @@ class Room {
 
   public getAvatarUrl() {
     return this.avatarUrl;
+  }
+
+  public getAge() {
+    return this.age!;
   }
 }
 
