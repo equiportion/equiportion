@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
+import RoomTile from '@/views/partials/RoomTile.vue';
 </script>
 <template>
   <MainLayout>
@@ -12,5 +13,11 @@ import MainLayout from '@/layouts/MainLayout.vue';
         </p>
       </div>
     </div>
+
+    <!--Rooms-->
+    <div class="flex flex-col items-center gap-2 p-2 lg:p-5">
+      <RoomTile room="sldjflköajsdöfjalksdj" />
+    </div>
+    <!--End of rooms-->
   </MainLayout>
 </template>
