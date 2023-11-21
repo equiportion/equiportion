@@ -20,31 +20,21 @@ const success = ref(false);
 
 async function loadPaymentMethods() {
   const user = authenticatedMatrixClient.getLoggedInUser().value;
-
-  if (!user) {
+  if (!user || !user.getPaymentInformations()) {
     // set timer to retry
     setTimeout(loadPaymentMethods, 500);
     return;
   }
 
-  const paymentInformations = await user.getPaymentInformations();
+  const paymentInformations = user!.getPaymentInformations()!;
 
-  console.log(paymentInformations);
-
-  if (!paymentInformations) {
-    return;
-  }
-
-  for (const paymentInformation of paymentInformations) {
+  for (const paymentInformation of paymentInformations!) {
     if (paymentInformation.getType() == 'paypal') {
       payPalMail.value = paymentInformation.getInformationValue();
     } else if (paymentInformation.getType() == 'iban') {
       iban.value = paymentInformation.getInformationValue();
     }
   }
-
-  console.log(payPalMail.value);
-  console.log(iban.value);
 }
 
 loadPaymentMethods();
