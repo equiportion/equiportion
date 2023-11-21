@@ -13,6 +13,14 @@ class MatrixError extends Error {
   public log() {
     console.error(this.errcode + ': ' + this.error);
   }
+
+  public getErrcode() {
+    return this.errcode;
+  }
+
+  public getError() {
+    return this.error;
+  }
 }
 
 export default MatrixError;

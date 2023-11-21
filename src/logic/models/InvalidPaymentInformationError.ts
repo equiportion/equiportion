@@ -1,0 +1,1 @@
+class InvalidPaymentInformationError extends Error {}

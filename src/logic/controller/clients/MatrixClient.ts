@@ -40,7 +40,7 @@ class MatrixClient {
     }
   }
 
-  public async postRequest(url: string, data?: Object) {
+  public async postRequest(url: string, data?: any) {
     try {
       const response = await this.axiosInstance.post(url, data);
       return response;
@@ -49,9 +49,18 @@ class MatrixClient {
     }
   }
 
-  public async getRequest(url: string, data?: Object) {
+  public async getRequest(url: string, data?: any) {
     try {
       const response = await this.axiosInstance.get(url, data);
+      return response;
+    } catch (error) {
+      this.handleRequestError(error);
+    }
+  }
+
+  public async putRequest(url: string, data?: any) {
+    try {
+      const response = await this.axiosInstance.put(url, data);
       return response;
     } catch (error) {
       this.handleRequestError(error);
