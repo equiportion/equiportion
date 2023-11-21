@@ -1,0 +1,158 @@
+#
+# CI-CD Pipeline für das PSE Matrix-basierte Micropayments
+#
+
+image: node:latest
+
+stages:
+- build
+- test
+- deploy
+
+#
+# Build stage
+#
+
+install-npm-dependencies:
+  stage: build
+  script:
+    - npm install
+  tags: 
+    - build-2
+  artifacts:
+    paths:
+      - node_modules/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}--npm-dev
+    paths:
+      - node_modules/
+      - ~/.cache/
+
+build-review:
+  stage: build
+  script:
+    - >
+      sed -i "s#base: '/'#base: '/$CI_COMMIT_REF_SLUG/'#g" vite.config.ts
+    - npm install
+    - npm run build
+  tags:
+    - build-2
+  artifacts:
+    paths:
+      - dist/
+  except: 
+    - main
+  only:
+    - branches
+
+build-production:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  tags:
+    - build-2
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - main
+
+#
+# Test stage
+#
+
+eslint:
+  stage: test
+  needs:
+    - install-npm-dependencies
+  dependencies:
+    - install-npm-dependencies
+  script:
+    - npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      junit: eslint-report.xml
+
+cypress:
+  stage: test
+  image: cypress/base:latest
+  needs:
+    - install-npm-dependencies
+  dependencies:
+    - install-npm-dependencies
+  script:
+    - npx cypress install
+    - npm run dev & npx cypress run
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      junit: cypress-report.xml
+
+#
+# Deploy Stage
+#
+
+deploy-review:
+  stage: deploy
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: $APPURL/$CI_COMMIT_REF_SLUG
+    auto_stop_in: 1 week
+    on_stop: stop-review
+  needs:
+    - job: build-review
+      artifacts: true
+  only:
+    - branches
+  except:
+    - main
+  before_script:
+    - apt-get update -y
+    - apt-get install lftp -y
+  script:
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
+  tags:
+    - build-2
+
+
+stop-review:
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  when: manual
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - apt-get update -y
+    - apt-get install lftp -y
+  script:
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
+  tags:
+    - build-2
+
+
+deploy-production:
+  stage: deploy
+  needs:
+    - job: eslint
+      artifacts: false
+    - job: cypress
+      artifacts: false
+    - job: build-production
+      artifacts: true
+  before_script:
+    - apt-get update -y
+    - apt-get install lftp -y
+  script:
+    - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH; bye"
+  environment:
+    name: production
+    url: $APPURL
+  only:
+    - main
+  tags:
+    - build-2
