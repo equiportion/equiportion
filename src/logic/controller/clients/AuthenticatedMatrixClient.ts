@@ -40,7 +40,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     const response = await this.getRequest('/_matrix/client/v3/sync', data);
     this.nextBatch = response?.data.next_batch;
-    
+
     if (response?.data.rooms != undefined && response?.data.rooms.join != undefined) {
       const joinedRooms = response?.data.rooms.join;
       for (const roomId in joinedRooms) {
