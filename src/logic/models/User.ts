@@ -3,6 +3,7 @@ import type AuthenticatedMatrixClient from '@/logic/controller/clients/Authentic
 import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
 import PaymentInformation from './PaymentInformation';
 import IbanPaymentInformation from './IbanPaymentInformation';
+import PayPalPaymentInformation from './PayPalPaymentInformation';
 
 class User {
   private userId: string;
@@ -71,6 +72,8 @@ class User {
     switch (data.type) {
       case IbanPaymentInformation.type:
         return IbanPaymentInformation.fromJson(data.information);
+      case PayPalPaymentInformation.type:
+        return PayPalPaymentInformation.fromJson(data.information);
       default:
         console.error('Error: Unknown Payment Information Type');
         return undefined;

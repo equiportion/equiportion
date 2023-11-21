@@ -18,6 +18,12 @@ abstract class PaymentInformation {
     };
   }
 
+  public getType() {
+    return this.type;
+  }
+
+  public abstract getInformationValue(): string;
+
   protected abstract isValid(): boolean;
 }
 

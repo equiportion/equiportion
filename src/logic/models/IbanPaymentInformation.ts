@@ -19,6 +19,14 @@ class IbanPaymentInformation extends PaymentInformation {
   public static fromJson(information: any) {
     return new IbanPaymentInformation(information.iban);
   }
+
+  public getIban() {
+    return this.information.iban;
+  }
+
+  public getInformationValue() {
+    return this.getIban();
+  }
 }
 
 export default IbanPaymentInformation;

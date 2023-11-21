@@ -19,6 +19,14 @@ class PayPalPaymentInformation extends PaymentInformation {
   public static fromJson(information: any) {
     return new PayPalPaymentInformation(information.mail);
   }
+
+  public getMail() {
+    return this.information.mail;
+  }
+
+  public getInformationValue() {
+    return this.getMail();
+  }
 }
 
 export default PayPalPaymentInformation;
