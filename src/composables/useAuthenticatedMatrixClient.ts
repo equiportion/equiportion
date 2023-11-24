@@ -1,32 +1,20 @@
-import MatrixError from '@/logic/controller/MatrixError';
-import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
-import InvalidHomeserverUrlError from '@/logic/controller/clients/InvalidHomeserverUrlError';
+import {AuthenticatedMatrixClient} from '@/logic/controller/clients/AuthenticatedMatrixClient';
 import router from '@/router';
 
-export default function useAuthenticatedMatrixClient() {
-  const authenticatedMatrixClient = new AuthenticatedMatrixClient();
+export default function useAuthenticatedMatrixClient(onLoad?: Function, onError?: Function) {
+  getClient();
 
-  initiate();
-
-  function getAuthenticatedMatrixClient() {
-    return authenticatedMatrixClient;
-  }
-
-  async function initiate() {
-    try {
-      await authenticatedMatrixClient.initiate();
-    } catch (error) {
-      if (error instanceof InvalidHomeserverUrlError) {
-        error.log();
-      } else if (error instanceof MatrixError) {
-        error.log();
-      } else {
-        console.error(error);
+  async function getClient() {
+    const client = await AuthenticatedMatrixClient.getClient();
+    if (client) {
+      if (onLoad) {
+        onLoad(client);
       }
-
+    } else {
+      if (onError) {
+        onError();
+      }
       router.push({name: 'landing-page'});
     }
   }
-
-  return {getAuthenticatedMatrixClient};
 }

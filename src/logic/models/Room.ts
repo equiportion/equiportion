@@ -5,6 +5,8 @@ class Room {
   private topic?: string;
   private avatarUrl?: string;
 
+  private members: Ref<String[]>;
+
   private age?: number;
 
   constructor(roomId: string, data: Object) {
@@ -27,6 +29,9 @@ class Room {
 
   private processEvent(event: any) {
     switch (event.type) {
+      case 'm.room.member':
+        this.updateMember(event.content);
+        break;
       case 'm.room.create':
         this.age = event.unsigned.age;
         break;
@@ -43,6 +48,8 @@ class Room {
         break;
     }
   }
+
+  private updateMember(content: any) {}
 
   public getRoomId() {
     return this.roomId;

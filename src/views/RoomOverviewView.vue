@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoomTile from '@/views/partials/RoomTile.vue';
-
-import {ref} from 'vue';
-
+import {ref, type Ref} from 'vue';
+import {AuthenticatedMatrixClient} from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import type Room from '@/logic/models/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
-const authenticatedMatrixClient = getAuthenticatedMatrixClient();
 
-const rooms = ref({});
+var rooms: Ref<{[roomId: string]: Room}>;
+
 const loading = ref(true);
+useAuthenticatedMatrixClient(loadData);
 
-async function loadRooms() {
-  rooms.value = await authenticatedMatrixClient.getRooms().value;
+async function loadData(client: AuthenticatedMatrixClient) {
+  rooms = client.getJoinedRooms();
+
   loading.value = false;
 }
-
-loadRooms();
 </script>
 <template>
   <MainLayout>
@@ -35,7 +34,7 @@ loadRooms();
       <span class="text-3xl text-gray-300" v-if="loading">
         <i class="fa-solid fa-spinner animate-spin"></i>
       </span>
-      <span class="text-sm text-gray-300" v-if="Object.keys(rooms).length <= 0 && !loading">
+      <span class="text-sm text-gray-300" v-if="rooms && Object.keys(rooms).length <= 0">
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">

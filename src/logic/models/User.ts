@@ -1,71 +1,58 @@
 import MatrixError from '@/logic/controller/MatrixError';
-import type AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import {AuthenticatedMatrixClient} from '@/logic/controller/clients/AuthenticatedMatrixClient';
 import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
 import PaymentInformation from './PaymentInformation';
 import IbanPaymentInformation from './IbanPaymentInformation';
 import PayPalPaymentInformation from './PayPalPaymentInformation';
 
 class User {
-  private userId: string;
+  protected userId: string;
 
-  private displayname?: string;
-  private avatarUrl?: string;
-  private paymentInformations?: PaymentInformation[];
+  protected displayname?: string;
+  protected avatarUrl?: string;
+  protected paymentInformations?: PaymentInformation[];
 
-  constructor(userId: string, authenticatedMatrixClient: AuthenticatedMatrixClient) {
+  constructor(
+    userId: string,
+    displayname?: string,
+    avatarUrl?: string,
+    paymentInformations?: PaymentInformation[]
+  ) {
     this.userId = userId;
-    this.update(authenticatedMatrixClient);
+    this.displayname = displayname;
+    this.avatarUrl = avatarUrl;
+    this.paymentInformations = paymentInformations;
   }
 
-  public async update(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    try {
-      const response = await authenticatedMatrixClient.getRequest(
-        `/_matrix/client/v3/profile/${this.userId}`
-      );
-
-      this.displayname = response?.data.displayname;
-      this.avatarUrl = response?.data.avatar_url;
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        error.log();
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  public async retrievePaymentInformations(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    const oldestRoom = authenticatedMatrixClient.getOldestRoom().value;
-    if (!oldestRoom) {
-      return;
-    }
-
-    try {
-      const response = await authenticatedMatrixClient.getRequest(
-        PaymentInformationEvent.getGetUrl(oldestRoom.getRoomId(), this.userId)
-      );
-
-      const paymentInformations: PaymentInformation[] = [];
-      for (const index in response?.data) {
-        const paymentInformation = User.createPaymentInformation(response.data[index]);
-        if (paymentInformation) {
-          paymentInformations.push(paymentInformation);
-        }
-      }
-
-      this.paymentInformations = paymentInformations;
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        if (error.getErrcode() === 'M_NOT_FOUND') {
-          //No payment information provided
-        } else {
-          //Something unexpected happened
-          error.log();
-        }
-      } else {
-        console.error(error);
-      }
-    }
+  private async retrievePaymentInformations(authenticatedMatrixClient: AuthenticatedMatrixClient) {
+    // const oldestRoom = authenticatedMatrixClient.getOldestRoom().value;
+    // if (!oldestRoom) {
+    //   return;
+    // }
+    // try {
+    //   const response = await authenticatedMatrixClient.getRequest(
+    //     PaymentInformationEvent.getGetUrl(oldestRoom.getRoomId(), this.userId)
+    //   );
+    //   const paymentInformations: PaymentInformation[] = [];
+    //   for (const index in response?.data) {
+    //     const paymentInformation = User.createPaymentInformation(response.data[index]);
+    //     if (paymentInformation) {
+    //       paymentInformations.push(paymentInformation);
+    //     }
+    //   }
+    //   this.paymentInformations = paymentInformations;
+    // } catch (error) {
+    //   if (error instanceof MatrixError) {
+    //     if (error.getErrcode() === 'M_NOT_FOUND') {
+    //       //No payment information provided
+    //     } else {
+    //       //Something unexpected happened
+    //       error.log();
+    //     }
+    //   } else {
+    //     console.error(error);
+    //   }
+    // }
   }
 
   private static createPaymentInformation(data: any) {
@@ -81,28 +68,30 @@ class User {
   }
 
   private async publishPaymentInformations(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    if (!this.paymentInformations) {
-      return;
-    }
-
-    const rooms = authenticatedMatrixClient.getRooms().value;
-
-    try {
-      for (const roomId in rooms) {
-        const paymentInformationEvent = new PaymentInformationEvent(
-          roomId,
-          this.userId,
-          this.paymentInformations
-        );
-        await authenticatedMatrixClient.publishEvent(paymentInformationEvent);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    // if (!this.paymentInformations) {
+    //   return;
+    // }
+    // const rooms = authenticatedMatrixClient.getJoinedRooms().value;
+    // try {
+    //   for (const roomId in rooms) {
+    //     const paymentInformationEvent = new PaymentInformationEvent(
+    //       roomId,
+    //       this.userId,
+    //       this.paymentInformations
+    //     );
+    //     await authenticatedMatrixClient.publishEvent(paymentInformationEvent);
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
   }
 
   public getDisplayname() {
     return this.displayname;
+  }
+
+  public setDisplayname(displayname: string) {
+    this.displayname = displayname;
   }
 
   public getUserId() {
@@ -113,16 +102,16 @@ class User {
     return this.avatarUrl;
   }
 
+  public setAvatarUrl(avatarUrl: string) {
+    this.avatarUrl = avatarUrl;
+  }
+
   public getPaymentInformations() {
     return this.paymentInformations;
   }
 
-  public async setPaymentInformations(
-    paymentInformations: PaymentInformation[],
-    authenticatedMatrixClient: AuthenticatedMatrixClient
-  ) {
+  public setPaymentInformations(paymentInformations: PaymentInformation[]) {
     this.paymentInformations = paymentInformations;
-    await this.publishPaymentInformations(authenticatedMatrixClient);
   }
 }
 
