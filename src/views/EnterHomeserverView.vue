@@ -50,7 +50,7 @@ async function continueToLogin() {
       </div>
 
       <div class="sm:flex sm:items-center sm:gap-4">
-        <LoginContinueButton :loading="loading" @continue="continueToLogin">
+        <LoginContinueButton :loading="loading" @continue="continueToLogin" id="goToLoginButton">
           Weiter zum Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>

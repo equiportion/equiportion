@@ -18,3 +18,16 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+beforeEach('logs in', () => {
+  login('name', 'passwd');
+})
+
+function login(userName: string, password: string) {
+    cy.visit('http://localhost:5173/welcome')
+    cy.get('#loginButton').click()
+    cy.get('#homeserver').type('https://matrix.org')
+    cy.get('#goToLoginButton').click()
+    cy.get('#username').type(userName)
+    cy.get('#homeserver').type(password)
+}
