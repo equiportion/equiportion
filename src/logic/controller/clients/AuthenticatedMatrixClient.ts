@@ -2,14 +2,16 @@ import cookieNames from '@/logic/constants/cookieNames';
 import {getCookie} from '@/logic/utils/cookies';
 import MatrixClient from '@/logic/controller/clients/MatrixClient';
 import Room from '@/logic/models/Room';
-import {computed, ref, type Ref} from 'vue';
+import {ref, type Ref} from 'vue';
 import User from '@/logic/models/User';
 import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 import type MatrixEvent from '../events/MatrixEvent';
 import MatrixError from '../MatrixError';
-import router from '@/router';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
 
+/**
+ * Models a authenticated matrix client. Manages all relevant data. Uses the singleton pattern.
+ */
 class AuthenticatedMatrixClient extends MatrixClient {
   private static client?: AuthenticatedMatrixClient;
 
@@ -17,7 +19,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
   private nextBatch?: string;
 
   private users: Ref<{[userId: string]: User}> = ref({});
-  private loggedInUserId?: string;
+  private loggedInUserId: Ref<string> = ref('');
   private joinedRooms: Ref<{[roomId: string]: Room}> = ref({});
 
   private constructor() {
@@ -26,6 +28,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
   }
 
+  /**
+   * Getter for the initiated authenticated matrix client instance. Creates a new one if it's undefined.
+   * @returns the client instance
+   */
   public static async getClient() {
     if (!AuthenticatedMatrixClient.client) {
       await AuthenticatedMatrixClient.createClient();
@@ -34,7 +40,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
     return AuthenticatedMatrixClient.client;
   }
 
-  private static async createClient() {
+  /**
+   * Tries to create a new client instance and checks if it is valid. If not, the client instance is set to undefined.
+   */
+  private static async createClient(): Promise<void> {
     AuthenticatedMatrixClient.client = new AuthenticatedMatrixClient();
 
     try {
@@ -48,14 +57,17 @@ class AuthenticatedMatrixClient extends MatrixClient {
         console.error(error);
       }
 
-      //client can't authenticate, try to log in
+      //client can't authenticate, reset it to undefined
       AuthenticatedMatrixClient.client = undefined;
 
       //TODO: check for soft logout etc.
     }
   }
 
-  private async initiate() {
+  /**
+   * Checks if this client has valid authentication data and if so, initiates and syncs it.
+   */
+  private async initiate(): Promise<void> {
     if (!(await super.isHomeserverUrlValid())) {
       throw new InvalidHomeserverUrlError();
     }
@@ -65,7 +77,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
       return;
     }
 
-    this.loggedInUserId = response.data.user_id;
+    this.loggedInUserId = ref(response.data.user_id);
     if (!this.loggedInUserId) {
       return;
     }
@@ -73,7 +85,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
     await this.sync();
   }
 
-  public async sync() {
+  /**
+   * Updates the clients data using the matrix sync-API-endpoint. Updates the rooms the logged in user has joined and all members of those rooms.
+   */
+  public async sync(): Promise<void> {
     const data = {
       since: this.nextBatch ?? '',
     };
@@ -84,52 +99,59 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     this.nextBatch = response.data.next_batch;
-    const joinedRooms = response.data.rooms?.join;
+    const joinedRoomsData = response.data.rooms?.join;
 
-    if (joinedRooms) {
-      for (const roomId in joinedRooms) {
+    //TODO: remove after #85
+    await this.updateLoggedInUser();
+    //
+
+    if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
+      //User has joined rooms, update them
+      for (const roomId in joinedRoomsData) {
         const room = this.joinedRooms.value[roomId];
+
         if (room) {
-          room.update(joinedRooms[roomId]);
+          room.update(joinedRoomsData[roomId]);
         } else {
-          this.joinedRooms.value[roomId] = new Room(roomId, joinedRooms[roomId]);
+          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId]);
         }
       }
     } else {
-      this.updateLoggedInUser();
+      //No joined rooms, need to update user separately
+      await this.updateLoggedInUser();
     }
   }
 
-  private async updateLoggedInUser() {
-    if (!this.loggedInUserId) {
-      return;
-    }
+  /**
+   * Updates the logged in user using the dedicated matrix API endpoint.
+   * Only to be used if there are no joined rooms the user can be updated from.
+   */
+  private async updateLoggedInUser(): Promise<void> {
+    const response = await this.getRequest(
+      `/_matrix/client/v3/profile/${this.loggedInUserId.value}`
+    );
 
-    try {
-      const response = await this.getRequest(`/_matrix/client/v3/profile/${this.loggedInUserId}`);
-      const displayname = response?.data.displayname;
-      const avatarUrl = response?.data.avatar_url;
-      const loggedInUser = this.getLoggedInUser();
-      if (loggedInUser) {
-        loggedInUser.setDisplayname(displayname);
-        loggedInUser.setAvatarUrl(avatarUrl);
-      } else {
-        this.users.value[this.loggedInUserId] = new User(
-          this.loggedInUserId,
-          displayname,
-          avatarUrl
-        );
-      }
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        error.log();
-      } else {
-        console.error(error);
-      }
+    const displayname = response?.data.displayname;
+    const avatarUrl = response?.data.avatar_url;
+
+    const loggedInUser = this.getLoggedInUser();
+
+    if (loggedInUser) {
+      loggedInUser.setDisplayname(displayname);
+      loggedInUser.setAvatarUrl(avatarUrl);
+    } else {
+      this.users.value[this.loggedInUserId.value] = new User(
+        this.loggedInUserId.value,
+        displayname,
+        avatarUrl
+      );
     }
   }
 
-  public async publishPaymentInformations() {
+  /**
+   * Publishes the logged in user's payment information to every joined room.
+   */
+  public async publishPaymentInformations(): Promise<void> {
     const loggedInUser = this.getLoggedInUser();
     if (!loggedInUser) {
       return;
@@ -144,7 +166,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
       for (const roomId in this.joinedRooms.value) {
         const paymentInformationEvent = new PaymentInformationEvent(
           roomId,
-          this.loggedInUserId!,
+          this.loggedInUserId.value,
           paymentInformations
         );
         await this.publishEvent(paymentInformationEvent);
@@ -154,24 +176,49 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
   }
 
+  /**
+   * Publishes an event to the matrix homeserver.
+   * @param event the event to publish
+   * @returns the HTTP response
+   */
   public async publishEvent(event: MatrixEvent) {
     const response = await this.putRequest(event.getPutUrl(), event.getContent());
     return response;
   }
 
-  public getLoggedInUser() {
-    return computed(() => {
-      if (!this.loggedInUserId) {
-        return undefined;
-      }
-
-      return this.users.value[this.loggedInUserId];
-    });
+  /**
+   * Gets the logged in user.
+   * @returns the logged in user
+   */
+  public getLoggedInUser(): User {
+    return this.getUser(this.loggedInUserId.value);
   }
 
-  public getJoinedRooms() {
-    return this.joinedRooms;
+  /**
+   * Gets all rooms the logged in user has joined.
+   * @returns the rooms
+   */
+  public getJoinedRooms(): {[roomId: string]: Room} {
+    return this.joinedRooms.value;
+  }
+
+  /**
+   * Gets a specific room the logged in user has joined.
+   * @param roomId the roomId of the room to get
+   * @returns the room
+   */
+  public getRoom(roomId: string): Room {
+    return this.joinedRooms.value[roomId];
+  }
+
+  /**
+   * Gets a specific user that is a member of a room the logged in user has joined.
+   * @param userId the userId of the user to get
+   * @returns
+   */
+  public getUser(userId: string): User {
+    return this.users.value[userId];
   }
 }
 
-export {AuthenticatedMatrixClient as AuthenticatedMatrixClient};
+export default AuthenticatedMatrixClient;

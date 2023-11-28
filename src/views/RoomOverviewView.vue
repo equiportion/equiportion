@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoomTile from '@/views/partials/RoomTile.vue';
-import {ref, type Ref} from 'vue';
-import {AuthenticatedMatrixClient} from '@/logic/controller/clients/AuthenticatedMatrixClient';
-import type Room from '@/logic/models/Room';
+import {ref} from 'vue';
+import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import Room from '@/logic/models/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
+import User from '@/logic/models/User';
 
-var rooms: Ref<{[roomId: string]: Room}>;
+var client: AuthenticatedMatrixClient;
+var rooms: {[roomId: string]: Room};
+var loggedInUser: User;
 
 const loading = ref(true);
 useAuthenticatedMatrixClient(loadData);
 
-async function loadData(client: AuthenticatedMatrixClient) {
+async function loadData(clientInstance: AuthenticatedMatrixClient) {
+  client = clientInstance;
+
   rooms = client.getJoinedRooms();
+  loggedInUser = client.getLoggedInUser();
 
   loading.value = false;
 }
@@ -21,7 +27,9 @@ async function loadData(client: AuthenticatedMatrixClient) {
   <MainLayout>
     <div class="bg-gray-50">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Willkommen zurück, Max Muster!</h1>
+        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+          Willkommen zurück, {{ loggedInUser?.getDisplayname() ?? loggedInUser?.getUserId() }}!
+        </h1>
 
         <p class="mt-1.5 text-sm text-gray-500">
           Du hast 1.000.000 € Schulden - beginne, Geld zurückzuzahlen!

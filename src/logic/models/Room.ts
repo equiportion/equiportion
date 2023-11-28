@@ -1,3 +1,7 @@
+import IbanPaymentInformation from './IbanPaymentInformation';
+import PayPalPaymentInformation from './PayPalPaymentInformation';
+import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
+
 class Room {
   private roomId: string;
 
@@ -5,9 +9,7 @@ class Room {
   private topic?: string;
   private avatarUrl?: string;
 
-  private members: Ref<String[]>;
-
-  private age?: number;
+  private memberIds: String[] = [];
 
   constructor(roomId: string, data: Object) {
     this.roomId = roomId;
@@ -17,23 +19,18 @@ class Room {
   public update(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
-
     for (const stateEvent of stateEvents) {
-      this.processEvent(stateEvent);
+      this.parseEvent(stateEvent);
     }
-
     for (const timelineEvent of timelineEvents) {
-      this.processEvent(timelineEvent);
+      this.parseEvent(timelineEvent);
     }
   }
 
-  private processEvent(event: any) {
+  private parseEvent(event: any) {
     switch (event.type) {
       case 'm.room.member':
         this.updateMember(event.content);
-        break;
-      case 'm.room.create':
-        this.age = event.unsigned.age;
         break;
       case 'm.room.name':
         this.name = event.content.name;
@@ -44,12 +41,29 @@ class Room {
       case 'm.room.topic':
         this.topic = event.content.topic;
         break;
+      case PaymentInformationEvent.eventType:
+        console.log(event);
+        break;
       default:
         break;
     }
   }
 
-  private updateMember(content: any) {}
+  private static parsePaymentInformation(data: any) {
+    switch (data.type) {
+      case IbanPaymentInformation.type:
+        return IbanPaymentInformation.fromJson(data.information);
+      case PayPalPaymentInformation.type:
+        return PayPalPaymentInformation.fromJson(data.information);
+      default:
+        console.error('Error: Unknown Payment Information Type');
+        return undefined;
+    }
+  }
+
+  private updateMember(content: any) {
+    //TODO: implement in #85
+  }
 
   public getRoomId() {
     return this.roomId;
@@ -65,10 +79,6 @@ class Room {
 
   public getAvatarUrl() {
     return this.avatarUrl;
-  }
-
-  public getAge() {
-    return this.age!;
   }
 }
 

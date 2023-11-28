@@ -1,7 +1,15 @@
-import {AuthenticatedMatrixClient} from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
 import router from '@/router';
 
-export default function useAuthenticatedMatrixClient(onLoad?: Function, onError?: Function) {
+/**
+ * Composable for using a authenticated matrix client.
+ * @param onLoad callback for when getting the client was succesful
+ * @param onError callback for when there was an error while getting the client
+ */
+export default function useAuthenticatedMatrixClient(
+  onLoad?: (client: AuthenticatedMatrixClient) => void,
+  onError?: () => void
+) {
   getClient();
 
   async function getClient() {
@@ -11,6 +19,7 @@ export default function useAuthenticatedMatrixClient(onLoad?: Function, onError?
         onLoad(client);
       }
     } else {
+      //client couldn't be authenticated, try to log in
       if (onError) {
         onError();
       }
