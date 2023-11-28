@@ -1,6 +1,6 @@
 const cookieNames = {
   homeserverUrl: 'homeserverUrl',
-  accessToken: 'accesToken',
+  accessToken: 'accessToken',
 };
 
 export default cookieNames;
