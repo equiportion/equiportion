@@ -29,6 +29,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
   private constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
+
+    //Set authorization header to enable this client to make authenticated requests
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
   }
 
