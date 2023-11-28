@@ -2,8 +2,8 @@ import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedM
 import router from '@/router';
 
 /**
- * Composable for using a authenticated matrix client.
- * @param onLoad callback for when getting the client was succesful
+ * Composable for using a authenticated matrix client. Should be used whenever data from matrix is needed.
+ * @param onLoad callback for when getting the client was succesful, provides the initiated client
  * @param onError callback for when there was an error while getting the client
  */
 export default function useAuthenticatedMatrixClient(

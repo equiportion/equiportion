@@ -1,7 +1,8 @@
-import IbanPaymentInformation from './IbanPaymentInformation';
-import PayPalPaymentInformation from './PayPalPaymentInformation';
 import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
 
+/**
+ * A matrix room the logged in user has joined.
+ */
 class Room {
   private roomId: string;
 
@@ -11,11 +12,20 @@ class Room {
 
   private memberIds: String[] = [];
 
+  /**
+   * Creates a new Room using data from the sync-API.
+   * @param roomId the rooms id
+   * @param data the data from the sync-API
+   */
   constructor(roomId: string, data: Object) {
     this.roomId = roomId;
     this.update(data);
   }
 
+  /**
+   * Updates the room using data from the sync-API.
+   * @param data the data from the sync-API
+   */
   public update(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
@@ -27,10 +37,14 @@ class Room {
     }
   }
 
+  /**
+   * Parses an event from the sync-API and updates this room accordingly.
+   * @param event the event to parse
+   */
   private parseEvent(event: any) {
     switch (event.type) {
       case 'm.room.member':
-        this.updateMember(event.content);
+        //TODO: implement in #85
         break;
       case 'm.room.name':
         this.name = event.content.name;
@@ -42,41 +56,41 @@ class Room {
         this.topic = event.content.topic;
         break;
       case PaymentInformationEvent.eventType:
-        console.log(event);
+        //TODO: implement in #85
         break;
       default:
         break;
     }
   }
 
-  private static parsePaymentInformation(data: any) {
-    switch (data.type) {
-      case IbanPaymentInformation.type:
-        return IbanPaymentInformation.fromJson(data.information);
-      case PayPalPaymentInformation.type:
-        return PayPalPaymentInformation.fromJson(data.information);
-      default:
-        console.error('Error: Unknown Payment Information Type');
-        return undefined;
-    }
-  }
-
-  private updateMember(content: any) {
-    //TODO: implement in #85
-  }
-
+  /**
+   * Gets this room's roomId.
+   * @returns the roomId
+   */
   public getRoomId() {
     return this.roomId;
   }
 
+  /**
+   * Gets this room's name.
+   * @returns the name if set, else undefined
+   */
   public getName() {
     return this.name;
   }
 
+  /**
+   * Gets this room's topic.
+   * @returns the topic if set, else undefined
+   */
   public getTopic() {
     return this.topic;
   }
 
+  /**
+   * Gets this room's avatarUrl.
+   * @returns the avatarUrl if set, else undefined
+   */
   public getAvatarUrl() {
     return this.avatarUrl;
   }

@@ -8,9 +8,10 @@ import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 import type MatrixEvent from '../events/MatrixEvent';
 import MatrixError from '../MatrixError';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
+import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /**
- * Models a authenticated matrix client. Manages all relevant data. Uses the singleton pattern.
+ * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
  */
 class AuthenticatedMatrixClient extends MatrixClient {
   private static client?: AuthenticatedMatrixClient;
@@ -22,6 +23,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
   private loggedInUserId: Ref<string> = ref('');
   private joinedRooms: Ref<{[roomId: string]: Room}> = ref({});
 
+  /**
+   * Private constructor for the singleton pattern. Should only be called from createClient().
+   */
   private constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
@@ -72,7 +76,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
       throw new InvalidHomeserverUrlError();
     }
 
-    const response = await this.getRequest('/_matrix/client/v3/account/whoami');
+    const response = await this.getRequest(apiEndpoints.whoami);
     if (!response) {
       return;
     }
@@ -93,12 +97,14 @@ class AuthenticatedMatrixClient extends MatrixClient {
       since: this.nextBatch ?? '',
     };
 
-    const response = await this.getRequest('/_matrix/client/v3/sync', data);
+    const response = await this.getRequest(apiEndpoints.sync, data);
     if (!response) {
       return;
     }
 
+    //Save the next_batch token in order to tell the homeserver what the previous sync state was when syncing again
     this.nextBatch = response.data.next_batch;
+
     const joinedRoomsData = response.data.rooms?.join;
 
     //TODO: remove after #85
@@ -127,9 +133,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * Only to be used if there are no joined rooms the user can be updated from.
    */
   private async updateLoggedInUser(): Promise<void> {
-    const response = await this.getRequest(
-      `/_matrix/client/v3/profile/${this.loggedInUserId.value}`
-    );
+    const response = await this.getRequest(apiEndpoints.profile(this.loggedInUserId.value));
 
     const displayname = response?.data.displayname;
     const avatarUrl = response?.data.avatar_url;

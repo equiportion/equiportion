@@ -44,10 +44,11 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
 async function savePaymentMethods() {
   const ibanPaymentInformation = new IbanPaymentInformation(iban.value);
   const payPalPaymentInformation = new PayPalPaymentInformation(payPalMail.value);
+
   loggedInUser?.setPaymentInformations([ibanPaymentInformation, payPalPaymentInformation]);
-  console.log('hey');
+
   await client?.publishPaymentInformations();
-  console.log('ho');
+
   saving.value = false;
   success.value = true;
 

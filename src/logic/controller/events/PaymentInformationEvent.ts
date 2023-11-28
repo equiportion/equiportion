@@ -13,10 +13,6 @@ class PaymentInformationEvent extends StateEvent {
 
     super(roomId, PaymentInformationEvent.eventType, content, userId);
   }
-
-  public static getGetUrl(roomId: string, userId: string) {
-    return `/_matrix/client/v3/rooms/${roomId}/state/${PaymentInformationEvent.eventType}/${userId}`;
-  }
 }
 
 export default PaymentInformationEvent;
