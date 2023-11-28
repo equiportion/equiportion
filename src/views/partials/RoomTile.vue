@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import ProfileImage from '@/components/media/ProfileImage.vue';
+import Room from '@/logic/models/Room';
 
 defineProps({
   room: {
-    type: Object,
+    type: Room,
     required: true,
   },
 });
@@ -15,7 +16,7 @@ defineProps({
     <ProfileImage class="rounded-full w-16 h-16 lg:w-32 lg:h-32"></ProfileImage>
 
     <div class="lg:ml-5 flex flex-col gap-2">
-      <h2 class="text-2xl font-bold w-full text-center lg:text-start">{{ room.name }}</h2>
+      <h2 class="text-2xl font-bold w-full text-center lg:text-start">{{ room.getName() }}</h2>
 
       <div
         class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"
