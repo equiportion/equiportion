@@ -9,6 +9,7 @@ import type MatrixEvent from '../events/MatrixEvent';
 import MatrixError from '../MatrixError';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
+import eventTypes from '@/logic/constants/eventTypes';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
@@ -119,9 +120,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
         const room = this.joinedRooms.value[roomId];
 
         if (room) {
-          room.update(joinedRoomsData[roomId]);
+          room.update(joinedRoomsData[roomId], this);
         } else {
-          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId]);
+          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId], this);
         }
       }
     } else {
@@ -224,6 +225,25 @@ class AuthenticatedMatrixClient extends MatrixClient {
    */
   public getUser(userId: string): User {
     return this.users.value[userId];
+  }
+
+  public updateUserFromStateEvent(userId: string, event: any) {
+    if (!this.getUser(userId)) {
+      this.users.value[userId] = new User(userId);
+    }
+
+    const user = this.getUser(userId);
+    switch (event.type) {
+      case eventTypes.paymentInformation:
+        //TODO
+        break;
+      case eventTypes.roomMember:
+        user.setAvatarUrl(event.avatar_url);
+        user.setDisplayname(event.displayname);
+        break;
+      default:
+        break;
+    }
   }
 }
 

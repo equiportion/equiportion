@@ -8,18 +8,28 @@ class User {
 
   private displayname?: string;
   private avatarUrl?: string;
-  private paymentInformations?: PaymentInformation[];
+  private paymentInformations: PaymentInformation[] = [];
 
   /**
-   * Creates a new User using the given parameters.
+   * Creates a new user using the given parameters.
    * @param userId the user's userId, required
    * @param displayname the user's displayname, optional
-   * @param avatarUrl the user's avatarUrl, optional
+   * @param avatarUrl the user's avatar url, optional
+   * @param paymentInformations the user's payment informations, optional
    */
-  constructor(userId: string, displayname?: string, avatarUrl?: string) {
+  constructor(
+    userId: string,
+    displayname?: string,
+    avatarUrl?: string,
+    paymentInformations?: PaymentInformation[]
+  ) {
     this.userId = userId;
     this.displayname = displayname;
     this.avatarUrl = avatarUrl;
+
+    if (paymentInformations) {
+      this.paymentInformations = paymentInformations;
+    }
   }
 
   /**
@@ -64,9 +74,9 @@ class User {
 
   /**
    * Gets this user's payment informations.
-   * @returns the payment informations as an array if set, else undefined
+   * @returns the payment informations as an array
    */
-  public getPaymentInformations(): PaymentInformation[] | undefined {
+  public getPaymentInformations(): PaymentInformation[] {
     return this.paymentInformations;
   }
 
