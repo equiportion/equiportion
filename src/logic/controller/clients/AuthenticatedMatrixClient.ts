@@ -91,8 +91,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     await this.sync();
-
-    console.log(this.getLoggedInUser());
   }
 
   /**
