@@ -57,3 +57,4 @@ async function continueToLogin() {
     </form>
   </LoginProcessBase>
 </template>
+@/logic/models/clients/MatrixClient.js

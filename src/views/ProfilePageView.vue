@@ -90,3 +90,5 @@ async function savePaymentMethods() {
     </div>
   </MainLayout>
 </template>
+@/logic/models/clients/AuthenticatedMatrixClient
+@/logic/payment-information/IbanPaymentInformation@/logic/payment-information/PayPalPaymentInformation

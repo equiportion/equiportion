@@ -1,6 +1,6 @@
-import IbanPaymentInformation from './IbanPaymentInformation';
-import PayPalPaymentInformation from './PayPalPaymentInformation';
-import PaymentInformation from './PaymentInformation';
+import IbanPaymentInformation from '../payment-information/IbanPaymentInformation';
+import PayPalPaymentInformation from '../payment-information/PayPalPaymentInformation';
+import PaymentInformation from '../payment-information/PaymentInformation';
 
 /**
  * A matrix user. Can be either the current logged in user or any member of any joined room.

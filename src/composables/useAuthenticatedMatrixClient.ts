@@ -1,4 +1,4 @@
-import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import router from '@/router';
 
 /**

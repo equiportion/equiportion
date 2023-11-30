@@ -1,12 +1,12 @@
 import cookieNames from '@/logic/constants/cookieNames';
 import {getCookie} from '@/logic/utils/cookies';
-import MatrixClient from '@/logic/controller/clients/MatrixClient';
+import MatrixClient from '@/logic/models/clients/MatrixClient';
 import Room from '@/logic/models/Room';
 import {ref, type Ref} from 'vue';
 import User from '@/logic/models/User';
 import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 import type MatrixEvent from '../events/MatrixEvent';
-import MatrixError from '../MatrixError';
+import MatrixError from './MatrixError';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import eventTypes from '@/logic/constants/eventTypes';
