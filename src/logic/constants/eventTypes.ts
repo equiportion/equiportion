@@ -1,5 +1,11 @@
+const customEventTypePrefix = 'edu.kit.kastel.dsn.pse.';
+
 const eventTypes = {
-  //TODO: extract event types (#97)
+  roomMember: 'm.room.member',
+  roomName: 'm.room.name',
+  roomAvatar: 'm.room.avatar',
+  roomTopic: 'm.room.topic',
+  paymentInformation: customEventTypePrefix + 'payment_information',
 };
 
 export default eventTypes;

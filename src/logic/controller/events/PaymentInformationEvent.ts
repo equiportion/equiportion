@@ -1,9 +1,8 @@
 import type PaymentInformation from '@/logic/models/PaymentInformation';
 import StateEvent from './StateEvent';
+import eventTypes from '@/logic/constants/eventTypes';
 
 class PaymentInformationEvent extends StateEvent {
-  public static eventType = 'edu.kit.dsn.pse.payment_information';
-
   constructor(roomId: string, userId: string, paymentInformations: PaymentInformation[]) {
     const paymentInformationsJson = [];
     for (const paymentInformation of paymentInformations) {
@@ -11,7 +10,7 @@ class PaymentInformationEvent extends StateEvent {
     }
     const content = Object.assign({}, paymentInformationsJson);
 
-    super(roomId, PaymentInformationEvent.eventType, content, userId);
+    super(roomId, eventTypes.paymentInformation, content, userId);
   }
 }
 
