@@ -29,8 +29,8 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
 
   loggedInUser = client.getLoggedInUser();
 
-  const paymentInformations = loggedInUser.getPaymentInformations()!;
-  for (const paymentInformation of paymentInformations!) {
+  const paymentInformations = loggedInUser.getPaymentInformations();
+  for (const paymentInformation of paymentInformations) {
     if (paymentInformation.getType() == 'paypal') {
       payPalMail.value = paymentInformation.getInformationValue();
     } else if (paymentInformation.getType() == 'iban') {

@@ -1,3 +1,5 @@
+import IbanPaymentInformation from './IbanPaymentInformation';
+import PayPalPaymentInformation from './PayPalPaymentInformation';
 import PaymentInformation from './PaymentInformation';
 
 /**
@@ -80,6 +82,10 @@ class User {
     return this.paymentInformations;
   }
 
+  /**
+   * Sets this user's payment informations.
+   * @param paymentInformations the new payment informations as an array
+   */
   public setPaymentInformations(paymentInformations: PaymentInformation[]): void {
     this.paymentInformations = paymentInformations;
   }
@@ -89,7 +95,28 @@ class User {
    * @param event the event to parse
    */
   public parsePaymentInformationEvent(event: any): void {
-    //TODO: implement in #85
+    const paymentInformations = [];
+    const paymentInformationsJson = event.content;
+
+    for (const index in paymentInformationsJson) {
+      const paymentInformationJson = paymentInformationsJson[index];
+      switch (paymentInformationJson.type) {
+        case IbanPaymentInformation.type:
+          paymentInformations.push(
+            IbanPaymentInformation.fromJson(paymentInformationJson.information)
+          );
+          break;
+        case PayPalPaymentInformation.type:
+          paymentInformations.push(
+            PayPalPaymentInformation.fromJson(paymentInformationJson.information)
+          );
+          break;
+        default:
+          break;
+      }
+    }
+
+    this.setPaymentInformations(paymentInformations);
   }
 
   /**
@@ -97,7 +124,8 @@ class User {
    * @param event
    */
   public parseMemberEvent(event: any): void {
-    //TODO: implement in #85
+    this.setAvatarUrl(event.content.avatar_url);
+    this.setDisplayname(event.content.displayname);
   }
 }
 

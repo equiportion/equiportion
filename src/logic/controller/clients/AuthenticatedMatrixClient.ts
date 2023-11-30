@@ -36,7 +36,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Getter for the initiated authenticated matrix client instance. Creates a new one if it's undefined.
+   * Getter for the initiated authenticated matrix client instance. Creates a new one if it is undefined.
+   * Should only be called from composable useAuthenticatedMatrixClient.
    * @returns the client instance
    */
   public static async getClient() {
@@ -90,6 +91,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     await this.sync();
+
+    console.log(this.getLoggedInUser());
   }
 
   /**
@@ -109,10 +112,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.nextBatch = response.data.next_batch;
 
     const joinedRoomsData = response.data.rooms?.join;
-
-    //TODO: remove after #85
-    await this.updateLoggedInUser();
-    //
 
     if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
       //User has joined rooms, update them
@@ -227,6 +226,11 @@ class AuthenticatedMatrixClient extends MatrixClient {
     return this.users.value[userId];
   }
 
+  /**
+   * Updates a user using a room's state event.
+   * @param userId the userId of the user to update
+   * @param event the state event to update the user with
+   */
   public updateUserFromStateEvent(userId: string, event: any) {
     if (!this.getUser(userId)) {
       this.users.value[userId] = new User(userId);
@@ -235,11 +239,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const user = this.getUser(userId);
     switch (event.type) {
       case eventTypes.paymentInformation:
-        //TODO
+        user.parsePaymentInformationEvent(event);
         break;
       case eventTypes.roomMember:
-        user.setAvatarUrl(event.avatar_url);
-        user.setDisplayname(event.displayname);
+        user.parseMemberEvent(event);
         break;
       default:
         break;

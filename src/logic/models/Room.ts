@@ -1,7 +1,5 @@
 import eventTypes from '../constants/eventTypes';
 import type AuthenticatedMatrixClient from '../controller/clients/AuthenticatedMatrixClient';
-import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
-import User from './User';
 
 /**
  * A matrix room the logged in user has joined.
@@ -49,11 +47,10 @@ class Room {
    */
   private parseEvent(event: any, client: AuthenticatedMatrixClient) {
     switch (event.type) {
-      case eventTypes.roomMember: {
+      case eventTypes.roomMember:
         this.memberIds.add(event.state_key);
         client.updateUserFromStateEvent(event.state_key, event);
         break;
-      }
       case eventTypes.roomName:
         this.name = event.content.name;
         break;
