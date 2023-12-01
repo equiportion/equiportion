@@ -1,11 +1,13 @@
-abstract class MatrixEvent {
-  protected roomId: string;
-  protected eventType: string;
-  protected content: Object;
+//TODO: doc
 
-  constructor(roomId: string, eventType: string, content: Object) {
+abstract class MatrixEvent {
+  protected content: any;
+  protected roomId: string;
+  protected type: string;
+
+  constructor(roomId: string, type: string, content: any) {
     this.roomId = roomId;
-    this.eventType = eventType;
+    this.type = type;
     this.content = content;
   }
 

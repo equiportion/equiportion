@@ -10,7 +10,7 @@ import MatrixError from './MatrixError';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import eventTypes from '@/logic/constants/eventTypes';
-
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
  */
@@ -126,6 +126,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
       //No joined rooms, need to update user separately
       await this.updateLoggedInUser();
     }
+
+    const transactionEvent = new TransactionEvent('roomId', 'type', 'purpose', 5, 'me', [
+      {user: 'you', amount: 5},
+    ]);
   }
 
   /**

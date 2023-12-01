@@ -38,7 +38,7 @@ const router = createRouter({
       path: '/transactions',
       name: 'transactions',
       component: TransactionOverviewViewVue,
-    }
+    },
   ],
 });
 

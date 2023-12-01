@@ -25,7 +25,7 @@ class StateEvent extends MatrixEvent {
    * @returns the url
    */
   public getPutUrl(): string {
-    return apiEndpoints.putStateEvent(this.roomId, this.eventType, this.stateKey);
+    return apiEndpoints.putStateEvent(this.roomId, this.type, this.stateKey);
   }
 }
 
