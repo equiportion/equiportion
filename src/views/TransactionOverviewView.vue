@@ -67,17 +67,17 @@ const transactionList = [transaction1, transaction2];
 <template>
     <MainLayout>
         <div class="flex flex-col px-5 items-center">
-            <div class="flex w-1/6"></div>
-            <div class="flex flex-col w-4/6">
+            <div class="flex lg:w-1/6"></div>
+            <div class="flex flex-col lg:w-4/6 w-full">
                 <!--Profile image and username -->
                 <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
                     <ProfileImage class="w-32 h-32 rounded-full ml-4" />
-                    <div class="flex flex-col items-center lg:items-start ml-4 gap-5">
-                        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">PSE</h1>
-                        <span> Max Muster, Maxi Muster, Maximilian Muster, ...</span>
+                    <div class="flex flex-col items-center lg:items-start ml-4 lg:gap-5">
+                            <h1 class="flex text-2xl font-bold text-gray-900 sm:text-3xl">PSE</h1>
+                            <span class="flex"> Max Muster, Maxi Muster, Maximilian Muster, ...</span>
                     </div>
                 </div>
-                <div class="flex flex-col">
+                <div class="flex flex-col mt-8 lg:mt-2">
 
                     <!--default message-->
                     <template v-if="transactionList.length <= 0">
@@ -95,7 +95,7 @@ const transactionList = [transaction1, transaction2];
                     <NewTransactionButton ></NewTransactionButton>
                 </div>
             </div>
-            <div class="flex w-1/6"></div>    
+            <div class="flex lg:w-1/6"></div>    
         </div>
     </MainLayout>
 </template>
