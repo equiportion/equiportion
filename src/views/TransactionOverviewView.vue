@@ -2,7 +2,6 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import ProfileImage from '@/components/media/ProfileImage.vue';
 import TransactionTile from '@/views/partials/TransactionTile.vue';
-import NewTransactionButton from '@/components/buttons/NewTransactionButton.vue'
 
 const transaction1 = {
     "content": {
@@ -67,7 +66,6 @@ const transactionList = [transaction1, transaction2];
 <template>
     <MainLayout>
         <div class="flex flex-col px-5 items-center">
-            <div class="flex lg:w-1/6"></div>
             <div class="flex flex-col lg:w-4/6 w-full">
                 <!--Profile image and username -->
                 <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
@@ -82,7 +80,7 @@ const transactionList = [transaction1, transaction2];
                     <!--default message-->
                     <template v-if="transactionList.length <= 0">
                         <div class="flex flex-col text-sm text-gray-300 items-center mt-5">
-                            <div>Keine Transaktionen vorhanden</div>
+                            Keine Transaktionen vorhanden
                         </div>
                     </template>
 
@@ -92,10 +90,9 @@ const transactionList = [transaction1, transaction2];
                     </template>
 
                     <!--Plus button-->
-                    <NewTransactionButton ></NewTransactionButton>
+                    
                 </div>
             </div>
-            <div class="flex lg:w-1/6"></div>    
         </div>
     </MainLayout>
 </template>
