@@ -35,7 +35,7 @@ const router = createRouter({
       component: ProfilePageView,
     },
     {
-      path: '/transactions',
+      path: '/transactions/:roomId',
       name: 'transactions',
       component: TransactionOverviewViewVue,
     }

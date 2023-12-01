@@ -1,5 +1,5 @@
 import eventTypes from '../constants/eventTypes';
-import type AuthenticatedMatrixClient from '../controller/clients/AuthenticatedMatrixClient';
+import type AuthenticatedMatrixClient from './clients/AuthenticatedMatrixClient';
 
 /**
  * A matrix room the logged in user has joined.
