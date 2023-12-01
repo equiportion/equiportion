@@ -6,6 +6,7 @@ const eventTypes = {
   roomAvatar: 'm.room.avatar',
   roomTopic: 'm.room.topic',
   paymentInformation: customEventTypePrefix + 'payment_information',
+  transaction: customEventTypePrefix + 'transaction',
 };
 
 export default eventTypes;
