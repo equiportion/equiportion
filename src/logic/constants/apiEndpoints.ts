@@ -7,6 +7,9 @@ const apiEndpoints = {
   putStateEvent: (roomId: string, eventType: string, stateKey: string) => {
     return `/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`;
   },
+  thumbnailGet: (serverName: string, mediaId: string, width: number, height: number, method: string) => {
+    return `/_matrix/media/v3/thumbnail/${serverName}/${mediaId}?width=${width}&height=${height}&method=${method}`;
+  },
 };
 
 export default apiEndpoints;
