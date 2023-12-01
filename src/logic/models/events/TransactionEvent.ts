@@ -1,11 +1,20 @@
+import eventTypes from '@/logic/constants/eventTypes';
 import MessageEvent from './MessageEvent';
 
-//TODO: doc
-
+/**
+ * A transaction event modelled after this project's documentation.
+ */
 class TransactionEvent extends MessageEvent {
+  /**
+   * Creates a new TransactionEvent
+   * @param roomId the roomId of the room this event is published to
+   * @param purpose the description of the transaction
+   * @param sum the total amount spent
+   * @param creditor the userId of the creditor
+   * @param debtors the debtors as an array, each debtor containing their userId and the amount they owe
+   */
   constructor(
     roomId: string,
-    type: string,
     purpose: string,
     sum: number,
     creditor: string,
@@ -18,27 +27,7 @@ class TransactionEvent extends MessageEvent {
       debtors: debtors,
     };
 
-    super(roomId, type, content);
-  }
-
-  /**
-   * Parses a transaction event received from the Matrix API as a json object to a new TransactionEvent object
-   * @param json the json object from the
-   * @returns the TransactionEvent
-   */
-  public static fromJson(json: any): TransactionEvent {
-    const debtors: {user: string; amount: number}[] = [];
-    for (const debtorJson of json.debtors) {
-      debtors.push({user: debtorJson.user, amount: debtorJson.amount});
-    }
-    return new TransactionEvent(
-      json.roomId,
-      json.type,
-      json.purpose,
-      json.sum,
-      json.creditor,
-      debtors
-    );
+    super(roomId, eventTypes.transaction, content);
   }
 
   /**

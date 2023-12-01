@@ -126,10 +126,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
       //No joined rooms, need to update user separately
       await this.updateLoggedInUser();
     }
-
-    const transactionEvent = new TransactionEvent('roomId', 'type', 'purpose', 5, 'me', [
-      {user: 'you', amount: 5},
-    ]);
   }
 
   /**

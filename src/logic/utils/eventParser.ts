@@ -43,7 +43,6 @@ function parseTransactionEvent(eventJson: any): TransactionEvent {
   }
   return new TransactionEvent(
     eventJson.roomId,
-    eventJson.type,
     eventJson.purpose,
     eventJson.sum,
     eventJson.creditor,
