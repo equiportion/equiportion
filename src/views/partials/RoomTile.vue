@@ -33,32 +33,3 @@ defineProps({
     </div>
   </div>
 </template>
-
-<!--
-      <div class="flex flex-row justify-center">
-        <div class="basis-1/2 flex flex-col gap-5 text-center">
-          <div class="flex flex-col">
-            <span class="font-semibold"><i class="fa-solid fa-users"></i> 5 Mitglieder</span>
-            <span>2 online</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="font-semibold"><i class="fa-solid fa-coins"></i> +5€</span>
-            <span>Geld fehlt von: Maxi</span>
-          </div>
-        </div>
-
-        <div class="basis-1/2 flex flex-col gap-5 text-center">
-          <div class="flex flex-col">
-            <span class="font-semibold"
-              ><i class="fa-solid fa-comments"></i> 2 ungelesene Nachrichten</span
-            >
-            <span>Maxi: PSE läuft super</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="font-semibold"
-              ><i class="fa-solid fa-building-columns"></i> 2 unbezahlte Rechnungen</span
-            >
-            <span>Maxi, Maxim</span>
-          </div>
-        </div>
--->
