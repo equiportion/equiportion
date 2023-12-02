@@ -16,6 +16,10 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
+cypress-report.xml
+
+# Dokumentation
+/docs/
 
 # Editor directories and files
 .vscode/*

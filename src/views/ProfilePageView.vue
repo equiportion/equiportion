@@ -4,11 +4,11 @@ import ProfileImage from '@/components/media/ProfileImage.vue';
 import DividerLeftText from '@/components/dividers/DividerLeftText.vue';
 import PaymentInformation from '@/views/partials/PaymentInformation.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import IbanPaymentInformation from '@/logic/models/IbanPaymentInformation';
-import PayPalPaymentInformation from '@/logic/models/PayPalPaymentInformation';
+import IbanPaymentInformation from '@/logic/models/payment-information/IbanPaymentInformation';
+import PayPalPaymentInformation from '@/logic/models/payment-information/PayPalPaymentInformation';
 
 import {ref} from 'vue';
-import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import type User from '@/logic/models/User';
 
@@ -29,8 +29,8 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
 
   loggedInUser = client.getLoggedInUser();
 
-  const paymentInformations = loggedInUser.getPaymentInformations()!;
-  for (const paymentInformation of paymentInformations!) {
+  const paymentInformations = loggedInUser.getPaymentInformations();
+  for (const paymentInformation of paymentInformations) {
     if (paymentInformation.getType() == 'paypal') {
       payPalMail.value = paymentInformation.getInformationValue();
     } else if (paymentInformation.getType() == 'iban') {
@@ -90,3 +90,5 @@ async function savePaymentMethods() {
     </div>
   </MainLayout>
 </template>
+@/logic/models/clients/AuthenticatedMatrixClient
+@/logic/payment-information/IbanPaymentInformation@/logic/payment-information/PayPalPaymentInformation

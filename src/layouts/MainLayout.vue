@@ -38,7 +38,9 @@ function logout() {
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex items-center justify-end lg:justify-between">
           <!-- Logo on the left sisde -->
-          <LogoWide class="hidden lg:flex h-10" />
+          <RouterLink :to="{name: 'home'}">
+            <LogoWide class="hidden lg:flex h-10" />
+          </RouterLink>
 
           <!-- Buttons, Search and Profile Picture on the right side -->
           <div class="flex items-center justify-end gap-4">

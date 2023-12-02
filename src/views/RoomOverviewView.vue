@@ -2,7 +2,7 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoomTile from '@/views/partials/RoomTile.vue';
 import {ref} from 'vue';
-import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import Room from '@/logic/models/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import User from '@/logic/models/User';
@@ -52,3 +52,4 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
     <!--End of rooms-->
   </MainLayout>
 </template>
+@/logic/models/clients/AuthenticatedMatrixClient

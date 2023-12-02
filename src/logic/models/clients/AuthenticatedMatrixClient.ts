@@ -1,15 +1,16 @@
 import cookieNames from '@/logic/constants/cookieNames';
 import {getCookie} from '@/logic/utils/cookies';
-import MatrixClient from '@/logic/controller/clients/MatrixClient';
+import MatrixClient from '@/logic/models/clients/MatrixClient';
 import Room from '@/logic/models/Room';
 import {ref, type Ref} from 'vue';
 import User from '@/logic/models/User';
 import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 import type MatrixEvent from '../events/MatrixEvent';
-import MatrixError from '../MatrixError';
+import MatrixError from './MatrixError';
 import PaymentInformationEvent from '../events/PaymentInformationEvent';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
-
+import eventTypes from '@/logic/constants/eventTypes';
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
  */
@@ -35,7 +36,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Getter for the initiated authenticated matrix client instance. Creates a new one if it's undefined.
+   * Getter for the initiated authenticated matrix client instance. Creates a new one if it is undefined.
+   * Should only be called from composable useAuthenticatedMatrixClient.
    * @returns the client instance
    */
   public static async getClient() {
@@ -109,19 +111,15 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     const joinedRoomsData = response.data.rooms?.join;
 
-    //TODO: remove after #85
-    await this.updateLoggedInUser();
-    //
-
     if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
       //User has joined rooms, update them
       for (const roomId in joinedRoomsData) {
         const room = this.joinedRooms.value[roomId];
 
         if (room) {
-          room.update(joinedRoomsData[roomId]);
+          room.update(joinedRoomsData[roomId], this);
         } else {
-          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId]);
+          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId], this);
         }
       }
     } else {
@@ -224,6 +222,29 @@ class AuthenticatedMatrixClient extends MatrixClient {
    */
   public getUser(userId: string): User {
     return this.users.value[userId];
+  }
+
+  /**
+   * Updates a user using a room's state event.
+   * @param userId the userId of the user to update
+   * @param event the state event to update the user with
+   */
+  public updateUserFromStateEvent(userId: string, event: any) {
+    if (!this.getUser(userId)) {
+      this.users.value[userId] = new User(userId);
+    }
+
+    const user = this.getUser(userId);
+    switch (event.type) {
+      case eventTypes.paymentInformation:
+        user.parsePaymentInformationEvent(event);
+        break;
+      case eventTypes.roomMember:
+        user.parseMemberEvent(event);
+        break;
+      default:
+        break;
+    }
   }
 }
 

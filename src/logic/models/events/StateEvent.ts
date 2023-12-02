@@ -2,7 +2,7 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
 
 /**
- * A state event modelled after the matrix specs. Should be used whenever a state event should be published to a matrix room.
+ * A state event modelled after the matrix specs. All types of state events inherit from this class.
  */
 class StateEvent extends MatrixEvent {
   private stateKey: string;
@@ -19,13 +19,8 @@ class StateEvent extends MatrixEvent {
 
     this.stateKey = stateKey ?? '';
   }
-
-  /**
-   * Gets the url to send the put request to for publishing this event
-   * @returns the url
-   */
   public getPutUrl(): string {
-    return apiEndpoints.putStateEvent(this.roomId, this.eventType, this.stateKey);
+    return apiEndpoints.putStateEvent(this.roomId, this.type, this.stateKey);
   }
 }
 

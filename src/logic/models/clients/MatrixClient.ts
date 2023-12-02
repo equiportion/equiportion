@@ -1,8 +1,8 @@
 import axios, {AxiosError, type AxiosInstance} from 'axios';
-import MatrixError from '@/logic/controller/MatrixError';
+import MatrixError from '@/logic/models/clients/MatrixError';
 import {getCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
-import InvalidHomeserverUrlError from '@/logic/controller/clients/InvalidHomeserverUrlError';
+import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
 
 class MatrixClient {
   private homeserverUrl?: string;
