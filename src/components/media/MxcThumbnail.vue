@@ -13,7 +13,7 @@
  */
 
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 import {ref, watch} from 'vue';
