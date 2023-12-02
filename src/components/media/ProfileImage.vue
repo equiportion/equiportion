@@ -1,6 +1,43 @@
 <script setup lang="ts">
+/**
+ * @component {ProfileImage} - Komponente zum Laden des Profilbildes eines Benutzers über den Matrix-Client.
+ * Falls kein Bild geladen werden kann, wird ein Platzhalterbild angezeigt.
+ * @author Philipp Stappert
+ *
+ * @prop {string} class - CSS-Klasse, die auf das Bild angewendet werden soll (optional).
+ */
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
+import User from '@/logic/models/User';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
+
+import {ref} from 'vue';
+
+const mxcUrl = ref('');
+const altText = ref('?');
+var client: AuthenticatedMatrixClient;
+var user: User;
+
+function loadUser() {
+  user = client.getLoggedInUser();
+
+  if (!user) {
+    setTimeout(loadUser, 100);
+  } else {
+    mxcUrl.value = user.getAvatarUrl() ?? '';
+    altText.value = user.getDisplayname() ?? user.getUserId();
+  }
+}
+
+async function loadData(clientInstance: AuthenticatedMatrixClient) {
+  client = clientInstance;
+
+  loadUser();
+}
+
+useAuthenticatedMatrixClient(loadData);
 </script>
 
 <template>
-    <img alt="// TODO" src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+  <MxcOrPlaceholderImage :mxcUrl="mxcUrl" :placeholderText="altText" />
 </template>
