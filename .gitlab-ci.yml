@@ -5,9 +5,9 @@
 image: node:latest
 
 stages:
-- build
-- test
-- deploy
+  - build
+  - test
+  - deploy
 
 #
 # Build stage
@@ -17,7 +17,7 @@ install-npm-dependencies:
   stage: build
   script:
     - npm install
-  tags: 
+  tags:
     - build-2
   artifacts:
     paths:
@@ -40,7 +40,7 @@ build-review:
   artifacts:
     paths:
       - dist/
-  except: 
+  except:
     - main
   only:
     - branches
@@ -84,7 +84,7 @@ cypress:
   dependencies:
     - install-npm-dependencies
   script:
-    - cp $TEST_ACCOUNTS ~/cypress/fixtures/test-accounts.json
+    - cp $TEST_ACCOUNTS cypress/fixtures/test-accounts.json
     - npx cypress install
     - npm run dev & npx cypress run
   tags:
@@ -119,7 +119,6 @@ deploy-review:
   tags:
     - build-2
 
-
 stop-review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
@@ -134,7 +133,6 @@ stop-review:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
   tags:
     - build-2
-
 
 deploy-production:
   stage: deploy
