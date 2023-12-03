@@ -40,11 +40,6 @@ const router = createRouter({
       name: 'transactions',
       component: TransactionOverviewViewVue,
     },
-    {
-      path: '/newtransaction',
-      name: '',
-      component: NewTransactionViewVue,
-    },
     
   ],
 });
