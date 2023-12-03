@@ -17,7 +17,6 @@ function openTransactions() {
 
 function newTransaction() {
   router.push({name: 'new-transaction', params: {roomId: props.room.getRoomId()}});
-  console.log('new transaction // TODO');
 }
 </script>
 <template>
