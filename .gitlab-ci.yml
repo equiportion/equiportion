@@ -84,6 +84,7 @@ cypress:
   dependencies:
     - install-npm-dependencies
   script:
+    - echo "$TEST_ACCOUNTS" > cypress/fixtures/test-accounts.json
     - npx cypress install
     - npm run dev & npx cypress run
   tags:
