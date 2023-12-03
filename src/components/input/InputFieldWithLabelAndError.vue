@@ -60,6 +60,6 @@ const inputValue = computed({
       :placeholder="placeholder"
       v-model="inputValue"
     />
-    <small class="block text-sm text-red-500" v-if="error"> {{ error }} </small>
+    <small class="block text-sm text-red-500" v-if="error" id="error-message"> {{ error }} </small>
   </div>
 </template>

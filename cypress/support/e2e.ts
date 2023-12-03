@@ -15,19 +15,33 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import testAccounts from "../fixtures/test-accounts.json"
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 beforeEach('logs in', () => {
-  login('name', 'passwd');
+  //login('https://matrix.org', 'schatzileinheini', 'v6x1e4jgnf');
 })
 
-function login(userName: string, password: string) {
+export function login(userType: string) {
     cy.visit('http://localhost:5173/welcome')
     cy.get('#loginButton').click()
-    cy.get('#homeserver').type('https://matrix.org')
+    cy.get('#homeserver').type(testAccounts[userType]["homeserver"])
     cy.get('#goToLoginButton').click()
-    cy.get('#username').type(userName)
-    cy.get('#homeserver').type(password)
+    cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
+    cy.get('#homeserver').type(testAccounts[userType]["password"])
+    cy.get('#loginbutton').click()
+}
+
+export function logout() {
+  cy.get('#profile-picture').click()
+  cy.get('#logout-button').click()
+}
+
+export function loginCookiesActive(userType: string) {
+  cy.get('#loginButton').click()
+  cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
+  cy.get('#homeserver').type(testAccounts[userType]["password"])
+  cy.get('#loginbutton').click()
 }

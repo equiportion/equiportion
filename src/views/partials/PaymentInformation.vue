@@ -32,6 +32,7 @@ const inputValue = computed({
         <div class="flex flex-column justify-center flex-grow gap-2">
           <InputFieldWithLabelAndError
             :label="paymentMethodName"
+            :id="paymentMethodName"
             type="text"
             class="w-full"
             v-model="inputValue"
