@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RoundButton from '@/components/buttons/RoundButton.vue';
-import ProfileImage from '@/components/media/ProfileImage.vue';
+import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import Room from '@/logic/models/Room';
 import router from '@/router';
 
@@ -26,7 +26,11 @@ function newTransaction() {
     @click="openTransactions()"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
-      <ProfileImage class="rounded-full w-16 h-16 lg:w-32 lg:h-32"></ProfileImage>
+      <MxcOrPlaceholderImage
+        :mxcUrl="room.getAvatarUrl() ?? ''"
+        class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
+        :placeholderText="room.getName() ?? '?'"
+      />
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div>
