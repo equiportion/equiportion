@@ -1,5 +1,7 @@
 import eventTypes from '../constants/eventTypes';
+import {parseTransactionEvent} from '../utils/eventParser';
 import type AuthenticatedMatrixClient from './clients/AuthenticatedMatrixClient';
+import TransactionEvent from './events/TransactionEvent';
 
 /**
  * A matrix room the logged in user has joined.
@@ -12,6 +14,8 @@ class Room {
   private avatarUrl?: string;
 
   private memberIds: Set<string> = new Set();
+
+  private transactionEvents: TransactionEvent[] = [];
 
   /**
    * Creates a new Room using data from the sync-API.
@@ -46,7 +50,11 @@ class Room {
    * @param client the client to update the users of
    */
   private parseEvent(event: any, client: AuthenticatedMatrixClient) {
+    //TODO: migrate to eventParser.ts
     switch (event.type) {
+      case eventTypes.transaction:
+        this.transactionEvents.push(parseTransactionEvent(event));
+        break;
       case eventTypes.roomMember:
         this.memberIds.add(event.state_key);
         client.updateUserFromStateEvent(event.state_key, event);
