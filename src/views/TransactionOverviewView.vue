@@ -99,12 +99,12 @@ const transactionList = [transaction1, transaction2];
                         </div>
                         <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
                             <span class="flex flex-col justify-center truncate">
-                                {{ transaction.content.creditor }}
+                                {{ transaction.content.sum }}€, gezahlt von {{ transaction.content.creditor }} 
                             </span>
                         </div>
                         <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
                             <span class="flex flex-col justify-center text-center truncate" v-for="debitor in transaction.content.debitors" :key="debitor.user">
-                                {{ debitor.user }}
+                                {{ debitor.user }} schuldet {{ debitor.amount }}€
                             </span>
                         </div>
                     </div>
