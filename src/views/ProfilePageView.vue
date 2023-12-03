@@ -4,65 +4,57 @@ import ProfileImage from '@/components/media/ProfileImage.vue';
 import DividerLeftText from '@/components/dividers/DividerLeftText.vue';
 import PaymentInformation from '@/views/partials/PaymentInformation.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import IbanPaymentInformation from '@/logic/models/IbanPaymentInformation';
-import PayPalPaymentInformation from '@/logic/models/PayPalPaymentInformation';
+import IbanPaymentInformation from '@/logic/models/payment-information/IbanPaymentInformation';
+import PayPalPaymentInformation from '@/logic/models/payment-information/PayPalPaymentInformation';
 
 import {ref} from 'vue';
-
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-const {getAuthenticatedMatrixClient} = useAuthenticatedMatrixClient();
-const authenticatedMatrixClient = getAuthenticatedMatrixClient();
+import type User from '@/logic/models/User';
 
 const payPalMail = ref('');
 const iban = ref('');
 const saving = ref(false);
 const success = ref(false);
 
-async function loadPaymentMethods() {
-  const user = authenticatedMatrixClient.getLoggedInUser().value;
-  if (!user || !user.getPaymentInformations()) {
-    // set timer to retry
-    setTimeout(loadPaymentMethods, 500);
-    return;
-  }
+var client: AuthenticatedMatrixClient;
 
-  const paymentInformations = user!.getPaymentInformations()!;
+var loggedInUser: User;
 
-  for (const paymentInformation of paymentInformations!) {
+const loading = ref(true);
+useAuthenticatedMatrixClient(loadData);
+
+async function loadData(clientInstance: AuthenticatedMatrixClient) {
+  client = clientInstance;
+
+  loggedInUser = client.getLoggedInUser();
+
+  const paymentInformations = loggedInUser.getPaymentInformations();
+  for (const paymentInformation of paymentInformations) {
     if (paymentInformation.getType() == 'paypal') {
       payPalMail.value = paymentInformation.getInformationValue();
     } else if (paymentInformation.getType() == 'iban') {
       iban.value = paymentInformation.getInformationValue();
     }
   }
+
+  loading.value = false;
 }
 
-loadPaymentMethods();
-
 async function savePaymentMethods() {
-  const user = authenticatedMatrixClient.getLoggedInUser().value;
-
-  if (!user) {
-    // set timer to retry
-    console.log('retrying later');
-    setTimeout(savePaymentMethods, 500);
-    return;
-  }
-
   const ibanPaymentInformation = new IbanPaymentInformation(iban.value);
   const payPalPaymentInformation = new PayPalPaymentInformation(payPalMail.value);
 
-  await user.setPaymentInformations(
-    [ibanPaymentInformation, payPalPaymentInformation],
-    authenticatedMatrixClient
-  );
+  loggedInUser?.setPaymentInformations([ibanPaymentInformation, payPalPaymentInformation]);
+
+  await client?.publishPaymentInformations();
 
   saving.value = false;
   success.value = true;
 
   setTimeout(() => {
     success.value = false;
-  }, 2000);
+  }, 1000);
 }
 </script>
 <template>
@@ -72,8 +64,10 @@ async function savePaymentMethods() {
       <div class="flex flex-col items-center lg:flex-row justify-center gap-5">
         <ProfileImage class="w-40 h-40 rounded-full" />
         <div class="flex flex-col items-center lg:items-start">
-          <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Max Mustermann</h1>
-          <span class="text-md text-gray-500">@maxmustermann</span>
+          <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+            {{ loggedInUser?.getDisplayname() }}
+          </h1>
+          <span class="text-md text-gray-500">{{ loggedInUser?.getUserId() }}</span>
         </div>
       </div>
 
@@ -96,3 +90,5 @@ async function savePaymentMethods() {
     </div>
   </MainLayout>
 </template>
+@/logic/models/clients/AuthenticatedMatrixClient
+@/logic/payment-information/IbanPaymentInformation@/logic/payment-information/PayPalPaymentInformation

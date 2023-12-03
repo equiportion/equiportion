@@ -23,7 +23,7 @@ watch(
 
 <template>
   <div class="relative no-close">
-    <div @click="toggle()">
+    <div @click="toggle()" class="cursor-pointer">
       <slot name="trigger" />
     </div>
     <div
