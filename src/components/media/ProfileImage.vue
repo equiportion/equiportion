@@ -1,10 +1,10 @@
 <script setup lang="ts">
 /**
- * @component {ProfileImage} - Komponente zum Laden des Profilbildes eines Benutzers über den Matrix-Client.
- * Falls kein Bild geladen werden kann, wird ein Platzhalterbild angezeigt.
+ * @component {ProfileImage} - Component to load profile images via the Matrix client.
+ * If no avatar image is available, a placeholder image is displayed instead.
  * @author Philipp Stappert
  *
- * @prop {string} class - CSS-Klasse, die auf das Bild angewendet werden soll (optional).
+ * @prop {string} class - CSS class to apply to the image (optional).
  */
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import User from '@/logic/models/User';

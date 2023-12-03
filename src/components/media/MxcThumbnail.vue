@@ -1,15 +1,15 @@
 <script setup lang="ts">
 /**
- * @component {MxcThumbnail} - Komponente zum Laden von Thumbnail-Bildern über den Matrix-Client.
+ * @component {MxcThumbnail} - Component to load thumbnails via the Matrix client.
  * @author Philipp Stappert
  *
- * @prop {string} class - CSS-Klasse, die auf das Bild angewendet werden soll (optional).
- * @prop {string} mxcUrl - Die MXC-URL des Bildes, das geladen werden soll (erforderlich).
- * @prop {string} [alt] - Alternativer Text für das Bild (optional).
- * @prop {string} [title] - Titel des Bildes (optional).
- * @prop {number} [width] - Breite des Bildes (optional, Standard: 128).
- * @prop {number} [height] - Höhe des Bildes (optional, Standard: 128).
- * @prop {string} [method] - Methode zur Bildskalierung (optional, Standard: 'crop').
+ * @prop {string} class - CSS class to apply to the image (optional).
+ * @prop {string} mxcUrl - The mxc url of the image.
+ * @prop {string} [alt] - Alternative text for the image (optional).
+ * @prop {string} [title] - Title text for the image (optional).
+ * @prop {number} [width] - Width of the image (optional, default: 128).
+ * @prop {number} [height] - Height of the image (optional, default: 128).
+ * @prop {string} [method] - Method to use for thumbnail generation (optional, default: 'crop', options: crop, scale).
  */
 
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
@@ -54,10 +54,10 @@ const imageUrl = ref('');
 var client: AuthenticatedMatrixClient;
 
 /**
- * Lädt den authentifizierten Matrix-Clients.
+ * Loads the client and saves it in the global variable.
  *
- * @param {AuthenticatedMatrixClient} client - Eine Instanz des authentifizierten Matrix-Clients.
- * @returns {Promise<void>} - Ein Promise, das gelöst wird, wenn der Client geladen ist.
+ * @param {AuthenticatedMatrixClient} clientInstance - The client to save.
+ * @returns {Promise<void>} - A promise that resolves when the client is saved.
  */
 async function saveClient(clientInstance: AuthenticatedMatrixClient): Promise<void> {
   client = clientInstance;
@@ -66,10 +66,10 @@ async function saveClient(clientInstance: AuthenticatedMatrixClient): Promise<vo
 }
 
 /**
- * Konvertiert ein Blob in einen Base64-String.
+ * Converts a blob to a base64 data url.
  *
- * @param blob - Der Blob, der konvertiert werden soll.
- * @returns {Promise<string>} - Ein Promise, das gelöst wird, wenn die Konvertierung abgeschlossen ist.
+ * @param blob - Blob to convert.
+ * @returns {Promise<string>} - A promise that resolves to the base64 data url.
  */
 function blobToData(blob: Blob) {
   return new Promise((resolve) => {
@@ -80,9 +80,9 @@ function blobToData(blob: Blob) {
 }
 
 /**
- * Lädt das Thumbnail-Bild über den Matrix-Client.
+ * Loads the thumbnail and saves it in the global variable.
  *
- * @returns {Promise<void>} - Ein Promise, das gelöst wird, wenn das Bild geladen ist.
+ * @returns {Promise<void>} - A promise that resolves when the thumbnail is saved.
  */
 async function loadThumbnail(): Promise<void> {
   loading.value = true;

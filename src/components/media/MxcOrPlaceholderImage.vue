@@ -1,16 +1,16 @@
 <script setup lang="ts">
 /**
- * @component {MxcOrPlaceholderImage} - Komponente zum Laden von Thumbnail-Bildern über den Matrix-Client,
- *  oder alternativ ein Platzhalterbild, falls kein Bild geladen werden kann.
+ * @component {MxcOrPlaceholderImage} - Component to load images via the Matrix client
+ *  or display a placeholder image if no image is available.
  * @author Philipp Stappert
  *
- * @prop {string} class - CSS-Klasse, die auf das Bild angewendet werden soll (optional).
- * @prop {string} mxcUrl - Die MXC-URL des Bildes, das geladen werden soll (erforderlich).
- * @prop {string} [alt] - Alternativer Text für das Bild (optional).
- * @prop {string} [title] - Titel des Bildes (optional).
- * @prop {number} [width] - Breite des Bildes (optional, Standard: 128).
- * @prop {number} [height] - Höhe des Bildes (optional, Standard: 128).
- * @prop {string} [method] - Methode zur Bildskalierung (optional, Standard: 'crop').
+ * @prop {string} class - CSS class to apply to the image (optional).
+ * @prop {string} mxcUrl - The mxc url of the image.
+ * @prop {string} [alt] - Alternative text for the image (optional).
+ * @prop {string} [title] - Title text for the image (optional).
+ * @prop {number} [width] - Width of the image (optional, default: 128).
+ * @prop {number} [height] - Height of the image (optional, default: 128).
+ * @prop {string} [method] - Method to use for thumbnail generation (optional, default: 'crop', options: crop, scale).
  */
 
 import MxcThumbnail from '@/components/media/MxcThumbnail.vue';
@@ -60,6 +60,7 @@ const placeholderUrl = computed(() => {
     '&background=random'
   );
 });
+
 </script>
 <template>
   <MxcThumbnail
