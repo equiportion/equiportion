@@ -1,4 +1,4 @@
-import { login } from "/home/joern/Dokumente/KIT/PSE/codebase/cypress/support/e2e";
+import { login } from "../support/e2e";
 
 describe('main layout: profile dropdown', () => {
   it('click outside dropdown menu closes it', () => {
