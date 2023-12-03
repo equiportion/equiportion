@@ -1,3 +1,5 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { login, logout, loginCookiesActive } from "../support/e2e";
 
 describe('payment information editing and displaying', () => {
