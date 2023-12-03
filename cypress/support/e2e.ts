@@ -26,7 +26,9 @@ beforeEach('logs in', () => {
 
 export function login(userType: string) {
     cy.visit('http://localhost:5173/welcome')
-    cy.get('#loginButton').click()
+    cy.wait(1000)
+    cy.get('#login-button-on-landing-page').click()
+    cy.wait(1000)
     cy.get('#homeserver').type(testAccounts[userType]["homeserver"])
     cy.get('#goToLoginButton').click()
     cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
@@ -40,7 +42,7 @@ export function logout() {
 }
 
 export function loginCookiesActive(userType: string) {
-  cy.get('#loginButton').click()
+  cy.get('#login-button-on-landing-page').click()
   cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
   cy.get('#homeserver').type(testAccounts[userType]["password"])
   cy.get('#loginbutton').click()

@@ -13,6 +13,6 @@ describe('login-and-logout', () => {
       login('no-rooms')
       cy.get('#profile-picture').click()
       cy.get('#logout-button').click()
-      cy.get('#loginButton').should('exist')
+      cy.get('#login-button-on-landing-page').should('exist')
     })
   })
