@@ -40,7 +40,11 @@ const router = createRouter({
       name: 'transactions',
       component: TransactionOverviewViewVue,
     },
-    
+    {
+      path: '/new-transaction/:roomId',
+      name: 'new-transaction',
+      component: NewTransactionViewVue,
+    },
   ],
 });
 
