@@ -110,12 +110,12 @@ class Room {
   }
 
   /**
-  * Gets the user ids of all members of this room.
-  * @returns the member ids as a set
-  */
+   * Gets the user ids of all members of this room.
+   * @returns the member ids as a set
+   */
   public getMemberIds() {
     return this.memberIds;
-  }
+  } 
 }
 
 export default Room;

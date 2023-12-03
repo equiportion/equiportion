@@ -1,0 +1,123 @@
+<script setup lang="ts">
+/**
+ * @component {MxcThumbnail} - Component to load thumbnails via the Matrix client.
+ * @author Philipp Stappert
+ *
+ * @prop {string} class - CSS class to apply to the image (optional).
+ * @prop {string} mxcUrl - The mxc url of the image.
+ * @prop {string} [alt] - Alternative text for the image (optional).
+ * @prop {string} [title] - Title text for the image (optional).
+ * @prop {number} [width] - Width of the image (optional, default: 128).
+ * @prop {number} [height] - Height of the image (optional, default: 128).
+ * @prop {string} [method] - Method to use for thumbnail generation (optional, default: 'crop', options: crop, scale).
+ */
+
+import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import apiEndpoints from '@/logic/constants/apiEndpoints';
+
+import {ref, watch} from 'vue';
+
+const props = defineProps({
+  class: {
+    type: String,
+    default: '',
+  },
+  mxcUrl: {
+    type: String,
+    required: true,
+  },
+  alt: {
+    type: String,
+    default: '',
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  width: {
+    type: Number,
+    default: 128,
+  },
+  height: {
+    type: Number,
+    default: 128,
+  },
+  method: {
+    type: String,
+    default: 'crop',
+  },
+});
+
+const loading = ref(true);
+const imageUrl = ref('');
+var client: AuthenticatedMatrixClient;
+
+/**
+ * Loads the client and saves it in the global variable.
+ *
+ * @param {AuthenticatedMatrixClient} clientInstance - The client to save.
+ * @returns {Promise<void>} - A promise that resolves when the client is saved.
+ */
+async function saveClient(clientInstance: AuthenticatedMatrixClient): Promise<void> {
+  client = clientInstance;
+
+  loadThumbnail();
+}
+
+/**
+ * Converts a blob to a base64 data url.
+ *
+ * @param blob - Blob to convert.
+ * @returns {Promise<string>} - A promise that resolves to the base64 data url.
+ */
+function blobToData(blob: Blob) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Loads the thumbnail and saves it in the global variable.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the thumbnail is saved.
+ */
+async function loadThumbnail(): Promise<void> {
+  loading.value = true;
+
+  // split mxc url into server and media id
+  const mxcUrlParts = props.mxcUrl.split('/');
+  const serverName = mxcUrlParts[2];
+  const mediaId = mxcUrlParts[3];
+
+  const response = await client.getRequest(
+    apiEndpoints.thumbnailGet(serverName, mediaId, props.width, props.height, props.method),
+    {
+      responseType: 'blob',
+    }
+  );
+  if (response!.status == 200) {
+    const base64data = await blobToData(response!.data);
+    imageUrl.value = base64data as string;
+  }
+
+  loading.value = false;
+}
+
+// load client and thumbnail
+useAuthenticatedMatrixClient(saveClient);
+
+watch(props, async () => {
+  loadThumbnail();
+});
+</script>
+<template>
+  <div>
+    <span v-show="loading" class="flex items-center justify-center h-full">
+      <i class="fa-solid fa-spinner animate-spin"></i>
+    </span>
+    <img v-show="!loading" :class="props.class" :src="imageUrl" :alt="alt" :title="title" />
+  </div>
+</template>
