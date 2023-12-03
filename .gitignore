@@ -32,4 +32,4 @@ cypress-report.xml
 *.sw?
 
 #passwords
-test-accounts.json
+/cypress/e2e/fixtures/test-accounts.json
