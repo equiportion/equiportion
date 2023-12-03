@@ -9,42 +9,20 @@ import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import {useRoute} from 'vue-router';
 
 const roomId = useRoute().params.roomId;
-//console.log(props.roomId)
-
-let creditorId = ''; //crediter
+const error = ref();
+let creditorId = '';
 const sum = ref<number>(0);
 const purpose = ref('');
 var client: AuthenticatedMatrixClient;
 
 const debtors = ref<User[]>([]);
-const members: {[userId: string]: User} = {}; //= ref<User[]>([
-//new User('person1id', 'Person 1', 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'),
-//new User('person2id', 'Person 2', 'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg'),
-//new User('person3id', 'Person 3', 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'),
-//]);
+const members: {[userId: string]: User} = {};
 
 useAuthenticatedMatrixClient(loadData);
 
 const isCreditorSelected = ref(false);
 const isDropdownOpen1 = ref(false);
 const isDropdownOpen2 = ref(false);
-
-//for test
-(members['aa'] = new User(
-  'aa',
-  'Person 1',
-  'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'
-)),
-  (members['bb'] = new User(
-    'bb',
-    'Person 2',
-    'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg'
-  )),
-  (members['cc'] = new User(
-    'cc',
-    'Person 3',
-    'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'
-  ));
 
 function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
@@ -68,14 +46,23 @@ function deleteCreditor() {
 }
 
 function createTransaction() {
-    const debtorArray = debtors.value.map(debtor => ({
+  const debtorArray = debtors.value.map((debtor) => ({
     user: debtor.getUserId(),
-    amount: sum.value/ debtors.value.length, 
+    amount: sum.value / debtors.value.length,
   }));
-  const transactionEvent = new TransactionEvent(useRoute().params.roomId.toString(), purpose.value, sum.value, creditorId, debtorArray);
-  client.publishEvent(transactionEvent);
+  try {
+    const transactionEvent = new TransactionEvent(
+      useRoute().params.roomId.toString(),
+      purpose.value,
+      sum.value,
+      creditorId,
+      debtorArray
+    );
+    client.publishEvent(transactionEvent);
+  } catch (err) {
+    error.value = err;
+  }
 }
-
 
 function addNewMember(id: string) {
   const userToAdd = members[id];
@@ -194,7 +181,7 @@ function selectCreditor(id: string) {
     </div>
 
     <div class="flex flex-wrap justify-center items-center mt-24">
-      <!--Eingabefeld sum-->
+      <!--entry widgets sum-->
       <div>sum :</div>
       <div>
         <input
@@ -204,7 +191,7 @@ function selectCreditor(id: string) {
         />
       </div>
       <i class="fa-solid fa-euro-sign"></i>
-      <!--Eingabefeld purpose-->
+      <!--entry widgets purpose-->
       <div class="ml-28">purpose :</div>
       <div>
         <input
