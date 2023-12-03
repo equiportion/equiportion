@@ -93,15 +93,17 @@ const transactionList = [transaction1, transaction2];
                 <div class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200" v-for="transaction in transactionList" :key="transaction.event_id">
                     <div class="flex flex-col lg:flex-row m-2">
                         <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                            <span class="truncate">
+                            <span class="flex flex-col justify-center truncate">
                                 {{ transaction.content.purpose }}
                             </span>
                         </div>
                         <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                            <span class="truncate">{{ transaction.content.creditor }}</span>
+                            <span class="flex flex-col justify-center truncate">
+                                {{ transaction.content.creditor }}
+                            </span>
                         </div>
                         <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                            <span class="text-center truncate" v-for="debitor in transaction.content.debitors" :key="debitor.user">
+                            <span class="flex flex-col justify-center text-center truncate" v-for="debitor in transaction.content.debitors" :key="debitor.user">
                                 {{ debitor.user }}
                             </span>
                         </div>
