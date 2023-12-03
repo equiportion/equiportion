@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
 import ProfileImage from '@/components/media/ProfileImage.vue';
-import TransactionTile from '@/views/partials/TransactionTile.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 
 const transaction1 = {
@@ -62,6 +61,7 @@ const transaction2 = {
 
 const transactionList = [transaction1, transaction2];
 </script>
+
 <template>
   <MainLayout>
     <div class="flex flex-col px-5 items-center">
@@ -75,37 +75,42 @@ const transactionList = [transaction1, transaction2];
           </div>
         </div>
         <div class="flex flex-col mt-8 lg:mt-2">
-          <!--default message-->
-          <template v-if="transactionList.length <= 0">
-            <div class="flex flex-col text-sm text-gray-300 items-center mt-5">
-              Keine Transaktionen vorhanden
+            <!--default message-->
+            <template v-if="transactionList.length <= 0">
+                <div class="flex flex-col text-sm text-gray-300 items-center mt-5">
+                    Keine Transaktionen vorhanden
+                </div>
+            </template>
+
+            <div class="grid justify-center-center grid-cols-1 lg:grid-cols-3">
+                <div class="col-span-3 lg:m-5 invisible lg:visible">
+                    <div class="flex flex-row">
+                        <div class="w-1/3 text-center font-bold text-gray-900">Verwendungszweck</div>
+                        <div class="w-1/3 text-center font-bold text-gray-900">Gläubiger</div>
+                        <div class="w-1/3 text-center font-bold text-gray-900">Schuldner</div>
+                    </div>
+                </div>
+                <div class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200" v-for="transaction in transactionList" :key="transaction.event_id">
+                    <div class="flex flex-col lg:flex-row m-2">
+                        <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
+                            <span class="truncate">
+                                {{ transaction.content.purpose }}
+                            </span>
+                        </div>
+                        <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
+                            <span class="truncate">{{ transaction.content.creditor }}</span>
+                        </div>
+                        <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
+                            <span class="text-center truncate" v-for="debitor in transaction.content.debitors" :key="debitor.user">
+                                {{ debitor.user }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </template>
-          <table class="border-collapse">
-            <tr class="hidden lg:table-row text-center">
-              <th>Verwendungszweck</th>
-              <th>Gläubiger</th>
-              <th>Schuldner</th>
-            </tr>
-            <tr
-              class="flex flex-col lg:table-row text-center max-w-screen rounded-lg border-b-4 border-r-4 border-bg-400"
-              v-for="transaction in transactionList"
-              :key="transaction.event_id"
-            >
-              <td class="truncate">{{ transaction.content.purpose }}</td>
-              <td class="truncate">{{ transaction.content.creditor }}</td>
-              <td>
-                <ul>
-                  <li v-for="debitor in transaction.content.debitors" :key="debitor.user">
-                    <span class="truncate max-w-[100%">{{ debitor.user }}</span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </table>
 
           <!--Plus button-->
-          <div class="self-end lg:self-center mt-5">
+          <div class="self-end lg:self-center mt-5 mb-2">
             <RoundButton><i class="fa-solid fa-plus"></i></RoundButton>
           </div>
         </div>
