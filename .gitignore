@@ -31,5 +31,5 @@ cypress-report.xml
 *.sln
 *.sw?
 
-#passwords
+# passwords
 /cypress/e2e/fixtures/test-accounts.json
