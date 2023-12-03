@@ -30,3 +30,6 @@ cypress-report.xml
 *.njsproj
 *.sln
 *.sw?
+
+#passwords
+test-accounts.json

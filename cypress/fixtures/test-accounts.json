@@ -1,7 +1,0 @@
-{
-    "wrong-password": {"homeserver": "https://pse.dsn.kastel.kit.edu", "username": "account-no-rooms", "password": "wrong-password"},
-    "no-rooms": {"homeserver": "https://pse.dsn.kastel.kit.edu", "username": "account-no-rooms", "password": "secret"},
-    "just-empty-room": {"homeserver": "https://pse.dsn.kastel.kit.edu", "username": "account-empty-room", "password": "secret"},
-    "two-filled-rooms": {"homeserver": "https://pse.dsn.kastel.kit.edu", "username": "account-multiple-filled-rooms1", "password": "secret"},
-    "three-rooms": {"homeserver": "https://pse.dsn.kastel.kit.edu", "username": "account-multiple-filled-rooms2", "password": "secret"}
-}
