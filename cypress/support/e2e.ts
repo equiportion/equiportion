@@ -27,10 +27,10 @@ beforeEach('logs in', () => {
 })
 
 export function login(userType: string) {
-    cy.visit('http://localhost:5173/welcome')
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.visit('http://localhost:5173/welcome') 
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#login-button-on-landing-page').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#homeserver').type(testAccounts[userType]["homeserver"])
     cy.get('#goToLoginButton').click()
     cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])

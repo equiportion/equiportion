@@ -7,16 +7,16 @@ describe('payment information editing and displaying', () => {
     const paypalAccount: string = 'mypaypaladress@gamil.com'
     login("two-filled-rooms")
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht', {timeout: 1000}).should('be.visible')
     cy.get('#profil-ansicht').click()
     cy.get('#PayPal').type(paypalAccount)
     cy.get('#button-to-safe').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     logout()
     loginCookiesActive('two-filled-rooms')
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht', {timeout: 1000}).should('be.visible')
     cy.get('#profil-ansicht', {timeout: 1000}).click()
     cy.get('#PayPal').should('have.value', paypalAccount)
@@ -25,7 +25,7 @@ describe('payment information editing and displaying', () => {
     logout()
     loginCookiesActive('two-filled-rooms')
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht').click()
     cy.get('#PayPal').should('have.value', "")
   })
@@ -33,15 +33,15 @@ describe('payment information editing and displaying', () => {
     const internationalBankAccountNumber: string = 'DE42 1234 4242 5678 4242 42'
     login("two-filled-rooms")
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht').click()
     cy.get('#IBAN').type(internationalBankAccountNumber)
     cy.get('#button-to-safe').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     logout()
     loginCookiesActive('two-filled-rooms')
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht').click()
     cy.get('#IBAN').should('have.value', internationalBankAccountNumber)
     cy.get('#IBAN').clear()
@@ -49,7 +49,7 @@ describe('payment information editing and displaying', () => {
     logout()
     loginCookiesActive('two-filled-rooms')
     cy.get('#profile-picture').click()
-    cy.wait(1000) // eslint-disable-line org.eslint.cypress/no-unnecessary-waiting
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
     cy.get('#profil-ansicht').click()
     cy.get('#IBAN').should('have.value', "")
   })
