@@ -23,7 +23,7 @@ import testAccounts from "../fixtures/test-accounts.json"
 // require('./commands')
 
 beforeEach('logs in', () => {
-  //login('https://matrix.org', 'schatzileinheini', 'v6x1e4jgnf');
+  //do nothing
 })
 
 export function login(userType: string) {
