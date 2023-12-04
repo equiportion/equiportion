@@ -7,8 +7,20 @@ import Room from '@/logic/models/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import {ref, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import router from '@/router';
+import TransactionTile from './partials/TransactionTile.vue';
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
+
+const User2 = {
+  user: "User2",
+  amount: 10 as number,
+};
+const User3 = {
+  user: "User3",
+  amount: 10 as number,
+};
+
+const testTransaction = new TransactionEvent("abc","Pizza",20,"User1",[User2, User3], "12345")
 
 var client: AuthenticatedMatrixClient;
 const roomId = useRoute().params.roomId.toString();
@@ -20,7 +32,7 @@ useAuthenticatedMatrixClient(loadData);
 async function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
   room.value = client.getRoom(roomId);
-
+  room.value.getTransactionEvents().push(testTransaction);
   loading.value = false;
 }
 
@@ -41,13 +53,17 @@ function newTransaction() {
             :placeholderText="room?.getName() ?? '?'"
           />
           <div class="flex flex-col items-center lg:items-start ml-4 lg:gap-5">
-            <h1 class="flex text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h1 class="flex text-3xl font-bold text-gray-900">
               {{ room?.getName() ?? roomId }}
             </h1>
-            <span class="flex"> Max Muster, Maxi Muster, Maximilian Muster, ...</span>
+            <div class="flex flex-col lg:flex-row lg:gap-2">
+              <span v-for="member in room?.getMemberIds()" :key="member" class="flex truncate">
+                {{ client.getUser(member)?.getDisplayname() ?? client.getUser(member)?.getUserId()}}
+            </span>
+            </div>
           </div>
         </div>
-        <div v-if="!loading && room" class="flex flex-col mt-8 lg:mt-2">
+        <div v-if="!loading && room" class="flex flex-col lg:mt-2">
           <!--default message-->
           <template v-if="room?.getTransactionEvents().length <= 0">
             <div class="flex flex-col text-sm text-gray-400 items-center mt-5">
@@ -68,27 +84,7 @@ function newTransaction() {
               v-for="transaction in room.getTransactionEvents()"
               :key="transaction.getEventId()"
             >
-              <div class="flex flex-col lg:flex-row m-2">
-                <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                  <span class="flex flex-col justify-center truncate text-gray-700">
-                    {{ transaction.getPurpose() }}
-                  </span>
-                </div>
-                <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                  <span class="flex flex-col justify-center truncate text-gray-700">
-                    {{ transaction.getSum() }}€, gezahlt von {{ transaction.getCreditor() }}
-                  </span>
-                </div>
-                <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-                  <span
-                    class="flex flex-col justify-center text-center truncate text-gray-700"
-                    v-for="debitor in transaction.getDebtors()"
-                    :key="debitor.user"
-                  >
-                    {{ debitor.user }} schuldet {{ debitor.amount }}€
-                  </span>
-                </div>
-              </div>
+            <TransactionTile :transaction="transaction"></TransactionTile>
             </div>
           </div>
         </div>
