@@ -12,13 +12,15 @@ class TransactionEvent extends MessageEvent {
    * @param sum the total amount spent
    * @param creditor the userId of the creditor
    * @param debtors the debtors as an array, each debtor containing their userId and the amount they owe
+   * @param eventId the eventId. Should be set if this event is received from matrix.
    */
   constructor(
     roomId: string,
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {user: string; amount: number}[]
+    debtors: {user: string; amount: number}[],
+    eventId?: string
   ) {
     const content = {
       purpose: purpose,
@@ -27,7 +29,7 @@ class TransactionEvent extends MessageEvent {
       debtors: debtors,
     };
 
-    super(roomId, eventTypes.transaction, content);
+    super(roomId, eventTypes.transaction, content, eventId);
   }
 
   /**

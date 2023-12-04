@@ -116,7 +116,7 @@ class Room {
   public getMemberIds() {
     return this.memberIds;
   }
-  
+
   /**
    * Gets the transaction events of this room.
    * @returns the transaction events as an array
