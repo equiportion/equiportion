@@ -91,10 +91,13 @@ function newTransaction() {
               </div>
             </div>
           </div>
-
-          <!--Plus button-->
-          <div class="self-end lg:self-center mt-5 mb-2">
-            <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
+        </div>
+        <!--Plus button-->
+        <div class="flex flex-row justify-end">
+          <div class="static">
+            <div class="absolute bottom-5 right-5 lg:left-1/2 lg:transform">
+              <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
+            </div>
           </div>
         </div>
       </div>
