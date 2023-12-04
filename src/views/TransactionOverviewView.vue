@@ -52,7 +52,7 @@ function newTransaction() {
             class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
             :placeholderText="room?.getName() ?? '?'"
           />
-          <div class="flex flex-col items-center lg:items-start ml-4 lg:gap-5">
+          <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">
             <h1 class="flex text-3xl font-bold text-gray-900">
               {{ room?.getName() ?? roomId }}
             </h1>
