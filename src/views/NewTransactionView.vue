@@ -7,8 +7,9 @@ import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixCl
 import type AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import {useRoute} from 'vue-router';
+import UserAvatar from '@/components/media/UserAvatar.vue';
 
-const roomId = useRoute().params.roomId;
+const roomId = useRoute().params.roomId.toString();
 const error = ref();
 let creditorId = '';
 const sum = ref<number>(0);
@@ -26,14 +27,17 @@ const isDropdownOpen2 = ref(false);
 
 function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
-  const room = client.getRoom(useRoute().params.roomId.toString());
+  const room = client.getRoom(roomId);
   const memberIds = room.getMemberIds();
-  for (const memberId in memberIds) {
+  for (const memberId of memberIds) {
     members[memberId] = client.getUser(memberId);
+    console.log(memberId);
+    console.log(Object.keys(members).length);
   }
 }
 
 function toggleDropdown1() {
+  console.log(members['@psetest:matrix.org'].getUserId());
   isDropdownOpen1.value = !isDropdownOpen1.value;
 }
 function toggleDropdown2() {
@@ -52,7 +56,7 @@ function createTransaction() {
   }));
   try {
     const transactionEvent = new TransactionEvent(
-      useRoute().params.roomId.toString(),
+      roomId,
       purpose.value,
       sum.value,
       creditorId,
@@ -104,7 +108,8 @@ function selectCreditor(id: string) {
               class="flex flex-col items-center m-10"
               @click="selectCreditor(member.getUserId())"
             >
-              <img :src="member.getAvatarUrl()" alt="Avatar" class="w-10 h-10 rounded-full" />
+              <!--<img :src="member.getAvatarUrl()" alt="Avatar" class="w-10 h-10 rounded-full" />-->
+              <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
               <span class="text-md text-gray-700 font-bold mt-3">{{
                 member.getDisplayname()
               }}</span>
@@ -114,9 +119,8 @@ function selectCreditor(id: string) {
 
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
-          <img
-            :src="members[creditorId].getAvatarUrl()"
-            alt="Avatar"
+          <UserAvatar
+            :user="members[creditorId]"
             class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
             @click="deleteCreditor"
           />
@@ -125,7 +129,7 @@ function selectCreditor(id: string) {
               {{ members[creditorId].getDisplayname() }}
             </h1>
             <span class="text-md text-gray-500">
-              {{ '@' + members[creditorId].getUserId() }}
+              {{ members[creditorId].getUserId() }}
             </span>
           </div>
         </div>
@@ -144,9 +148,8 @@ function selectCreditor(id: string) {
         :key="debtor.getUserId()"
         class="flex flex-col items-center m-10"
       >
-        <img
-          :src="debtor.getAvatarUrl()"
-          alt="Avatar"
+        <UserAvatar
+          :user="members[debtor.getUserId()]"
           class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
           @click="deleteMember(debtor.getUserId())"
         />
@@ -169,7 +172,7 @@ function selectCreditor(id: string) {
               @click="addNewMember(member.getUserId())"
             >
               <template v-if="!debtors.some((debtor) => debtor.getUserId() === member.getUserId())">
-                <img :src="member.getAvatarUrl()" alt="Avatar" class="w-10 h-10 rounded-full" />
+                <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
                 <span class="text-md text-gray-700 font-bold mt-3">{{
                   member.getDisplayname()
                 }}</span>
