@@ -83,6 +83,7 @@ async function savePaymentMethods() {
             saving = true;
             savePaymentMethods();
           "
+          id="button-to-safe"
         >
           Speichern
         </StandardButton>
