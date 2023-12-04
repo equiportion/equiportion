@@ -32,7 +32,9 @@ useAuthenticatedMatrixClient(loadData);
 async function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
   room.value = client.getRoom(roomId);
-  room.value.getTransactionEvents().push(testTransaction);
+  if(room.value.getTransactionEvents().length == 0) {
+    room.value.getTransactionEvents().push(testTransaction);
+  }
   loading.value = false;
 }
 
