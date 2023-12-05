@@ -11,6 +11,11 @@ import router from '@/router';
 import TransactionTile from './partials/TransactionTile.vue';
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
 
+/**
+ * @view {TransactionOverview} - Shows all transactions in a group.
+ * @author Leandro El Omari
+ */
+
 //sets up 2 test users for the text transaction
 const User2 = {
   user: "User2",

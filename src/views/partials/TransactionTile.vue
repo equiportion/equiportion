@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
 
+/**
+ * @partial {TransactionTile} - Partial that shows transactions as a tile
+ * @author Leandro El Omari
+ * 
+ * @prop {transaction} transaction - A transaction.
+ */
 
 const props = defineProps({
     transaction: {
@@ -15,19 +21,19 @@ const props = defineProps({
         <!--first column shows the purpose of the transaction-->
         <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
             <span class="flex flex-col justify-center truncate text-gray-700">
-                {{ transaction.getPurpose() }}
+                {{ props.transaction.getPurpose() }}
             </span>
         </div>
         <!--second column shows the creditor and the amount paid of the transaction-->
         <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
             <span class="flex flex-col justify-center truncate text-gray-700">
-                {{ transaction.getSum() }}€, gezahlt von {{ transaction.getCreditor() }}
+                {{ props.transaction.getSum() }}€, gezahlt von {{ props.transaction.getCreditor() }}
             </span>
         </div>
         <!--third column shows all debitors and the amount they owe-->
         <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
             <span class="flex flex-col justify-center text-center truncate text-gray-700"
-            v-for="debitor in transaction.getDebtors()"
+            v-for="debitor in props.transaction.getDebtors()"
             :key="debitor.user"
             >
                 {{ debitor.user }} schuldet {{ debitor.amount }}€
