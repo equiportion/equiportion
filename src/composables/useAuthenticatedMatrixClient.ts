@@ -23,7 +23,7 @@ export default function useAuthenticatedMatrixClient(
       if (onError) {
         onError();
       }
-      router.push({name: 'landing-page'});
+      // router.push({name: 'landing-page'});
     }
   }
 }

@@ -6,21 +6,22 @@ import AuthenticatedMatrixClient from '@/logic/models-old/clients/AuthenticatedM
 import Room from '@/logic/models-old/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import User from '@/logic/models-old/User';
+import {useClientStateStore} from '@/stores/clientState';
+import { useLoggedInUserStore } from '@/stores/loggedInUser';
+
+const clientStateStore = useClientStateStore();
 
 var client: AuthenticatedMatrixClient;
 var rooms: {[roomId: string]: Room};
 var loggedInUser: User;
 
-const loading = ref(true);
-useAuthenticatedMatrixClient(loadData);
+// useAuthenticatedMatrixClient(loadData);
 
 async function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
 
   rooms = client.getJoinedRooms();
   loggedInUser = client.getLoggedInUser();
-
-  loading.value = false;
 }
 </script>
 <template>
@@ -36,10 +37,14 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
         </p>
       </div>
     </div>
+    
+
+    <div>{{ clientStateStore.numberOfSyncs }}</div>
+    <button @click="useLoggedInUserStore().avatarUrl = undefined">Remove Avatar</button>
 
     <!--Rooms-->
     <div class="flex flex-col items-center gap-2 p-2 lg:p-5" id="rooms">
-      <span class="text-3xl text-gray-300" v-if="loading">
+      <span class="text-3xl text-gray-300" v-if="true">
         <i class="fa-solid fa-spinner animate-spin"></i>
       </span>
       <span
@@ -56,4 +61,3 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
     <!--End of rooms-->
   </MainLayout>
 </template>
-@/logic/models-old/clients/AuthenticatedMatrixClient

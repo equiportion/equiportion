@@ -6,38 +6,24 @@
  *
  * @prop {string} class - CSS class to apply to the image (optional).
  */
-import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import User from '@/logic/models-old/User';
-import AuthenticatedMatrixClient from '@/logic/models-old/clients/AuthenticatedMatrixClient';
+
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
+import {computed} from 'vue';
 
-import {ref} from 'vue';
+const loggedInUserStore = useLoggedInUserStore();
 
-const mxcUrl = ref('');
-const altText = ref('?');
-var client: AuthenticatedMatrixClient;
-var user: User;
-
-function loadUser() {
-  user = client.getLoggedInUser();
-
-  if (!user) {
-    setTimeout(loadUser, 100);
-  } else {
-    mxcUrl.value = user.getAvatarUrl() ?? '';
-    altText.value = user.getDisplayname() ?? user.getUserId();
+const placeholderText = computed(() => {
+  if (loggedInUserStore.userId != '') {
+    return loggedInUserStore.displayname ?? loggedInUserStore.userId;
   }
-}
-
-async function loadData(clientInstance: AuthenticatedMatrixClient) {
-  client = clientInstance;
-
-  loadUser();
-}
-
-useAuthenticatedMatrixClient(loadData);
+  return undefined;
+});
 </script>
 
 <template>
-  <MxcOrPlaceholderImage :mxcUrl="mxcUrl" :placeholderText="altText" />
+  <MxcOrPlaceholderImage
+    :mxcUrl="loggedInUserStore.avatarUrl"
+    :placeholderText="placeholderText ?? '?'"
+  />
 </template>

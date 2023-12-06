@@ -12,11 +12,11 @@
  * @prop {string} [method] - Method to use for thumbnail generation (optional, default: 'crop', options: crop, scale).
  */
 
-import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import AuthenticatedMatrixClient from '@/logic/models-old/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 import {ref, watch} from 'vue';
+import {useClientStateStore} from '@/stores/clientState';
 
 const props = defineProps({
   class: {
@@ -51,19 +51,6 @@ const props = defineProps({
 
 const loading = ref(true);
 const imageUrl = ref('');
-var client: AuthenticatedMatrixClient;
-
-/**
- * Loads the client and saves it in the global variable.
- *
- * @param {AuthenticatedMatrixClient} clientInstance - The client to save.
- * @returns {Promise<void>} - A promise that resolves when the client is saved.
- */
-async function saveClient(clientInstance: AuthenticatedMatrixClient): Promise<void> {
-  client = clientInstance;
-
-  loadThumbnail();
-}
 
 /**
  * Converts a blob to a base64 data url.
@@ -85,6 +72,12 @@ function blobToData(blob: Blob) {
  * @returns {Promise<void>} - A promise that resolves when the thumbnail is saved.
  */
 async function loadThumbnail(): Promise<void> {
+  if (!clientStateStore.created) {
+    return;
+  }
+
+  console.log('loading thumbnail');
+
   loading.value = true;
 
   // split mxc url into server and media id
@@ -92,7 +85,7 @@ async function loadThumbnail(): Promise<void> {
   const serverName = mxcUrlParts[2];
   const mediaId = mxcUrlParts[3];
 
-  const response = await client.getRequest(
+  const response = await AuthenticatedMatrixClient.getClient().getRequest(
     apiEndpoints.thumbnailGet(serverName, mediaId, props.width, props.height, props.method),
     {
       responseType: 'blob',
@@ -106,12 +99,14 @@ async function loadThumbnail(): Promise<void> {
   loading.value = false;
 }
 
-// load client and thumbnail
-useAuthenticatedMatrixClient(saveClient);
-
-watch(props, async () => {
+const clientStateStore = useClientStateStore();
+watch(() => clientStateStore.created, () => {
   loadThumbnail();
 });
+
+watch(props, () => {
+  loadThumbnail();
+}, {immediate: true});
 </script>
 <template>
   <div>
