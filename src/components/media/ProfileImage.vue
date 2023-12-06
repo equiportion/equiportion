@@ -7,8 +7,8 @@
  * @prop {string} class - CSS class to apply to the image (optional).
  */
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import User from '@/logic/models/User';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import User from '@/logic/models-old/User';
+import AuthenticatedMatrixClient from '@/logic/models-old/clients/AuthenticatedMatrixClient';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 
 import {ref} from 'vue';

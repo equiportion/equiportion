@@ -6,7 +6,7 @@ import LoginProcessBase from '@/views/partials/LoginProcessBase.vue';
 import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
 import LoginStepsBar from '@/views/partials/LoginStepsBar.vue';
 
-import MatrixClient from '@/logic/models/clients/MatrixClient.js';
+import MatrixClient from '@/logic/models-old/clients/MatrixClient.js';
 import router from '@/router';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
@@ -57,4 +57,4 @@ async function continueToLogin() {
     </form>
   </LoginProcessBase>
 </template>
-@/logic/models/clients/MatrixClient.js
+@/logic/models-old/clients/MatrixClient.js

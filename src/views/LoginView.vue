@@ -7,7 +7,7 @@ import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
 import LoginStepsBar from '@/views/partials/LoginStepsBar.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
-import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient.js';
+import LoginMatrixClient from '@/logic/models-old/clients/LoginMatrixClient.js';
 import router from '@/router';
 
 const loading = ref(false);
@@ -85,4 +85,4 @@ async function login() {
     </form>
   </LoginProcessBase>
 </template>
-@/logic/models/clients/LoginMatrixClient.js
+@/logic/models-old/clients/LoginMatrixClient.js

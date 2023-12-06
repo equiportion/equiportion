@@ -1,6 +1,6 @@
 import eventTypes from '../constants/eventTypes';
-import type MatrixEvent from '../models/events/MatrixEvent';
-import TransactionEvent from '../models/events/TransactionEvent';
+import type MatrixEvent from '../models-old/events/MatrixEvent';
+import TransactionEvent from '../models-old/events/TransactionEvent';
 
 /**
  * Parses an event received from the Matrix API as a json object to a new MatrixEvent object.

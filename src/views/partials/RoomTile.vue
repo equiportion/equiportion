@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
-import Room from '@/logic/models/Room';
+import Room from '@/logic/models-old/Room';
 import router from '@/router';
 
 const props = defineProps({

@@ -2,10 +2,10 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoomTile from '@/views/partials/RoomTile.vue';
 import {ref} from 'vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import Room from '@/logic/models/Room';
+import AuthenticatedMatrixClient from '@/logic/models-old/clients/AuthenticatedMatrixClient';
+import Room from '@/logic/models-old/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import User from '@/logic/models/User';
+import User from '@/logic/models-old/User';
 
 var client: AuthenticatedMatrixClient;
 var rooms: {[roomId: string]: Room};
@@ -42,14 +42,18 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
       <span class="text-3xl text-gray-300" v-if="loading">
         <i class="fa-solid fa-spinner animate-spin"></i>
       </span>
-      <span class="text-sm text-gray-300" v-if="rooms && Object.keys(rooms).length <= 0" id="no-rooms-message">
+      <span
+        class="text-sm text-gray-300"
+        v-if="rooms && Object.keys(rooms).length <= 0"
+        id="no-rooms-message"
+      >
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">
-        <RoomTile :room="room"/>
+        <RoomTile :room="room" />
       </template>
     </div>
     <!--End of rooms-->
   </MainLayout>
 </template>
-@/logic/models/clients/AuthenticatedMatrixClient
+@/logic/models-old/clients/AuthenticatedMatrixClient
