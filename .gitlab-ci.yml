@@ -77,12 +77,10 @@ eslint:
       codequality: gl-codequality.json
 
 prettier:
+  image: node:14
   stage: test
-  needs:
-    - install-npm-dependencies
-  dependencies:
-    - install-npm-dependencies
   script:
+    - npm ci
     - npx prettier-formatter-gitlab 'prettier -c src/'
   tags:
     - build-2
