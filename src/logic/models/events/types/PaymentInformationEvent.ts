@@ -1,5 +1,5 @@
 import type PaymentInformation from '@/logic/models-old/payment-information/PaymentInformation';
-import StateEvent from './StateEvent';
+import StateEvent from '../StateEvent';
 import eventTypes from '@/logic/constants/eventTypes';
 
 /**

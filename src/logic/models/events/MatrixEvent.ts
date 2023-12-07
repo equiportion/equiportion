@@ -4,11 +4,9 @@
 abstract class MatrixEvent {
   protected content: any;
   protected roomId: string;
-  protected type: string;
 
-  constructor(roomId: string, type: string, content: any) {
+  constructor(roomId: string, content: any) {
     this.roomId = roomId;
-    this.type = type;
     this.content = content;
   }
 
@@ -23,8 +21,10 @@ abstract class MatrixEvent {
    * @returns the content
    */
   public getContent() {
-    return this.content;
+    return this.ontent;
   }
+
+  public abstract getType(): string;
 }
 
 export default MatrixEvent;

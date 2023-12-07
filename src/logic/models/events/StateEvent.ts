@@ -14,11 +14,12 @@ class StateEvent extends MatrixEvent {
    * @param content the content of the state event
    * @param stateKey the key of the state. Defaults to an empty string.
    */
-  constructor(roomId: string, eventType: string, content: any, stateKey?: string) {
-    super(roomId, eventType, content);
+  constructor(roomId: string, content: any, stateKey?: string) {
+    super(roomId, content);
 
     this.stateKey = stateKey ?? '';
   }
+
   public getPutUrl(): string {
     return apiEndpoints.putStateEvent(this.roomId, this.type, this.stateKey);
   }
