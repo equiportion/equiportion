@@ -1,10 +1,12 @@
 import eventTypes from '@/logic/constants/eventTypes';
-import MessageEvent from './MessageEvent';
+import MessageEvent from '../MessageEvent';
 
 /**
  * A transaction event modelled after this project's documentation.
  */
 class TransactionEvent extends MessageEvent {
+  public static TYPE = 'edu.kit.kastel.dsn.pse.transaction';
+
   /**
    * Creates a new TransactionEvent
    * @param roomId the roomId of the room this event is published to
@@ -27,11 +29,15 @@ class TransactionEvent extends MessageEvent {
       debtors: debtors,
     };
 
-    super(roomId, eventTypes.transaction, content);
+    super(roomId, content);
+  }
+
+  public getType(): string {
+    return TransactionEvent.TYPE;
   }
 
   /**
-   * Get's this TransactionEvent's purpose.
+   * Gets this TransactionEvent's purpose.
    * @returns the purpose
    */
   public getPurpose(): string {
@@ -39,7 +45,7 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Get's this TransactionEvent's sum.
+   * Gets this TransactionEvent's sum.
    * @returns the sum
    */
   public getSum(): number {
@@ -47,7 +53,7 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Get's this TransactionEvent's creditor.
+   * Gets this TransactionEvent's creditor.
    * @returns the userId of the creditor
    */
   public getCreditor(): string {
@@ -55,7 +61,7 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Get's this TransactionEvent's debtors.
+   * Gets this TransactionEvent's debtors.
    * @returns an array of debtors each containing a userId and the amount they owe
    */
   public getDebtors(): [{user: string; amount: number}] {
