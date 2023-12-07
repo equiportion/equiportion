@@ -76,6 +76,20 @@ eslint:
     reports:
       codequality: gl-codequality.json
 
+prettier:
+  stage: test
+  needs:
+    - install-npm-dependencies
+  dependencies:
+    - install-npm-dependencies
+  script:
+    - prettier-formatter-gitlab 'prettier -c src/'
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
+
 cypress:
   stage: test
   image: cypress/base:latest
