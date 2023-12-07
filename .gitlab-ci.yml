@@ -79,6 +79,8 @@ eslint:
 prettier:
   image: node:14
   stage: test
+  needs: []
+  dependencies: []
   script:
     - npm ci
     - npx prettier-formatter-gitlab 'prettier -c src/'
