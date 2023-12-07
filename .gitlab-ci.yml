@@ -83,7 +83,7 @@ prettier:
   dependencies:
     - install-npm-dependencies
   script:
-    - prettier-formatter-gitlab 'prettier -c src/'
+    - npx prettier-formatter-gitlab 'prettier -c src/'
   tags:
     - build-2
   artifacts:
