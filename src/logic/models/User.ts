@@ -1,0 +1,75 @@
+/**
+ * A matrix user. Can be either the current logged in user or any member of any joined room.
+ */
+class User {
+  private userId: string;
+  private displayname?: string;
+  private avatarUrl?: string;
+
+  /**
+   * Creates a new user using the given parameters.
+   * @param userId the user's userId, required
+   * @param [displayname] the user's displayname (optional)
+   * @param [avatarUrl] the user's avatar url (optional)
+   */
+  constructor(
+    userId: string,
+    displayname?: string,
+    avatarUrl?: string,
+  ) {
+    this.userId = userId;
+    this.displayname = displayname;
+    this.avatarUrl = avatarUrl;
+  }
+
+  /**
+   * Gets this user's userId.
+   * @returns the userId
+   */
+  public getUserId(): string {
+    return this.userId;
+  }
+
+  public setUserId(userId: string): boolean {
+    if (this.userId != '' || userId == '') {
+      return false;
+    }
+
+    this.userId = userId;
+    return true;
+  }
+
+  /**
+   * Gets this user's displayname.
+   * @returns the displayname if set, else undefined
+   */
+  public getDisplayname(): string | undefined {
+    return this.displayname;
+  }
+
+  /**
+   * Sets this user's displayname.
+   * @param [displayname] the new displayname (optional)
+   */
+  public setDisplayname(displayname?: string): void {
+    this.displayname = displayname;
+  }
+
+  /**
+   * Gets this user's avatarUrl.
+   * @returns the avatarUrl if set, else undefined
+   */
+  public getAvatarUrl(): string | undefined {
+    return this.avatarUrl;
+  }
+
+  /**
+   * Sets this user's avatarUrl.
+   * @param [avatarUrl] the new avatarUrl (optional)
+   */
+  public setAvatarUrl(avatarUrl?: string): void {
+    this.avatarUrl = avatarUrl;
+  }
+}
+
+export default User;

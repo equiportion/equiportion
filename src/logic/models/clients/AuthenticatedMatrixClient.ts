@@ -58,16 +58,17 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * Checks if this client has valid authentication data and if so, initiates and syncs it.
    */
   private async initiate(): Promise<void> {
-    const loggedInUserStore = useLoggedInUserStore();
+    const loggedInUser = useLoggedInUserStore().user;
     if (!(await super.isHomeserverUrlValid())) {
       throw new InvalidHomeserverUrlError();
     }
 
     const response = await this.getRequest(apiEndpoints.whoami);
-    if (!response?.data.user_id) {
+    const userId = response?.data.user_id;
+    if (!userId) {
       //TODO: Fehler
     } else {
-      loggedInUserStore.userId = response.data.user_id;
+      loggedInUser.setUserId(userId as string);
     }
 
     useClientStateStore().numberOfSyncs = 0;
@@ -124,15 +125,15 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * Only to be used if there are no joined rooms the user can be updated from.
    */
   private async updateLoggedInUser(): Promise<void> {
-    const loggedInUserStore = useLoggedInUserStore();
+    const loggedInUser = useLoggedInUserStore().user;
 
-    const response = await this.getRequest(apiEndpoints.profile(loggedInUserStore.userId));
+    const response = await this.getRequest(apiEndpoints.profile(loggedInUser.getUserId()));
 
     const displayname = response?.data.displayname;
     const avatarUrl = response?.data.avatar_url;
 
-    loggedInUserStore.displayname = displayname;
-    loggedInUserStore.avatarUrl = avatarUrl;
+    loggedInUser.setDisplayname(displayname);
+    loggedInUser.setAvatarUrl(avatarUrl);
   }
 
   /**

@@ -37,10 +37,6 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
         </p>
       </div>
     </div>
-    
-
-    <div>{{ clientStateStore.numberOfSyncs }}</div>
-    <button @click="useLoggedInUserStore().avatarUrl = undefined">Remove Avatar</button>
 
     <!--Rooms-->
     <div class="flex flex-col items-center gap-2 p-2 lg:p-5" id="rooms">

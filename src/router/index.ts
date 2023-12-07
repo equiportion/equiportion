@@ -6,7 +6,6 @@ import EnterHomeserverView from '@/views/EnterHomeserverView.vue';
 import ProfilePageView from '@/views/ProfilePageView.vue';
 import TransactionOverviewView from '@/views/TransactionOverviewView.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import {useClientStateStore} from '@/stores/clientState';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,11 +37,17 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfilePageView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/transactions/:roomId',
       name: 'transactions',
       component: TransactionOverviewView,
+      meta: {
+        requiresAuth: true,
+      },
     },
   ],
 });

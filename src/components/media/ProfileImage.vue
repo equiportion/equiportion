@@ -11,11 +11,11 @@ import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue'
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {computed} from 'vue';
 
-const loggedInUserStore = useLoggedInUserStore();
+const loggedInUser = useLoggedInUserStore().user;
 
 const placeholderText = computed(() => {
-  if (loggedInUserStore.userId != '') {
-    return loggedInUserStore.displayname ?? loggedInUserStore.userId;
+  if (loggedInUser.getUserId() != '') {
+    return loggedInUser.getDisplayname() ?? loggedInUser.getUserId();
   }
   return undefined;
 });
@@ -23,7 +23,7 @@ const placeholderText = computed(() => {
 
 <template>
   <MxcOrPlaceholderImage
-    :mxcUrl="loggedInUserStore.avatarUrl"
+    :mxcUrl="loggedInUser.getAvatarUrl()"
     :placeholderText="placeholderText ?? '?'"
   />
 </template>
