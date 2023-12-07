@@ -84,12 +84,13 @@ prettier:
     - install-npm-dependencies
   script:
     - npx prettier-formatter-gitlab 'prettier -l src/'
-    - echo gl-codequality.json
   tags:
     - build-2
   artifacts:
     reports:
       codequality: gl-codequality.json
+    paths:
+      - gl-codequality.json
 
 cypress:
   stage: test
