@@ -76,8 +76,6 @@ async function loadThumbnail(): Promise<void> {
     return;
   }
 
-  console.log('loading thumbnail');
-
   loading.value = true;
 
   // split mxc url into server and media id
