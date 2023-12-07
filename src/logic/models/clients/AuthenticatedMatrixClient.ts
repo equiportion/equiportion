@@ -1,20 +1,31 @@
+/** Constants */
 import cookieNames from '@/logic/constants/cookieNames';
-import {getCookie} from '@/logic/utils/cookies';
-import MatrixClient from '@/logic/models-old/clients/MatrixClient';
-import Room from '@/logic/models-old/Room';
-import {ref, type Ref} from 'vue';
-import User from '@/logic/models-old/User';
-import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
-import type MatrixEvent from '@/logic/models-old/events/MatrixEvent';
-import MatrixError from './MatrixError';
-import PaymentInformationEvent from '@/logic/models-old/events/PaymentInformationEvent';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
-import eventTypes from '@/logic/constants/eventTypes';
+
+/** Models */
+import MatrixClient from '@/logic/models/clients/MatrixClient';
+import Room from '@/logic/models/Room';
+
+/** Errors */
+import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
+import MatrixError from './MatrixError';
+
+/** Stores */
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useClientStateStore} from '@/stores/clientState';
+import {useRoomsStore} from '@/stores/rooms';
+
+/** Types */
+import type MatrixEvent from '@/logic/models/events/MatrixEvent';
+import type {AxiosResponse} from 'axios';
+
+/** Utils */
+import {getCookie} from '@/logic/utils/cookies';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 class AuthenticatedMatrixClient extends MatrixClient {
   private static client: AuthenticatedMatrixClient;
@@ -86,7 +97,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Updates the clients data using the matrix sync-API-endpoint. Updates the rooms the logged in user has joined and all members of those rooms.
+   * Updates the clients data using the matrix sync-API-endpoint.
+   * Updates the rooms the logged in user has joined and all members of those rooms.
    * @returns {Promise<void>} a promise that resolves when the client has been synced
    */
   public async sync(): Promise<void> {
@@ -123,15 +135,20 @@ class AuthenticatedMatrixClient extends MatrixClient {
     // Save the next_batch token in order to tell the homeserver what the previous sync state was when syncing again
     this.nextBatch = response.data.next_batch;
 
+    const roomsStore = useRoomsStore();
+    const rooms = roomsStore.rooms;
+
     const joinedRoomsData = response.data.rooms?.join;
     if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
       for (const roomId in joinedRoomsData) {
-        const room = this.joinedRooms.value[roomId];
-        if (room) {
-          room.update(joinedRoomsData[roomId], this);
-        } else {
-          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId], this);
+        const room = rooms[roomId];
+
+        // Create a new room if it doesn't exist yet
+        if (!room) {
+          rooms[roomId] = new Room(roomId);
         }
+
+        rooms[roomId].update(joinedRoomsData[roomId]);
       }
     }
   }
@@ -156,34 +173,11 @@ class AuthenticatedMatrixClient extends MatrixClient {
   /**
    * Publishes an event to the matrix homeserver.
    * @param {MatrixEvent} event the event to publish
-   * @returns {Promise<AxiosResponse>} the HTTP response
+   * @returns {Promise<AxiosResponse>|undefined} the HTTP response or undefined if the request failed
    */
-  public async publishEvent(event: MatrixEvent): Promise<AxiosResponse> {
+  public async publishEvent(event: MatrixEvent): Promise<AxiosResponse | undefined> {
     const response = await this.putRequest(event.getPutUrl(), event.getContent());
     return response;
-  }
-
-  /**
-   * Updates a user using a room's state event.
-   * @param {string} userId the userId of the user to update
-   * @param event the state event to update the user with
-   */
-  public updateUserFromStateEvent(userId: string, event: any) {
-    if (!this.getUser(userId)) {
-      this.users.value[userId] = new User(userId);
-    }
-
-    const user = this.getUser(userId);
-    switch (event.type) {
-      case eventTypes.paymentInformation:
-        user.parsePaymentInformationEvent(event);
-        break;
-      case eventTypes.roomMember:
-        user.parseMemberEvent(event);
-        break;
-      default:
-        break;
-    }
   }
 }
 
