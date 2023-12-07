@@ -33,12 +33,17 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
   }
 
+  /**
+   * Gets the singleton instance of this class.
+   * @returns {AuthenticatedMatrixClient} the singleton instance
+   */
   public static getClient(): AuthenticatedMatrixClient {
     return AuthenticatedMatrixClient.client;
   }
 
   /**
    * Tries to create a new client instance and checks if it is valid. If not, the client instance is set to undefined.
+   * @returns {Promise<void>} a promise that resolves when the client has been created
    */
   public static async createClient(): Promise<void> {
     if (AuthenticatedMatrixClient.client) {
@@ -56,6 +61,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
   /**
    * Checks if this client has valid authentication data and if so, initiates and syncs it.
+   * @returns {Promise<void>} a promise that resolves when the client has been initiated
    */
   private async initiate(): Promise<void> {
     const loggedInUser = useLoggedInUserStore().user;
@@ -81,6 +87,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
   /**
    * Updates the clients data using the matrix sync-API-endpoint. Updates the rooms the logged in user has joined and all members of those rooms.
+   * @returns {Promise<void>} a promise that resolves when the client has been synced
    */
   public async sync(): Promise<void> {
     const clientStateStore = useClientStateStore();
@@ -90,39 +97,49 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
     clientStateStore.syncing = true;
 
-    // const data = {
-    //   since: this.nextBatch ?? '',
-    // };
-
-    // const response = await this.getRequest(apiEndpoints.sync, data);
-
-    // //Save the next_batch token in order to tell the homeserver what the previous sync state was when syncing again
-    // this.nextBatch = response.data.next_batch;
-
-    // const joinedRoomsData = response.data.rooms?.join;
-
-    // if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
-    //   //User has joined rooms, update them
-    //   for (const roomId in joinedRoomsData) {
-    //     const room = this.joinedRooms.value[roomId];
-
-    //     if (room) {
-    //       room.update(joinedRoomsData[roomId], this);
-    //     } else {
-    //       this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId], this);
-    //     }
-    //   }
-    // }
-
-    Promise.all([this.updateLoggedInUser()]).then((values) => {
+    await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then((values) => {
       clientStateStore.numberOfSyncs++;
       clientStateStore.syncing = false;
     });
   }
 
   /**
+   * Updates the joined rooms using the matrix sync-API-endpoint.
+   * @returns {Promise<void>} a promise that resolves when the rooms have been updated
+   */
+  private async updateJoinedRooms(): Promise<void> {
+    const data = {
+      since: this.nextBatch ?? '',
+    };
+
+    // Send a request to the homeserver to get the latest events (and do error handling)
+    const response = await this.getRequest(apiEndpoints.sync, data);
+    if (!response) {
+      throw new Error('No response from homeserver');
+    } else if (response.status !== 200) {
+      throw new MatrixError(response);
+    }
+
+    // Save the next_batch token in order to tell the homeserver what the previous sync state was when syncing again
+    this.nextBatch = response.data.next_batch;
+
+    const joinedRoomsData = response.data.rooms?.join;
+    if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
+      for (const roomId in joinedRoomsData) {
+        const room = this.joinedRooms.value[roomId];
+        if (room) {
+          room.update(joinedRoomsData[roomId], this);
+        } else {
+          this.joinedRooms.value[roomId] = new Room(roomId, joinedRoomsData[roomId], this);
+        }
+      }
+    }
+  }
+
+  /**
    * Updates the logged in user using the dedicated matrix API endpoint.
    * Only to be used if there are no joined rooms the user can be updated from.
+   * @returns {Promise<void>} a promise that resolves when the user has been updated
    */
   private async updateLoggedInUser(): Promise<void> {
     const loggedInUser = useLoggedInUserStore().user;
@@ -137,80 +154,18 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Publishes the logged in user's payment information to every joined room.
-   */
-  public async publishPaymentInformations(): Promise<void> {
-    const loggedInUser = this.getLoggedInUser();
-    if (!loggedInUser) {
-      return;
-    }
-
-    const paymentInformations = loggedInUser.getPaymentInformations();
-    if (!paymentInformations) {
-      return;
-    }
-
-    try {
-      for (const roomId in this.joinedRooms.value) {
-        const paymentInformationEvent = new PaymentInformationEvent(
-          roomId,
-          this.loggedInUserId.value,
-          paymentInformations
-        );
-        await this.publishEvent(paymentInformationEvent);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  /**
    * Publishes an event to the matrix homeserver.
-   * @param event the event to publish
-   * @returns the HTTP response
+   * @param {MatrixEvent} event the event to publish
+   * @returns {Promise<AxiosResponse>} the HTTP response
    */
-  public async publishEvent(event: MatrixEvent) {
+  public async publishEvent(event: MatrixEvent): Promise<AxiosResponse> {
     const response = await this.putRequest(event.getPutUrl(), event.getContent());
     return response;
   }
 
   /**
-   * Gets the logged in user.
-   * @returns the logged in user
-   */
-  public getLoggedInUser(): User {
-    return this.getUser(this.loggedInUserId.value);
-  }
-
-  /**
-   * Gets all rooms the logged in user has joined.
-   * @returns the rooms
-   */
-  public getJoinedRooms(): {[roomId: string]: Room} {
-    return this.joinedRooms.value;
-  }
-
-  /**
-   * Gets a specific room the logged in user has joined.
-   * @param roomId the roomId of the room to get
-   * @returns the room
-   */
-  public getRoom(roomId: string): Room {
-    return this.joinedRooms.value[roomId];
-  }
-
-  /**
-   * Gets a specific user that is a member of a room the logged in user has joined.
-   * @param userId the userId of the user to get
-   * @returns
-   */
-  public getUser(userId: string): User {
-    return this.users.value[userId];
-  }
-
-  /**
    * Updates a user using a room's state event.
-   * @param userId the userId of the user to update
+   * @param {string} userId the userId of the user to update
    * @param event the state event to update the user with
    */
   public updateUserFromStateEvent(userId: string, event: any) {
