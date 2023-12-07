@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
-    "@studiometa/prettier-formatter-gitlab": "^1.1.2",
+    "@studiometa/prettier-formatter-gitlab": "github:philippstappert/prettier-formatter-gitlab",
     "@tailwindcss/forms": "^0.5.7",
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^18.18.5",
