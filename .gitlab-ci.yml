@@ -79,10 +79,11 @@ eslint:
 prettier:
   image: node:14
   stage: test
-  needs: []
-  dependencies: []
+  needs:
+    - install-npm-dependencies
+  dependencies:
+    - install-npm-dependencies
   script:
-    - npm install
     - npx prettier-formatter-gitlab 'prettier -c src/'
   tags:
     - build-2
