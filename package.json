@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
+    "@studiometa/prettier-formatter-gitlab": "^1.1.2",
     "@tailwindcss/forms": "^0.5.7",
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^18.18.5",
@@ -32,7 +33,8 @@
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.16",
     "cypress": "^13.3.1",
-    "eslint": "^8.49.0",
+    "eslint": "^8.55.0",
+    "eslint-formatter-gitlab": "^5.1.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.17.0",
     "npm-run-all2": "^6.1.1",
