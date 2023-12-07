@@ -77,7 +77,6 @@ eslint:
       codequality: gl-codequality.json
 
 prettier:
-  image: node:14
   stage: test
   needs:
     - install-npm-dependencies
