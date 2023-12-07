@@ -53,13 +53,13 @@ const inputValue = computed({
   <div>
     <label for="Email" class="block text-sm font-medium text-gray-700"> {{ label }} </label>
     <InputField
+      :id="id"
+      v-model="inputValue"
       class="mt-1"
       :type="type"
-      :id="id"
       :name="name"
       :placeholder="placeholder"
-      v-model="inputValue"
     />
-    <small class="block text-sm text-red-500" v-if="error" id="error-message"> {{ error }} </small>
+    <small v-if="error" id="error-message" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
 </template>

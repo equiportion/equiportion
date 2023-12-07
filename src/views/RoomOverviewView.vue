@@ -7,7 +7,7 @@ import Room from '@/logic/models-old/Room';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import User from '@/logic/models-old/User';
 import {useClientStateStore} from '@/stores/clientState';
-import { useLoggedInUserStore } from '@/stores/loggedInUser';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 const clientStateStore = useClientStateStore();
 
@@ -38,15 +38,17 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
       </div>
     </div>
 
+    {{ clientStateStore.numberOfSyncs }}
+
     <!--Rooms-->
-    <div class="flex flex-col items-center gap-2 p-2 lg:p-5" id="rooms">
-      <span class="text-3xl text-gray-300" v-if="true">
+    <div id="rooms" class="flex flex-col items-center gap-2 p-2 lg:p-5">
+      <span v-if="true" class="text-3xl text-gray-300">
         <i class="fa-solid fa-spinner animate-spin"></i>
       </span>
       <span
-        class="text-sm text-gray-300"
         v-if="rooms && Object.keys(rooms).length <= 0"
         id="no-rooms-message"
+        class="text-sm text-gray-300"
       >
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>

@@ -19,7 +19,7 @@ const buttonClasses = computed(() => {
 });
 </script>
 <template>
-  <button :class="buttonClasses" @click="emit('continue')" :disabled="loading">
+  <button :class="buttonClasses" :disabled="loading" @click="emit('continue')">
     <span v-show="!loading">
       <slot />
     </span>

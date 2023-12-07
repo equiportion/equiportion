@@ -23,7 +23,7 @@ const placeholderText = computed(() => {
 
 <template>
   <MxcOrPlaceholderImage
-    :mxcUrl="loggedInUser.getAvatarUrl()"
-    :placeholderText="placeholderText ?? '?'"
+    :mxc-url="loggedInUser.getAvatarUrl()"
+    :placeholder-text="placeholderText ?? '?'"
   />
 </template>

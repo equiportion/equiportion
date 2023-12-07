@@ -43,7 +43,7 @@ async function login() {
 
 <template>
   <LoginProcessBase>
-    <form @submit.prevent="login" class="mt-8 flex flex-col gap-6 w-full">
+    <form class="mt-8 flex flex-col gap-6 w-full" @submit.prevent="login">
       <LoginStepsBar :active="2" />
 
       <span class="text-center"
@@ -59,26 +59,26 @@ async function login() {
       </SystemAlert>
 
       <InputFieldWithLabelAndError
-        type="text"
         id="username"
+        v-model:model-value="username"
+        type="text"
         name="username"
         placeholder="z.B. @maxmustermann:matrix.org"
         label="Benutzername"
-        v-model:model-value="username"
-        v-bind:error="error"
+        :error="error"
       />
       <InputFieldWithLabelAndError
-        type="password"
         id="homeserver"
+        v-model:model-value="password"
+        type="password"
         name="homeserver"
         placeholder="Matrix-Passwort eingeben..."
         label="Passwort"
-        v-model:model-value="password"
-        v-bind:error="error"
+        :error="error"
       />
 
       <div class="sm:flex sm:items-center sm:gap-4">
-        <LoginContinueButton :loading="loading" @continue="login" id="loginbutton">
+        <LoginContinueButton id="loginbutton" :loading="loading" @continue="login">
           Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>

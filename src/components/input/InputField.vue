@@ -40,11 +40,11 @@ const inputValue = computed({
 </script>
 <template>
   <input
-    :type="type"
     :id="id"
+    v-model="inputValue"
+    :type="type"
     :name="name"
     class="w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
     :placeholder="placeholder"
-    v-model="inputValue"
   />
 </template>

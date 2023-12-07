@@ -64,7 +64,7 @@ const placeholderUrl = computed(() => {
 <template>
   <MxcThumbnail
     v-if="mxcUrl"
-    :mxcUrl="mxcUrl"
+    :mxc-url="mxcUrl"
     alt=""
     :title="title"
     :width="width"

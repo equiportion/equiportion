@@ -67,8 +67,8 @@ function logout() {
               <template #trigger>
                 <MenuProfilePicture id="profile-picture" />
               </template>
-              <DropdownLink to="/profile" id="profil-ansicht">Profil</DropdownLink>
-              <DropdownButton @click="logout" id="logout-button"> Abmelden </DropdownButton>
+              <DropdownLink id="profil-ansicht" to="/profile">Profil</DropdownLink>
+              <DropdownButton id="logout-button" @click="logout"> Abmelden </DropdownButton>
             </DropdownMenu>
           </div>
         </div>
