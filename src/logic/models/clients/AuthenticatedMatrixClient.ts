@@ -83,7 +83,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const response = await this.getRequest(apiEndpoints.whoami);
     const userId = response?.data.user_id;
     if (!userId) {
-      //TODO: Fehler
+      //TODO: Error
     } else {
       loggedInUser.setUserId(userId as string);
     }
@@ -107,8 +107,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
       //A sync is already in progress.
       return;
     }
-    clientStateStore.syncing = true;
 
+    clientStateStore.syncing = true;
     await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then((values) => {
       clientStateStore.numberOfSyncs++;
       clientStateStore.syncing = false;
@@ -141,14 +141,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const joinedRoomsData = response.data.rooms?.join;
     if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
       for (const roomId in joinedRoomsData) {
-        const room = rooms[roomId];
-
         // Create a new room if it doesn't exist yet
-        if (!room) {
+        if (!rooms[roomId]) {
           rooms[roomId] = new Room(roomId);
         }
 
-        rooms[roomId].update(joinedRoomsData[roomId]);
+        rooms[roomId].sync(joinedRoomsData[roomId]);
       }
     }
   }

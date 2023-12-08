@@ -1,5 +1,4 @@
-import eventTypes from '@/logic/constants/eventTypes';
-import MessageEvent from '../MessageEvent';
+import MessageEvent from './MessageEvent';
 
 /**
  * A transaction event modelled after this project's documentation.
@@ -7,8 +6,14 @@ import MessageEvent from '../MessageEvent';
 class TransactionEvent extends MessageEvent {
   public static TYPE = 'edu.kit.kastel.dsn.pse.transaction';
 
+  private purpose: string;
+  private sum: number;
+  private creditor: string;
+  private debtors: {user: string; amount: number}[];
+
   /**
    * Creates a new TransactionEvent
+   * @param eventId the eventId of this event (optional, only to be set if this event was received from the matrix api)
    * @param roomId the roomId of the room this event is published to
    * @param purpose the description of the transaction
    * @param sum the total amount spent
@@ -16,20 +21,41 @@ class TransactionEvent extends MessageEvent {
    * @param debtors the debtors as an array, each debtor containing their userId and the amount they owe
    */
   constructor(
+    eventId: string,
     roomId: string,
+
     purpose: string,
     sum: number,
     creditor: string,
     debtors: {user: string; amount: number}[]
   ) {
-    const content = {
-      purpose: purpose,
-      sum: sum,
-      creditor: creditor,
-      debtors: debtors,
-    };
+    super(eventId, roomId);
 
-    super(roomId, content);
+    this.purpose = purpose;
+    this.sum = sum;
+    this.creditor = creditor;
+    this.debtors = debtors;
+  }
+
+  /**
+   * Executes this event on its room
+   * @returns {void}
+   */
+  public execute(): void {
+    return;
+  }
+
+  /**
+   * Gets the content of this event as a Json object
+   * @returns {any} the content of this event
+   */
+  public getContent(): any {
+    return {
+      purpose: this.purpose,
+      sum: this.sum,
+      creditor: this.creditor,
+      debtors: this.debtors,
+    };
   }
 
   /**
@@ -45,7 +71,7 @@ class TransactionEvent extends MessageEvent {
    * @returns the purpose
    */
   public getPurpose(): string {
-    return this.content.purpose;
+    return this.purpose;
   }
 
   /**
@@ -53,7 +79,7 @@ class TransactionEvent extends MessageEvent {
    * @returns the sum
    */
   public getSum(): number {
-    return this.content.sum;
+    return this.sum;
   }
 
   /**
@@ -61,15 +87,15 @@ class TransactionEvent extends MessageEvent {
    * @returns the userId of the creditor
    */
   public getCreditor(): string {
-    return this.content.creditor;
+    return this.creditor;
   }
 
   /**
    * Gets this TransactionEvent's debtors.
    * @returns an array of debtors each containing a userId and the amount they owe
    */
-  public getDebtors(): [{user: string; amount: number}] {
-    return this.content.debtors;
+  public getDebtors(): {user: string; amount: number}[] {
+    return this.debtors;
   }
 }
 

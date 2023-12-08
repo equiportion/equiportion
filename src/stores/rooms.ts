@@ -14,5 +14,5 @@ export const useRoomsStore = defineStore('rooms', () => {
     return rooms.value[roomId];
   }
 
-  return {rooms};
+  return {rooms, getRoom};
 });

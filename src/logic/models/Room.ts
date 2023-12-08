@@ -1,8 +1,8 @@
-import eventTypes from '../constants/eventTypes';
-import {parseTransactionEvent} from '../utils/eventParser';
+import {parseEvent, parseTransactionEvent} from '../utils/eventParser';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import TransactionEvent from '@/logic/models/events/types/TransactionEvent';
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import type MatrixEvent from './events/MatrixEvent';
+import StateEvent from './events/StateEvent';
 
 /**
  * A matrix room the logged in user has joined.
@@ -18,15 +18,15 @@ class Room {
 
   private memberIds: Set<string> = new Set();
 
-  // private transactionEvents: TransactionEvent[] = [];
-
-  private events: MatrixEvent[] = [];
+  private eventIds: string[] = [];
+  private events: {[eventId: string]: MatrixEvent} = {};
 
   /**
    * Creates a new Room using data from the sync-API.
    * @param {string} roomId the rooms id
    */
   constructor(roomId: string) {
+    this.eventIds.push();
     this.roomId = roomId;
   }
 
@@ -35,48 +35,29 @@ class Room {
    *
    * @param data the data from the sync-API
    */
-  public update(data: any) {
-    const client = AuthenticatedMatrixClient.getClient();
-
+  public sync(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
-    for (const stateEvent of stateEvents) {
-      //  this.parseEvent(stateEvent, client);
-    }
-    for (const timelineEvent of timelineEvents) {
-      // this.parseEvent(timelineEvent, client);
-    }
-  }
 
-  /**
-   * Parses an event from the sync-API and updates this room accordingly.
-   * @param event the event to parse
-   */
-  private parseEvent(event: any) {
-    //TODO: migrate to eventParser.ts
-    switch (event.type) {
-      case eventTypes.transaction:
-        this.transactionEvents.push(parseTransactionEvent(event));
-        break;
-      case eventTypes.roomMember:
-        this.memberIds.add(event.state_key);
-        // client.updateUserFromStateEvent(event.state_key, event);
-        break;
-      case eventTypes.roomName:
-        this.name = event.content.name;
-        break;
-      case eventTypes.roomAvatar:
-        this.avatarUrl = event.content.url;
-        break;
-      case eventTypes.roomTopic:
-        this.topic = event.content.topic;
-        break;
-      case eventTypes.paymentInformation:
-        this.memberIds.add(event.state_key);
-        client.updateUserFromStateEvent(event.state_key, event);
-        break;
-      default:
-        break;
+    for (const stateEvent of stateEvents) {
+      const event = parseEvent(stateEvent);
+
+      event?.execute();
+    }
+
+    for (const timelineEvent of timelineEvents) {
+      const event = parseEvent(timelineEvent);
+      if (!event) {
+        continue;
+      }
+
+      const eventId = event.getEventId()!;
+      if (!this.events[eventId]) {
+        this.eventIds.push(eventId);
+      }
+      this.events[eventId] = event;
+
+      event.execute();
     }
   }
 
@@ -94,6 +75,10 @@ class Room {
    */
   public getName() {
     return this.name;
+  }
+
+  public setName(name: string) {
+    this.name = name;
   }
 
   /**

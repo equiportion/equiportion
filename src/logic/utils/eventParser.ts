@@ -1,6 +1,6 @@
-import eventTypes from '../constants/eventTypes';
-import type MatrixEvent from '../models-old/events/MatrixEvent';
-import TransactionEvent from '../models-old/events/TransactionEvent';
+import MRoomNameEvent from '../models/events/MRoomNameEvent';
+import MatrixEvent from '../models/events/MatrixEvent';
+import TransactionEvent from '../models/events/TransactionEvent';
 
 /**
  * Parses an event received from the Matrix API as a json object to a new MatrixEvent object.
@@ -11,18 +11,10 @@ function parseEvent(eventJson: any): MatrixEvent | undefined {
   try {
     //TODO: Implement other event types
     switch (eventJson.type) {
-      case eventTypes.transaction:
+      case MRoomNameEvent.TYPE:
+        return parseMRoomNameEvent(eventJson);
+      case TransactionEvent.TYPE:
         return parseTransactionEvent(eventJson);
-      case eventTypes.paymentInformation:
-        return undefined;
-      case eventTypes.roomMember:
-        return undefined;
-      case eventTypes.roomName:
-        return undefined;
-      case eventTypes.roomTopic:
-        return undefined;
-      case eventTypes.roomAvatar:
-        return undefined;
       default:
         return undefined;
     }
@@ -33,21 +25,32 @@ function parseEvent(eventJson: any): MatrixEvent | undefined {
 
 /**
  * Parses a transaction event received from the Matrix API as a json object to a new TransactionEvent object.
- * @param eventJson the event as a json object
- * @returns the TransactionEvent object
+ * @param {any} eventJson the event as a json object
+ * @returns {TransactionEvent} the TransactionEvent object
  */
 function parseTransactionEvent(eventJson: any): TransactionEvent {
   const debtors: {user: string; amount: number}[] = [];
-  for (const debtor of eventJson.debtors) {
+  for (const debtor of eventJson.content.debtors) {
     debtors.push({user: debtor.user, amount: debtor.amount});
   }
+
   return new TransactionEvent(
+    eventJson.eventId,
     eventJson.roomId,
-    eventJson.purpose,
-    eventJson.sum,
-    eventJson.creditor,
+    eventJson.content.purpose,
+    eventJson.content.sum,
+    eventJson.content.creditor,
     debtors
   );
+}
+
+/**
+ * Parses a m.room.name event received from the Matrix API as a json object to a new MRoomNameEvent object.
+ * @param {any} eventJson the event as a json object
+ * @returns {MRoomNameEvent} the MRoomNameEvent object
+ */
+function parseMRoomNameEvent(eventJson: any): MRoomNameEvent {
+  return new MRoomNameEvent(eventJson.roomId, eventJson.content.name, eventJson.eventId)
 }
 
 export {parseEvent, parseTransactionEvent};
