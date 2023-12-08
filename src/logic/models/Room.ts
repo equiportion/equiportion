@@ -41,10 +41,10 @@ class Room {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
     for (const stateEvent of stateEvents) {
-      this.parseEvent(stateEvent, client);
+      //  this.parseEvent(stateEvent, client);
     }
     for (const timelineEvent of timelineEvents) {
-      this.parseEvent(timelineEvent, client);
+      // this.parseEvent(timelineEvent, client);
     }
   }
 

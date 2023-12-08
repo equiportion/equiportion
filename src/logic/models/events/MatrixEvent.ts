@@ -21,7 +21,7 @@ abstract class MatrixEvent {
    * @returns the content
    */
   public getContent() {
-    return this.ontent;
+    return this.content;
   }
 
   public abstract getType(): string;

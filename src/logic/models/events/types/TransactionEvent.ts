@@ -32,6 +32,10 @@ class TransactionEvent extends MessageEvent {
     super(roomId, content);
   }
 
+  /**
+   * Gets the type of this event (matrix event type)
+   * @returns {string} the type of this event
+   */
   public getType(): string {
     return TransactionEvent.TYPE;
   }
