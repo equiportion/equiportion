@@ -2,7 +2,7 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import User from '@/logic/models/User';
-import {ref} from 'vue';
+import {ref, reactive} from 'vue';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import type AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
@@ -12,18 +12,18 @@ import UserAvatar from '@/components/media/UserAvatar.vue';
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
 let creditorId = '';
-const sum = ref<number>(0);
+const sum = ref('');
 const purpose = ref('');
 var client: AuthenticatedMatrixClient;
 
 const debtors = ref<User[]>([]);
-const members: {[userId: string]: User} = {};
-
-useAuthenticatedMatrixClient(loadData);
+const members: {[userId: string]: User} = reactive({});
 
 const isCreditorSelected = ref(false);
 const isDropdownOpen1 = ref(false);
 const isDropdownOpen2 = ref(false);
+
+useAuthenticatedMatrixClient(loadData);
 
 function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
@@ -31,13 +31,10 @@ function loadData(clientInstance: AuthenticatedMatrixClient) {
   const memberIds = room.getMemberIds();
   for (const memberId of memberIds) {
     members[memberId] = client.getUser(memberId);
-    console.log(memberId);
-    console.log(Object.keys(members).length);
   }
 }
 
 function toggleDropdown1() {
-  console.log(members['@psetest:matrix.org'].getUserId());
   isDropdownOpen1.value = !isDropdownOpen1.value;
 }
 function toggleDropdown2() {
@@ -52,13 +49,13 @@ function deleteCreditor() {
 function createTransaction() {
   const debtorArray = debtors.value.map((debtor) => ({
     user: debtor.getUserId(),
-    amount: sum.value / debtors.value.length,
+    amount: parseInt(sum.value)/ debtors.value.length,
   }));
   try {
     const transactionEvent = new TransactionEvent(
       roomId,
       purpose.value,
-      sum.value,
+      parseInt(sum.value),
       creditorId,
       debtorArray
     );
@@ -85,6 +82,18 @@ function selectCreditor(id: string) {
   creditorId = id;
   isCreditorSelected.value = true;
 }
+function validateSum() {
+  const currencyRegex = /^\d+(\.\d{0,2})?$/;
+  if (!currencyRegex.test(sum.value)) {
+    const parsedValue = parseFloat(sum.value);
+
+    if (!isNaN(parsedValue)) {
+      sum.value = parsedValue.toFixed(2);
+    } else {
+      sum.value = '';
+    }
+  }
+}
 </script>
 
 <template>
@@ -108,7 +117,6 @@ function selectCreditor(id: string) {
               class="flex flex-col items-center m-10"
               @click="selectCreditor(member.getUserId())"
             >
-              <!--<img :src="member.getAvatarUrl()" alt="Avatar" class="w-10 h-10 rounded-full" />-->
               <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
               <span class="text-md text-gray-700 font-bold mt-3">{{
                 member.getDisplayname()
@@ -116,7 +124,6 @@ function selectCreditor(id: string) {
             </div>
           </div>
         </RoundButton>
-
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
           <UserAvatar
@@ -155,7 +162,6 @@ function selectCreditor(id: string) {
         />
         <span class="text-md text-gray-700 font-bold mt-3">{{ debtor.getDisplayname() }}</span>
       </div>
-
       <div
         v-if="debtors.length < Object.keys(members).length"
         class="flex flex-col items-center m-16 relative"
@@ -185,17 +191,18 @@ function selectCreditor(id: string) {
 
     <div class="flex flex-wrap justify-center items-center mt-24">
       <!--entry widgets sum-->
-      <div>sum :</div>
+      <div>Betrag :</div>
       <div>
         <input
+          @input="validateSum"
           v-model="sum"
-          type="number"
+          type="text"
           class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
         />
       </div>
       <i class="fa-solid fa-euro-sign"></i>
       <!--entry widgets purpose-->
-      <div class="ml-28">purpose :</div>
+      <div class="ml-28">Zweck :</div>
       <div>
         <input
           v-model="purpose"
