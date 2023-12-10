@@ -1,4 +1,10 @@
 <script setup lang="ts">
+
+/**
+ * @view {TransactionOverview} - Shows all transactions in a group.
+ * @author Leandro El Omari
+ */
+
 import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
@@ -9,25 +15,6 @@ import {ref, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
 import router from '@/router';
 import TransactionTile from './partials/TransactionTile.vue';
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
-
-/**
- * @view {TransactionOverview} - Shows all transactions in a group.
- * @author Leandro El Omari
- */
-
-//sets up 2 test users for the text transaction
-const User2 = {
-  user: "User2",
-  amount: 10 as number,
-};
-const User3 = {
-  user: "User3",
-  amount: 10 as number,
-};
-
-//creates a test transaction
-const testTransaction = new TransactionEvent("abc","Pizza",20,"User1",[User2, User3], "12345")
 
 var client: AuthenticatedMatrixClient;
 const roomId = useRoute().params.roomId.toString();
@@ -41,9 +28,6 @@ useAuthenticatedMatrixClient(loadData);
 async function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
   room.value = client.getRoom(roomId);
-  if(room.value.getTransactionEvents().length == 0) {
-    room.value.getTransactionEvents().push(testTransaction);
-  }
   loading.value = false;
 }
 
