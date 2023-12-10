@@ -23,6 +23,7 @@ const members: {[userId: string]: User} = reactive({});
 const isCreditorSelected = ref(false);
 const isDropdownOpen1 = ref(false);
 const isDropdownOpen2 = ref(false);
+const showError = ref(false);
 
 const {bus} = useGlobalEventBus();
 
@@ -35,6 +36,8 @@ function loadData(clientInstance: AuthenticatedMatrixClient) {
   for (const memberId of memberIds) {
     members[memberId] = client.getUser(memberId);
   }
+  creditorId = client.getLoggedInUser().getUserId();
+  isCreditorSelected.value = true;
 }
 
 function toggleDropdown1() {
@@ -50,21 +53,26 @@ function deleteCreditor() {
 }
 
 function createTransaction() {
-  const debtorArray = debtors.value.map((debtor) => ({
-    user: debtor.getUserId(),
-    amount: parseInt(sum.value) / debtors.value.length,
-  }));
-  try {
-    const transactionEvent = new TransactionEvent(
-      roomId,
-      purpose.value,
-      parseInt(sum.value),
-      creditorId,
-      debtorArray
-    );
-    client.publishEvent(transactionEvent);
-  } catch (err) {
-    error.value = err;
+  if (creditorId && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
+    const debtorArray = debtors.value.map((debtor) => ({
+      user: debtor.getUserId(),
+      amount: parseInt(sum.value) / debtors.value.length,
+    }));
+    try {
+      const transactionEvent = new TransactionEvent(
+        roomId,
+        purpose.value,
+        parseInt(sum.value),
+        creditorId,
+        debtorArray
+      );
+      client.publishEvent(transactionEvent);
+      showError.value = false;
+    } catch (err) {
+      error.value = err;
+    }
+  } else {
+    showError.value = true;
   }
 }
 
@@ -112,6 +120,15 @@ watch(
 
 <template>
   <MainLayout>
+    <!--error message-->
+    <div
+      v-if="showError"
+      class="p-4 mb-4 text-yellow-800 flex flex-row items-center gap-2 border border-yellow-300 rounded-lg bg-yellow-50 ml-32 mr-32 mt-5"
+    >
+    <i class="fa-solid fa-circle-exclamation"></i>
+      <div>Bitte vervollständigen Sie die Angaben</div>
+    </div>
+
     <!--Profile of creditor-->
     <div class="flex flex-col items-center lg:flex-row mt-2 ml-10">
       <div class="flex flex-col items-center m-8">
