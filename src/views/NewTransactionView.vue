@@ -2,12 +2,13 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import User from '@/logic/models/User';
-import {ref, reactive} from 'vue';
+import {ref, reactive, watch} from 'vue';
 import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
 import type AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import {useRoute} from 'vue-router';
 import UserAvatar from '@/components/media/UserAvatar.vue';
+import useGlobalEventBus from '@/composables/useGlobalEventBus';
 
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
@@ -22,6 +23,8 @@ const members: {[userId: string]: User} = reactive({});
 const isCreditorSelected = ref(false);
 const isDropdownOpen1 = ref(false);
 const isDropdownOpen2 = ref(false);
+
+const {bus} = useGlobalEventBus();
 
 useAuthenticatedMatrixClient(loadData);
 
@@ -49,7 +52,7 @@ function deleteCreditor() {
 function createTransaction() {
   const debtorArray = debtors.value.map((debtor) => ({
     user: debtor.getUserId(),
-    amount: parseInt(sum.value)/ debtors.value.length,
+    amount: parseInt(sum.value) / debtors.value.length,
   }));
   try {
     const transactionEvent = new TransactionEvent(
@@ -94,6 +97,17 @@ function validateSum() {
     }
   }
 }
+
+// close dropdown on click outside
+watch(
+  () => bus.value.get('click'),
+  (val) => {
+    if (!val[0]['no-close']) {
+      isDropdownOpen1.value = false;
+      isDropdownOpen2.value = false;
+    }
+  }
+);
 </script>
 
 <template>
@@ -142,13 +156,13 @@ function validateSum() {
         </div>
       </div>
     </div>
-    <div class="flex flex-col ml-14">
+    <div class="flex flex-col items-center lg:flex-row ml-14">
       <span class="text-2xl font-bold text-gray-800 mb-5">hat bezahlt für...</span>
     </div>
 
     <!--list of member-->
     <div
-      class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg ml-10 relative"
+      class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg ml-10"
     >
       <div
         v-for="debtor in debtors"
@@ -189,26 +203,30 @@ function validateSum() {
       </div>
     </div>
 
-    <div class="flex flex-wrap justify-center items-center mt-24">
+    <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
       <!--entry widgets sum-->
-      <div>Betrag :</div>
-      <div>
-        <input
-          @input="validateSum"
-          v-model="sum"
-          type="text"
-          class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-        />
+      <div class="flex flex-row items-center">
+        <div>Betrag :</div>
+        <div>
+          <input
+            @input="validateSum"
+            v-model="sum"
+            type="text"
+            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
+          />
+        </div>
+        <i class="fa-solid fa-euro-sign"></i>
       </div>
-      <i class="fa-solid fa-euro-sign"></i>
       <!--entry widgets purpose-->
-      <div class="ml-28">Zweck :</div>
-      <div>
-        <input
-          v-model="purpose"
-          type="text"
-          class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-        />
+      <div class="flex flex-row items-center">
+        <div>Zweck :</div>
+        <div>
+          <input
+            v-model="purpose"
+            type="text"
+            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
+          />
+        </div>
       </div>
     </div>
 
