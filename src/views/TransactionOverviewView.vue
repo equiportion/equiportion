@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 /**
- * @view {TransactionOverview} - Shows all transactions in a group.
+ * @component {TransactionOverview} - Shows all transactions in a group.
  * @author Leandro El Omari
  */
 
