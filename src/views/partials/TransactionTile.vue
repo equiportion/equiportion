@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
 
 /**
- * @partial {TransactionTile} - Partial that shows transactions as a tile
+ * @component {TransactionTile} - Partial that shows transactions as a tile
  * @author Leandro El Omari
  * 
  * @prop {transaction} transaction - A transaction.
  */
+
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
 
 const props = defineProps({
     transaction: {
