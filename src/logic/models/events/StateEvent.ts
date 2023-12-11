@@ -1,16 +1,18 @@
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
+import type {AxiosResponse} from 'axios';
+import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
 
 /**
  * A state event modelled after the matrix specs. All types of state events inherit from this class.
  */
 abstract class StateEvent extends MatrixEvent {
-  private stateKey: string;
+  protected stateKey: string;
 
   /**
    * Creates a new state event with the given parameters
    * @param {string} eventId the eventId of this event, set to MatrixEvent.EVENT_ID_NEW if its a new event
-   * @param {string} roomId the roomId this event is published to
+   * @param {string} roomId the roomId of the room this event is published to
    * @param stateKey the key of the state
    */
   constructor(eventId: string, roomId: string, stateKey: string) {
@@ -20,11 +22,32 @@ abstract class StateEvent extends MatrixEvent {
   }
 
   /**
-   * Gets the url to send the put request to for publishing this event
-   * @returns {string} the url
+   * Publishes this event to the matrix homeserver.
+   * @returns {Promise<AxiosResponse | undefined>} a Promise that resolves to the HTTP response or undefined if the request failed
    */
-  public getPutUrl(): string {
-    return apiEndpoints.putStateEvent(this.getRoomId(), this.getType(), this.stateKey);
+  public async publish(): Promise<AxiosResponse | undefined> {
+    const client = AuthenticatedMatrixClient.getClient();
+
+    const url = apiEndpoints.putStateEvent(this.getRoomId(), this.getType(), this.getStateKey());
+    const data = this.getContent();
+
+    const response = await client.putRequest(url, data);
+
+    if (!response?.data.event_id) {
+      return undefined;
+    }
+
+    this.setEventId(response.data.event_id);
+
+    return response;
+  }
+
+  /**
+   * Gets the state key of this event.
+   * @returns the state key
+   */
+  public getStateKey(): string {
+    return this.stateKey;
   }
 }
 

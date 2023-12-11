@@ -33,9 +33,6 @@ const rooms = roomsStore.rooms;
       </div>
     </div>
 
-    {{ clientStateStore.numberOfSyncs }}
-    {{ JSON.stringify(rooms) }}
-
     <!--Rooms-->
     <div id="rooms" class="flex flex-col items-center gap-2 p-2 lg:p-5">
       <HeightFade>

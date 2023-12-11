@@ -1,6 +1,9 @@
 import {useRoomsStore} from '@/stores/rooms';
 import StateEvent from './StateEvent';
 
+/**
+ * A m.room.name event modelled after the matrix specs.
+ */
 class MRoomNameEvent extends StateEvent {
   public static TYPE = 'm.room.name';
 
@@ -8,9 +11,9 @@ class MRoomNameEvent extends StateEvent {
 
   /**
    * Creates a new state event with the given parameters
-   * @param roomId the roomId this event is published to
-   * @param name the new name of the room
-   * @param [eventId] the eventId of this event (optional, only to be set if this event was received from the matrix api)
+   * @param {string} eventId the eventId of this event, set to MatrixEvent.EVENT_ID_NEW if its a new event
+   * @param {string} roomId the roomId of the room this event is published to
+   * @param {string} name the value the room's name is set to via this event
    */
   constructor(eventId: string, roomId: string, name: string) {
     const stateKey = '';
@@ -20,13 +23,13 @@ class MRoomNameEvent extends StateEvent {
   }
 
   /**
-   * Executes this event on its room.
+   * Executes this event on its room
    * @returns {void}
    */
   public execute(): void {
     const roomsStore = useRoomsStore();
     const room = roomsStore.getRoom(this.getRoomId());
-    room?.setName(this.getContent().name);
+    room?.setName(this.name);
   }
 
   /**
@@ -41,7 +44,7 @@ class MRoomNameEvent extends StateEvent {
    * Gets the content of this event as a Json object
    * @returns {any} the content of this event
    */
-  public getContent() {
+  public getContent(): any {
     return {
       name: this.name,
     };

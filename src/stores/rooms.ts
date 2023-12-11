@@ -8,7 +8,7 @@ export const useRoomsStore = defineStore('rooms', () => {
   /**
    * Get a room by its roomId.
    * @param {string} roomId the matrix-room-id of the room
-   * @returns {Room|undefined} the room if it exists, else undefined
+   * @returns {Room | undefined} the room if it exists, else undefined
    */
   function getRoom(roomId: string): Room | undefined {
     return rooms.value[roomId];

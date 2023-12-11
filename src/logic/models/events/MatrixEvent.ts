@@ -1,16 +1,18 @@
+import type { AxiosResponse } from "axios";
+
 /**
  * An event modelled after the matrix specs. All types of events inherit from this class.
  */
 abstract class MatrixEvent {
   public static EVENT_ID_NEW = 'NEW_EVENT';
 
-  private roomId: string;
-  private eventId: string;
+  protected roomId: string;
+  protected eventId: string;
 
   /**
    * Creates a new matrix event using the given parameters
-   * @param {string} roomId the roomId this event is published to
    * @param {string} eventId the eventId of this event, set to MatrixEvent.EVENT_ID_NEW if its a new event
+   * @param {string} roomId the roomId of the room this event is published to
    */
   constructor(eventId: string, roomId: string) {
     this.roomId = roomId;
@@ -18,10 +20,10 @@ abstract class MatrixEvent {
   }
 
   /**
-   * Gets the url to send the put request to for publishing this event
-   * @returns {string} the url
+   * Publishes this event to the matrix homeserver.
+   * @returns {Promise<AxiosResponse | undefined>} the HTTP response or undefined if the request failed
    */
-  public abstract getPutUrl(): string;
+  public abstract publish(): Promise<AxiosResponse | undefined>;
 
   /**
    * Executes this event on its room.
@@ -35,6 +37,20 @@ abstract class MatrixEvent {
    */
   public getEventId(): string {
     return this.eventId;
+  }
+
+  /**
+   * Sets the eventId of this event. Should only be called after it has been published to matrix and got an eventId in response.
+   * @param eventId
+   * @returns {boolean} true if setting the eventId was successful, false otherwise
+   */
+  protected setEventId(eventId: string): boolean {
+    if (eventId === '') {
+      return false;
+    }
+
+    this.eventId = eventId;
+    return true;
   }
 
   /**

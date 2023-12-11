@@ -167,16 +167,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     loggedInUser.setDisplayname(displayname);
     loggedInUser.setAvatarUrl(avatarUrl);
   }
-
-  /**
-   * Publishes an event to the matrix homeserver.
-   * @param {MatrixEvent} event the event to publish
-   * @returns {Promise<AxiosResponse>|undefined} the HTTP response or undefined if the request failed
-   */
-  public async publishEvent(event: MatrixEvent): Promise<AxiosResponse | undefined> {
-    const response = await this.putRequest(event.getPutUrl(), event.getContent());
-    return response;
-  }
 }
 
 export default AuthenticatedMatrixClient;

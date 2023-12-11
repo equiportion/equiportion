@@ -1,8 +1,6 @@
-import {parseEvent, parseTransactionEvent} from '../utils/eventParser';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
+import {parseEvent} from '../utils/eventParser';
 import type MatrixEvent from './events/MatrixEvent';
-import StateEvent from './events/StateEvent';
+import User from './User';
 
 /**
  * A matrix room the logged in user has joined.
@@ -16,10 +14,12 @@ class Room {
   private topic?: string;
   private avatarUrl?: string;
 
-  private memberIds: Set<string> = new Set();
+  private members: {[userId: string]: User} = {};
 
   private eventIds: string[] = [];
   private events: {[eventId: string]: MatrixEvent} = {};
+
+  private nextBatch: string = '';
 
   /**
    * Creates a new Room using data from the sync-API.
@@ -40,13 +40,13 @@ class Room {
     const timelineEvents = data.timeline.events;
 
     for (const stateEvent of stateEvents) {
-      const event = parseEvent(stateEvent);
+      const event = parseEvent(stateEvent, this.getRoomId());
 
       event?.execute();
     }
 
     for (const timelineEvent of timelineEvents) {
-      const event = parseEvent(timelineEvent);
+      const event = parseEvent(timelineEvent, this.getRoomId());
       if (!event) {
         continue;
       }
@@ -89,6 +89,10 @@ class Room {
     return this.topic;
   }
 
+  public setTopic(topic: string) {
+    this.topic = topic;
+  }
+
   /**
    * Gets this room's avatarUrl.
    * @returns the avatarUrl if set, else undefined
@@ -97,12 +101,20 @@ class Room {
     return this.avatarUrl;
   }
 
-  /**
-   * Gets the user ids of all members of this room.
-   * @returns the member ids as a set
-   */
-  public getMemberIds() {
-    return this.memberIds;
+  public setAvatarUrl(avatarUrl: string) {
+    this.avatarUrl = avatarUrl;
+  }
+
+  public getMembers(): {[userId: string]: User} {
+    return this.members;
+  }
+
+  public getMember(userId: string): User {
+    if (!this.members[userId]) {
+      this.members[userId] = new User(userId);
+    }
+
+    return this.members[userId];
   }
 }
 

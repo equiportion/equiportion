@@ -5,6 +5,11 @@ export const useClientStateStore = defineStore('loading', () => {
   const created = ref(false);
   const numberOfSyncs = ref(0);
   const syncing = ref(false);
+  const transactionId = ref(0);
 
-  return {created, numberOfSyncs, syncing};
+  function incrementTransactionId() {
+    transactionId.value++;
+  }
+
+  return {created, numberOfSyncs, syncing, transactionId, incrementTransactionId};
 });
