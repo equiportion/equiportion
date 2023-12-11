@@ -125,7 +125,7 @@ watch(
       v-if="showError"
       class="p-4 mb-4 text-yellow-800 flex flex-row items-center gap-2 border border-yellow-300 rounded-lg bg-yellow-50 ml-32 mr-32 mt-5"
     >
-    <i class="fa-solid fa-circle-exclamation"></i>
+      <i class="fa-solid fa-circle-exclamation"></i>
       <div>Bitte vervollständigen Sie die Angaben</div>
     </div>
 
@@ -141,7 +141,10 @@ watch(
         >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown1 -->
-          <div v-show="isDropdownOpen1" class="bg-white absolute left-40 z-10 shadow-sm">
+          <div
+            v-show="isDropdownOpen1"
+            class="bg-white absolute left-40 z-10 border-2 border-slate-200 rounded"
+          >
             <div
               v-for="member in members"
               :key="member.getUserId()"
@@ -157,11 +160,20 @@ watch(
         </RoundButton>
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
-          <UserAvatar
-            :user="members[creditorId]"
-            class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
-            @click="deleteCreditor"
-          />
+          <div class="relative group transition duration-200 hover:scale-110">
+            <!--'x'-->
+            <div
+              class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+              @click="deleteCreditor"
+            >
+              <i class="text-white fa-solid fa-xmark text-2xl"></i>
+            </div>
+            <UserAvatar
+              :user="members[creditorId]"
+              class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
+            />
+          </div>
+
           <div class="flex-col ml-8">
             <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
               {{ members[creditorId].getDisplayname() }}
@@ -186,13 +198,19 @@ watch(
         :key="debtor.getUserId()"
         class="flex flex-col items-center m-10"
       >
-        <UserAvatar
-          :user="members[debtor.getUserId()]"
-          class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
-          @click="deleteMember(debtor.getUserId())"
-        />
+        <div class="relative group transition duration-200 hover:scale-110">
+          <!--'x'-->
+          <div
+            class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+            @click="deleteMember(debtor.getUserId())"
+          >
+            <i class="text-white fa-solid fa-xmark text-2xl"></i>
+          </div>
+          <UserAvatar :user="members[debtor.getUserId()]" class="w-20 h-20 rounded-full" />
+        </div>
         <span class="text-md text-gray-700 font-bold mt-3">{{ debtor.getDisplayname() }}</span>
       </div>
+
       <div
         v-if="debtors.length < Object.keys(members).length"
         class="flex flex-col items-center m-16 relative"
@@ -201,7 +219,10 @@ watch(
         <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2">
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown2 -->
-          <div v-show="isDropdownOpen2" class="bg-white absolute left-16 shadow-sm">
+          <div
+            v-show="isDropdownOpen2"
+            class="bg-white absolute left-16 border-2 border-slate-200 rounded"
+          >
             <div
               v-for="member in members"
               :key="member.getUserId()"
