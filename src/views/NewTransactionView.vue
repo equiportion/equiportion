@@ -9,6 +9,7 @@ import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import {useRoute} from 'vue-router';
 import UserAvatar from '@/components/media/UserAvatar.vue';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
+import MemberDropdown from '@/views/partials/MemberDropdown.vue';
 
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
@@ -76,14 +77,14 @@ function createTransaction() {
   }
 }
 
-function addNewMember(id: string) {
+function addNewDebtor(id: string) {
   const userToAdd = members[id];
 
   if (userToAdd) {
     debtors.value.push(userToAdd);
   }
 }
-function deleteMember(id: string) {
+function deleteDebtor(id: string) {
   const index = debtors.value.findIndex((member) => member.getUserId() === id);
   if (index !== -1) {
     debtors.value.splice(index, 1);
@@ -138,25 +139,15 @@ watch(
           v-if="!isCreditorSelected"
           title="Mitgliederliste anzeigen"
           @click="toggleDropdown1"
+          class="relative"
         >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown1 -->
-          <div
-            v-show="isDropdownOpen1"
-            class="bg-white absolute left-40 z-10 border-2 border-slate-200 rounded"
-          >
-            <div
-              v-for="member in members"
-              :key="member.getUserId()"
-              class="flex flex-col items-center m-10"
-              @click="selectCreditor(member.getUserId())"
-            >
-              <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-              <span class="text-md text-gray-700 font-bold mt-3">{{
-                member.getDisplayname()
-              }}</span>
-            </div>
-          </div>
+          <MemberDropdown
+            :isOpen="isDropdownOpen1"
+            :members="members"
+            :handleClick="selectCreditor"
+          />
         </RoundButton>
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
@@ -189,7 +180,7 @@ watch(
       <span class="text-2xl font-bold text-gray-800 mb-5">hat bezahlt für...</span>
     </div>
 
-    <!--list of member-->
+    <!--list of debtors-->
     <div
       class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg ml-10"
     >
@@ -202,7 +193,7 @@ watch(
           <!--'x'-->
           <div
             class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
-            @click="deleteMember(debtor.getUserId())"
+            @click="deleteDebtor(debtor.getUserId())"
           >
             <i class="text-white fa-solid fa-xmark text-2xl"></i>
           </div>
@@ -216,27 +207,14 @@ watch(
         class="flex flex-col items-center m-16 relative"
       >
         <!--Add button-->
-        <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2">
+        <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2" class="relative">
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown2 -->
-          <div
-            v-show="isDropdownOpen2"
-            class="bg-white absolute left-16 border-2 border-slate-200 rounded"
-          >
-            <div
-              v-for="member in members"
-              :key="member.getUserId()"
-              class="flex flex-col items-center m-10"
-              @click="addNewMember(member.getUserId())"
-            >
-              <template v-if="!debtors.some((debtor) => debtor.getUserId() === member.getUserId())">
-                <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-                <span class="text-md text-gray-700 font-bold mt-3">{{
-                  member.getDisplayname()
-                }}</span>
-              </template>
-            </div>
-          </div>
+          <MemberDropdown
+            :isOpen="isDropdownOpen2"
+            :members="members"
+            :handleClick="addNewDebtor"
+          />
         </RoundButton>
       </div>
     </div>
