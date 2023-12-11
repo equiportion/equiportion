@@ -4,7 +4,7 @@
  * @component {TransactionTile} - Partial that shows transactions as a tile
  * @author Leandro El Omari
  * 
- * @prop {TransactionEvent} transaction - A transaction event of a transaction made in a group.
+ * @prop {TransactionEvent} transaction - A transaction event of a transaction (sent into a room).
  */
 
 import TransactionEvent from '@/logic/models/events/TransactionEvent';
