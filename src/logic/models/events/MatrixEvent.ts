@@ -2,14 +2,16 @@
  * An event modelled after the matrix specs. All types of events inherit from this class.
  */
 abstract class MatrixEvent {
-  protected content: any;
+  protected eventId: string;
   protected roomId: string;
   protected type: string;
+  protected content: any;
 
-  constructor(roomId: string, type: string, content: any) {
+  constructor(roomId: string, type: string, content: any, eventId: string = '') {
     this.roomId = roomId;
     this.type = type;
     this.content = content;
+    this.eventId = eventId;
   }
 
   /**
@@ -18,8 +20,16 @@ abstract class MatrixEvent {
    */
   public abstract getPutUrl(): string;
 
+/**
+   * Gets this event's eventId. Is set only if this event was already published, else it is an empty string.
+   * @returns the eventId
+   */
+  public getEventId(): string {
+    return this.eventId;
+  }
+
   /**
-   * Gets this event's content
+   * Gets this event's content.
    * @returns the content
    */
   public getContent() {

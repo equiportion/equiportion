@@ -52,4 +52,3 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
     <!--End of rooms-->
   </MainLayout>
 </template>
-@/logic/models/clients/AuthenticatedMatrixClient
