@@ -10,6 +10,9 @@ import {useRoute} from 'vue-router';
 import UserAvatar from '@/components/media/UserAvatar.vue';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import MemberDropdown from '@/views/partials/MemberDropdown.vue';
+import DebtorTile from '@/views/partials/DebtorTile.vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
+import TransactionEntryWidgets from './partials/TransactionEntryWidgets.vue';
 
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
@@ -28,8 +31,14 @@ const showError = ref(false);
 
 const {bus} = useGlobalEventBus();
 
+// Load client data and room information
 useAuthenticatedMatrixClient(loadData);
 
+/**
+ * Load data from the authenticated matrix client and initialize values.
+ *
+ * @param {AuthenticatedMatrixClient} clientInstance - The authenticated matrix client instance.
+ */
 function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
   const room = client.getRoom(roomId);
@@ -41,18 +50,30 @@ function loadData(clientInstance: AuthenticatedMatrixClient) {
   isCreditorSelected.value = true;
 }
 
+/**
+ * Toggle the visibility of the first dropdown.
+ */
 function toggleDropdown1() {
   isDropdownOpen1.value = !isDropdownOpen1.value;
 }
+/**
+ * Toggle the visibility of the second dropdown.
+ */
 function toggleDropdown2() {
   isDropdownOpen2.value = !isDropdownOpen2.value;
 }
 
+/**
+ * Clear the selected creditor.
+ */
 function deleteCreditor() {
   creditorId = '';
   isCreditorSelected.value = false;
 }
 
+/**
+ * Create a new transaction event with the provided information.
+ */
 function createTransaction() {
   if (creditorId && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
     const debtorArray = debtors.value.map((debtor) => ({
@@ -77,6 +98,11 @@ function createTransaction() {
   }
 }
 
+/**
+ * Add a new debtor to the list.
+ *
+ * @param {string} id - The user ID of the debtor to add.
+ */
 function addNewDebtor(id: string) {
   const userToAdd = members[id];
 
@@ -84,16 +110,32 @@ function addNewDebtor(id: string) {
     debtors.value.push(userToAdd);
   }
 }
+
+/**
+ * Remove a debtor from the list.
+ *
+ * @param {string} id - The user ID of the debtor to remove.
+ */
 function deleteDebtor(id: string) {
   const index = debtors.value.findIndex((member) => member.getUserId() === id);
   if (index !== -1) {
     debtors.value.splice(index, 1);
   }
 }
+
+/**
+ * Select a creditor from the members.
+ *
+ * @param {string} id - The user ID of the selected creditor.
+ */
 function selectCreditor(id: string) {
   creditorId = id;
   isCreditorSelected.value = true;
 }
+
+/**
+ * Validate the input for the sum field.
+ */
 function validateSum() {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
   if (!currencyRegex.test(sum.value)) {
@@ -122,13 +164,14 @@ watch(
 <template>
   <MainLayout>
     <!--error message-->
-    <div
+    <SystemAlert
       v-if="showError"
-      class="p-4 mb-4 text-yellow-800 flex flex-row items-center gap-2 border border-yellow-300 rounded-lg bg-yellow-50 ml-32 mr-32 mt-5"
+      severity="warning"
+      class="ml-32 mr-32 mt-5 flex flex-row items-center gap-2"
     >
       <i class="fa-solid fa-circle-exclamation"></i>
-      <div>Bitte vervollständigen Sie die Angaben</div>
-    </div>
+      <p>Bitte vervollständigen Sie die Angaben</p>
+    </SystemAlert>
 
     <!--Profile of creditor-->
     <div class="flex flex-col items-center lg:flex-row mt-2 ml-10">
@@ -189,17 +232,7 @@ watch(
         :key="debtor.getUserId()"
         class="flex flex-col items-center m-10"
       >
-        <div class="relative group transition duration-200 hover:scale-110">
-          <!--'x'-->
-          <div
-            class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
-            @click="deleteDebtor(debtor.getUserId())"
-          >
-            <i class="text-white fa-solid fa-xmark text-2xl"></i>
-          </div>
-          <UserAvatar :user="members[debtor.getUserId()]" class="w-20 h-20 rounded-full" />
-        </div>
-        <span class="text-md text-gray-700 font-bold mt-3">{{ debtor.getDisplayname() }}</span>
+        <DebtorTile :debtor="debtor" :members="members" :handleClick="deleteDebtor"> </DebtorTile>
       </div>
 
       <div
@@ -222,30 +255,12 @@ watch(
     <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
       <!--entry widgets sum-->
       <div class="flex flex-row items-center">
-        <div>Betrag :</div>
-        <div>
-          <input
-            @input="validateSum"
-            v-model="sum"
-            type="text"
-            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-          />
-        </div>
+        <TransactionEntryWidgets @input="validateSum" tag="Betrag" v-model="sum" />
         <i class="fa-solid fa-euro-sign"></i>
       </div>
       <!--entry widgets purpose-->
-      <div class="flex flex-row items-center">
-        <div>Zweck :</div>
-        <div>
-          <input
-            v-model="purpose"
-            type="text"
-            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-          />
-        </div>
-      </div>
+      <TransactionEntryWidgets tag="Zweck" v-model="purpose" />
     </div>
-
     <!--validate and create new transaction-->
     <div class="flex justify-end m-10">
       <RoundButton title="Bestätigen" @click="createTransaction">
