@@ -32,7 +32,6 @@ class Room {
 
   /**
    * Updates the room using data from the sync-API.
-   *
    * @param data the data from the sync-API
    */
   public sync(data: any) {
@@ -63,52 +62,73 @@ class Room {
 
   /**
    * Gets this room's roomId.
-   * @returns the roomId
+   * @returns {string} the roomId
    */
-  public getRoomId() {
+  public getRoomId(): string {
     return this.roomId;
   }
 
   /**
    * Gets this room's name.
-   * @returns the name if set, else undefined
+   * @returns {string|undefined} the name if set, else undefined
    */
-  public getName() {
+  public getName(): string | undefined {
     return this.name;
   }
 
+  /**
+   * Sets the name of the room.
+   * @param {string} name the new name of the room
+   */
   public setName(name: string) {
     this.name = name;
   }
 
   /**
    * Gets this room's topic.
-   * @returns the topic if set, else undefined
+   * @returns {string|undefined} the topic if set, else undefined
    */
-  public getTopic() {
+  public getTopic(): string | undefined {
     return this.topic;
   }
 
+  /**
+   * Sets the topic of the room.
+   * @param {string} topic the new topic of the room
+   */
   public setTopic(topic: string) {
     this.topic = topic;
   }
 
   /**
    * Gets this room's avatarUrl.
-   * @returns the avatarUrl if set, else undefined
+   * @returns {string|undefined} the avatarUrl if set, else undefined
    */
-  public getAvatarUrl() {
+  public getAvatarUrl(): string | undefined {
     return this.avatarUrl;
   }
 
+  /**
+   * Sets the avatarUrl of the room.
+   * @param {string} avatarUrl the new avatarUrl of the room
+   */
   public setAvatarUrl(avatarUrl: string) {
     this.avatarUrl = avatarUrl;
   }
 
+  /**
+   * Returns all users in this room
+   * @returns {{[userId: string]: User}} all users in this room
+   */
   public getMembers(): {[userId: string]: User} {
     return this.members;
   }
 
+  /**
+   * Returns a specific member of this room
+   * @param userId the id of the user
+   * @returns {User} the user with the given id, or a new user with the given id if the user is not loaded yet
+   */
   public getMember(userId: string): User {
     if (!this.members[userId]) {
       this.members[userId] = new User(userId);
