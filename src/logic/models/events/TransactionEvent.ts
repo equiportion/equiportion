@@ -1,7 +1,11 @@
 import MessageEvent from './MessageEvent';
+import MatrixEvent from './MatrixEvent';
+import type {RawMatrixEvent} from './RawMatrixEvent';
 
 /**
  * A transaction event modelled after this project's documentation.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 class TransactionEvent extends MessageEvent {
   public static TYPE = 'edu.kit.kastel.dsn.pse.transaction';
@@ -38,6 +42,33 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
+   * Tries to parse the given event into a TransactionEvent.
+   * @static
+   * @param {RawMatrixEvent} event the event to parse
+   * @param {string} [roomId] the roomId of the room this event is published to
+   * @returns {MatrixEvent|undefined} Either the parsed event or undefined if the event could not be parsed (type missmatch)
+   */
+  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
+    if (event.type !== this.TYPE) {
+      return undefined;
+    }
+
+    const debtors: {user: string; amount: number}[] = [];
+    for (const debtor of event.content.debtors) {
+      debtors.push({user: debtor.user, amount: debtor.amount});
+    }
+
+    return new TransactionEvent(
+      event.event_id,
+      roomId ?? event.room_id,
+      event.content.purpose,
+      event.content.sum,
+      event.content.creditor,
+      debtors
+    );
+  }
+
+  /**
    * Executes this event on its room
    * @returns {void}
    */
@@ -46,10 +77,10 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Gets the content of this event as a Json object
+   * Gets the content of this event as a Json object (for matrix api)
    * @returns {any} the content of this event
    */
-  public getContent(): any {
+  public toEventContent(): any {
     return {
       purpose: this.purpose,
       sum: this.sum,

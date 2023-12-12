@@ -1,4 +1,4 @@
-import {parseEvent} from '../utils/eventParser';
+import EventParser from './events/EventParser';
 import type MatrixEvent from './events/MatrixEvent';
 import User from './User';
 
@@ -40,13 +40,13 @@ class Room {
     const timelineEvents = data.timeline.events;
 
     for (const stateEvent of stateEvents) {
-      const event = parseEvent(stateEvent, this.getRoomId());
+      const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
 
       event?.execute();
     }
 
     for (const timelineEvent of timelineEvents) {
-      const event = parseEvent(timelineEvent, this.getRoomId());
+      const event = EventParser.jsonToEvent(timelineEvent, this.getRoomId());
       if (!event) {
         continue;
       }

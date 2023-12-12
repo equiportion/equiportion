@@ -5,6 +5,8 @@ import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
 
 /**
  * A state event modelled after the matrix specs. All types of state events inherit from this class.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 abstract class StateEvent extends MatrixEvent {
   protected stateKey: string;
@@ -29,7 +31,7 @@ abstract class StateEvent extends MatrixEvent {
     const client = AuthenticatedMatrixClient.getClient();
 
     const url = apiEndpoints.putStateEvent(this.getRoomId(), this.getType(), this.getStateKey());
-    const data = this.getContent();
+    const data = this.toEventContent();
 
     const response = await client.putRequest(url, data);
 

@@ -1,5 +1,5 @@
 import eventTypes from '../constants/eventTypes';
-import {parseTransactionEvent} from '../utils/eventParser';
+import {parseTransactionEvent} from '../models/events/EventParser';
 import type AuthenticatedMatrixClient from './clients/AuthenticatedMatrixClient';
 import TransactionEvent from './events/TransactionEvent';
 
@@ -115,7 +115,7 @@ class Room {
    */
   public getMemberIds() {
     return this.memberIds;
-  } 
+  }
 }
 
 export default Room;

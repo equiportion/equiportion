@@ -1,8 +1,12 @@
 import {useRoomsStore} from '@/stores/rooms';
 import StateEvent from './StateEvent';
+import type {RawMatrixEvent} from './RawMatrixEvent';
+import MatrixEvent from './MatrixEvent';
 
 /**
  * A m.room.avatar event modelled after the matrix specs.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 class MRoomAvatarEvent extends StateEvent {
   public static TYPE = 'm.room.avatar';
@@ -20,6 +24,21 @@ class MRoomAvatarEvent extends StateEvent {
     super(eventId, roomId, stateKey);
 
     this.avatarUrl = avatarUrl;
+  }
+
+  /**
+   * Tries to parse the given event into a MRoomAvatarEvent.
+   * @static
+   * @param {RawMatrixEvent} event the event to parse
+   * @param {string} [roomId] the roomId of the room this event is published to
+   * @returns {MatrixEvent|undefined} Either the parsed event or undefined if the event could not be parsed (type missmatch)
+   */
+  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
+    if (event.type !== this.TYPE) {
+      return undefined;
+    }
+
+    return new MRoomAvatarEvent(event.event_id, roomId ?? event.room_id, event.content.url);
   }
 
   /**
@@ -41,10 +60,10 @@ class MRoomAvatarEvent extends StateEvent {
   }
 
   /**
-   * Gets the content of this event as a Json object
+   * Gets the content of this event as a Json object (for matrix api)
    * @returns {any} the content of this event
    */
-  public getContent(): any {
+  public toEventContent(): any {
     return {
       avatar_url: this.avatarUrl,
     };

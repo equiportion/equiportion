@@ -1,11 +1,12 @@
-import type { AxiosResponse } from "axios";
+import type {AxiosResponse} from 'axios';
 
 /**
  * An event modelled after the matrix specs. All types of events inherit from this class.
+ * The constructors of the class is defined by {@link MatrixEventConstructor}
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 abstract class MatrixEvent {
-  public static EVENT_ID_NEW = 'NEW_EVENT';
-
   protected roomId: string;
   protected eventId: string;
 
@@ -26,7 +27,9 @@ abstract class MatrixEvent {
   public abstract publish(): Promise<AxiosResponse | undefined>;
 
   /**
-   * Executes this event on its room.
+   * Executes this event on its room
+   * (e.g. sets the room's name if its a MRoomNameEvent)
+   *
    * @returns {void}
    */
   public abstract execute(): void;
@@ -62,10 +65,10 @@ abstract class MatrixEvent {
   }
 
   /**
-   * Gets the content of this event as a Json object
-   * @returns {any} the content of this event
+   * Gets the content of this event as a Json object (for matrix api)
+   * @returns {{}} the content of this event
    */
-  public abstract getContent(): any;
+  public abstract toEventContent(): {};
 
   /**
    * Gets the type of this event (matrix event type)

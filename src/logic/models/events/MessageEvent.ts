@@ -6,6 +6,8 @@ import type {AxiosResponse} from 'axios';
 
 /**
  * A message event modelled after the matrix specs.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
 abstract class MessageEvent extends MatrixEvent {
   /**
@@ -21,7 +23,7 @@ abstract class MessageEvent extends MatrixEvent {
       this.getType(),
       clientStateStore.transactionId
     );
-    const data = this.getContent();
+    const data = this.toEventContent();
 
     const response = await client.putRequest(url, data);
 
