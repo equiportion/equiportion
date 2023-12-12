@@ -1,6 +1,6 @@
-import MessageEvent from './MessageEvent';
-import MatrixEvent from './MatrixEvent';
-import type {RawMatrixEvent} from './RawMatrixEvent';
+import MessageEvent from '../MessageEvent';
+import MatrixEvent from '../MatrixEvent';
+import type {RawMatrixEvent} from '../RawMatrixEvent';
 
 /**
  * A transaction event modelled after this project's documentation.

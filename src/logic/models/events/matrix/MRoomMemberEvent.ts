@@ -1,7 +1,7 @@
 import {useRoomsStore} from '@/stores/rooms';
-import StateEvent from './StateEvent';
-import type {RawMatrixEvent} from './RawMatrixEvent';
-import MatrixEvent from './MatrixEvent';
+import StateEvent from '../StateEvent';
+import type {RawMatrixEvent} from '../RawMatrixEvent';
+import MatrixEvent from '../MatrixEvent';
 
 /**
  * A m.room.member event modelled after the matrix specs.

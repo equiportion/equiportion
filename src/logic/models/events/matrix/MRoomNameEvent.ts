@@ -1,33 +1,33 @@
 import {useRoomsStore} from '@/stores/rooms';
-import StateEvent from './StateEvent';
-import type {RawMatrixEvent} from './RawMatrixEvent';
-import MatrixEvent from './MatrixEvent';
+import StateEvent from '../StateEvent';
+import type {RawMatrixEvent} from '../RawMatrixEvent';
+import MatrixEvent from '../MatrixEvent';
 
 /**
- * A m.room.topic event modelled after the matrix specs.
+ * A m.room.name event modelled after the matrix specs.
  * @author Jakob Gießibel
  * @author Philipp Stappert
  */
-class MRoomTopicEvent extends StateEvent {
-  public static TYPE = 'm.room.topic';
+class MRoomNameEvent extends StateEvent {
+  public static TYPE = 'm.room.name';
 
-  private topic: string;
+  private name: string;
 
   /**
    * Creates a new state event with the given parameters
    * @param {string} eventId the eventId of this event, set to MatrixEvent.EVENT_ID_NEW if its a new event
    * @param {string} roomId the roomId of the room this event is published to
-   * @param {string} topic the value the room's topic is set to via this event
+   * @param {string} name the value the room's name is set to via this event
    */
-  constructor(eventId: string, roomId: string, topic: string) {
+  constructor(eventId: string, roomId: string, name: string) {
     const stateKey = '';
     super(eventId, roomId, stateKey);
 
-    this.topic = topic;
+    this.name = name;
   }
 
   /**
-   * Tries to parse the given event into a MRoomTopicEvent.
+   * Tries to parse the given event into a MRoomNameEvent.
    * @static
    * @param {RawMatrixEvent} event the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
@@ -38,7 +38,7 @@ class MRoomTopicEvent extends StateEvent {
       return undefined;
     }
 
-    return new MRoomTopicEvent(event.event_id, roomId ?? event.room_id, event.content.topic);
+    return new MRoomNameEvent(event.event_id, roomId ?? event.room_id, event.content.name);
   }
 
   /**
@@ -48,7 +48,7 @@ class MRoomTopicEvent extends StateEvent {
   public execute(): void {
     const roomsStore = useRoomsStore();
     const room = roomsStore.getRoom(this.getRoomId());
-    room?.setTopic(this.topic);
+    room?.setName(this.name);
   }
 
   /**
@@ -56,7 +56,7 @@ class MRoomTopicEvent extends StateEvent {
    * @returns {string} the type of this event
    */
   public getType(): string {
-    return MRoomTopicEvent.TYPE;
+    return MRoomNameEvent.TYPE;
   }
 
   /**
@@ -65,9 +65,9 @@ class MRoomTopicEvent extends StateEvent {
    */
   public toEventContent(): any {
     return {
-      avatar_url: this.topic,
+      name: this.name,
     };
   }
 }
 
-export default MRoomTopicEvent;
+export default MRoomNameEvent;

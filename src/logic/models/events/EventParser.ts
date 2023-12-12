@@ -1,11 +1,11 @@
-import MRoomAvatarEvent from './MRoomAvatarEvent';
-import MRoomMemberEvent from './MRoomMemberEvent';
-import MRoomNameEvent from './MRoomNameEvent';
-import MRoomTopicEvent from './MRoomTopicEvent';
+import MRoomAvatarEvent from './matrix/MRoomAvatarEvent';
+import MRoomMemberEvent from './matrix/MRoomMemberEvent';
+import MRoomNameEvent from './matrix/MRoomNameEvent';
+import MRoomTopicEvent from './matrix/MRoomTopicEvent';
 import MatrixEvent from './MatrixEvent';
 import type {MatrixEventConstructor} from './MatrixEventConstructor';
 import type {RawMatrixEvent} from './RawMatrixEvent';
-import TransactionEvent from './TransactionEvent';
+import TransactionEvent from './custom/TransactionEvent';
 
 /**
  * Parses events received from the Matrix API as json objects to MatrixEvent objects.
