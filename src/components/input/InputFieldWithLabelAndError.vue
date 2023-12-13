@@ -33,6 +33,7 @@ const props = defineProps({
   error: {
     type: String,
     required: false,
+    default: undefined,
   },
   label: {
     type: String,

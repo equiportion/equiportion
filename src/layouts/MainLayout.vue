@@ -9,7 +9,6 @@ import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import DropdownLink from '@/components/dropdowns/DropdownLink.vue';
 
 import LogoWide from '@/components/brand/LogoWide.vue';
-import LogoSquare from '@/components/brand/LogoSquare.vue';
 
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import cookieNames from '@/logic/constants/cookieNames';

@@ -33,9 +33,9 @@ const props = defineProps({
     <!--third column shows all debitors and the amount they owe-->
     <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
       <span
-        class="flex flex-col justify-center text-center truncate text-gray-700"
         v-for="debitor in props.transaction.getDebtors()"
         :key="debitor.user"
+        class="flex flex-col justify-center text-center truncate text-gray-700"
       >
         {{ debitor.user }} schuldet {{ debitor.amount }}€
       </span>

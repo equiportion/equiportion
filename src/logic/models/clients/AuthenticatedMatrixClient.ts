@@ -15,10 +15,6 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useClientStateStore} from '@/stores/clientState';
 import {useRoomsStore} from '@/stores/rooms';
 
-/** Types */
-import type MatrixEvent from '@/logic/models/events/MatrixEvent';
-import type {AxiosResponse} from 'axios';
-
 /** Utils */
 import {getCookie} from '@/logic/utils/cookies';
 
@@ -109,7 +105,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     clientStateStore.syncing = true;
-    await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then((values) => {
+    await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then(() => {
       clientStateStore.numberOfSyncs++;
       clientStateStore.syncing = false;
     });
