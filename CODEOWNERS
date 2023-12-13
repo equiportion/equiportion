@@ -1,30 +1,30 @@
-# Project Configuration @philippstappert
-/* @philippstappert
-.vscode/ @philippstappert
+[Project Configuration] @philippstappert
+# /*
+.vscode/
 
-# Codeowners file
-CODEOWNERS @uelbi @philippstappert @ufgfg @ubpch @usslz
+[Codeowners file] @uelbi @philippstappert @ufgfg @ubpch @usslz
+CODEOWNERS
 
-# CI/CD Pipeline @ubpch @philippstappert
-.gitlab-ci.yml @ubpch @philippstappert
+[CI/CD Pipeline][2] @ubpch @philippstappert
+.gitlab-ci.yml
 
-# Cypress @uelbi @philippstappert
-cypress/ @uelbi @philippstappert
+[Cypress] @uelbi @philippstappert
+cypress/
 
-# Backend-Logik @ufgfg @philippstappert
-src/logic/ @ufgfg @philippstappert
-src/stores/ @ufgfg @philippstappert
+[Backend-Logik] @ufgfg @philippstappert
+src/logic/
+src/stores/
 
-# Global Frontend @philippstappert
-src/components/ @philippstappert
-src/composables/ @philippstappert
-src/layouts/ @philippstappert
-src/assets/ @philippstappert
-public/ @philippstappert
+[Global Frontend] @philippstappert
+src/components/
+src/composables/
+src/layouts/
+src/assets/
+public/
 
-# Frontend @ufgfg @philippstappert
-src/views/ @ufgfg @philippstappert
+[Frontend] @ufgfg @philippstappert
+src/views/
 
-# Vue Configuration @ufgfg @philippstappert
-src/* @ufgfg @philippstappert
-src/router/ @ufgfg @philippstappert
+[Vue Configuration] @ufgfg @philippstappert
+src/*
+src/router/
