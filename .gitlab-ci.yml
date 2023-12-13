@@ -69,12 +69,26 @@ eslint:
   dependencies:
     - install-npm-dependencies
   script:
-    - npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore --format junit --output-file eslint-report.xml
+    - npx eslint --format gitlab .
   tags:
     - build-2
   artifacts:
     reports:
-      junit: eslint-report.xml
+      codequality: gl-codequality.json
+
+prettier:
+  stage: test
+  needs:
+    - install-npm-dependencies
+  dependencies:
+    - install-npm-dependencies
+  script:
+    - npx prettier-formatter-gitlab 'prettier -l src/'
+  tags:
+    - build-2
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
 
 cypress:
   stage: test

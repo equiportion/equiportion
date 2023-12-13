@@ -9,7 +9,6 @@ import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import DropdownLink from '@/components/dropdowns/DropdownLink.vue';
 
 import LogoWide from '@/components/brand/LogoWide.vue';
-import LogoSquare from '@/components/brand/LogoSquare.vue';
 
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import cookieNames from '@/logic/constants/cookieNames';
@@ -67,8 +66,8 @@ function logout() {
               <template #trigger>
                 <MenuProfilePicture id="profile-picture" />
               </template>
-              <DropdownLink to="/profile" id="profil-ansicht">Profil</DropdownLink>
-              <DropdownButton @click="logout" id="logout-button"> Abmelden </DropdownButton>
+              <DropdownLink id="profil-ansicht" to="/profile">Profil</DropdownLink>
+              <DropdownButton id="logout-button" @click="logout"> Abmelden </DropdownButton>
             </DropdownMenu>
           </div>
         </div>

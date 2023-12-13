@@ -5,7 +5,7 @@
  * @author Philipp Stappert
  *
  * @prop {string} class - CSS class to apply to the image (optional).
- * @prop {string} mxcUrl - The mxc url of the image.
+ * @prop {string} [mxcUrl] - The mxc url of the image (optional).
  * @prop {string} [alt] - Alternative text for the image (optional).
  * @prop {string} [title] - Title text for the image (optional).
  * @prop {number} [width] - Width of the image (optional, default: 128).
@@ -23,7 +23,7 @@ const props = defineProps({
   },
   mxcUrl: {
     type: String,
-    required: true,
+    default: undefined,
   },
   alt: {
     type: String,
@@ -60,12 +60,11 @@ const placeholderUrl = computed(() => {
     '&background=random'
   );
 });
-
 </script>
 <template>
   <MxcThumbnail
     v-if="mxcUrl"
-    :mxcUrl="mxcUrl"
+    :mxc-url="mxcUrl"
     alt=""
     :title="title"
     :width="width"

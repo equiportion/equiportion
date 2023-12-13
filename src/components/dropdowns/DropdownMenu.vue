@@ -23,13 +23,13 @@ watch(
 
 <template>
   <div class="relative no-close">
-    <div @click="toggle()" class="cursor-pointer">
+    <div class="cursor-pointer" @click="toggle()">
       <slot name="trigger" />
     </div>
     <div
+      v-show="open"
       class="absolute end-0 z-10 mt-2 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg"
       role="menu"
-      v-show="open"
     >
       <slot />
     </div>

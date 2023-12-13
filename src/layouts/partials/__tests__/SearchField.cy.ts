@@ -1,7 +1,7 @@
-import SearchField from '@/layouts/partials/SearchField.vue'
+import SearchField from '@/layouts/partials/SearchField.vue';
 
 describe('<SearchField />', () => {
   it('renders', () => {
-    cy.mount(SearchField)
-  })
-})
+    cy.mount(SearchField);
+  });
+});

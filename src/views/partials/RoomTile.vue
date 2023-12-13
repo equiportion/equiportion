@@ -26,9 +26,9 @@ function newTransaction() {
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
       <MxcOrPlaceholderImage
-        :mxcUrl="room.getAvatarUrl() ?? ''"
+        :mxc-url="room.getAvatarUrl() ?? ''"
         class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
-        :placeholderText="room.getName() ?? '?'"
+        :placeholder-text="room.getName() ?? '?'"
       />
 
       <div class="lg:ml-5 flex flex-col gap-2">

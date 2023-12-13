@@ -1,26 +1,55 @@
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
+import type {AxiosResponse} from 'axios';
+import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
 
 /**
  * A state event modelled after the matrix specs. All types of state events inherit from this class.
+ * @author Jakob Gießibel
+ * @author Philipp Stappert
  */
-class StateEvent extends MatrixEvent {
-  private stateKey: string;
+abstract class StateEvent extends MatrixEvent {
+  protected stateKey: string;
 
   /**
    * Creates a new state event with the given parameters
-   * @param roomId the id of the room to publish this event to
-   * @param eventType the type of state event
-   * @param content the content of the state event
-   * @param stateKey the key of the state. Defaults to an empty string.
+   * @param {string} eventId the eventId of this event, set to MatrixEvent.EVENT_ID_NEW if its a new event
+   * @param {string} roomId the roomId of the room this event is published to
+   * @param stateKey the key of the state
    */
-  constructor(roomId: string, eventType: string, content: any, stateKey?: string) {
-    super(roomId, eventType, content);
+  constructor(eventId: string, roomId: string, stateKey: string) {
+    super(eventId, roomId);
 
     this.stateKey = stateKey ?? '';
   }
-  public getPutUrl(): string {
-    return apiEndpoints.putStateEvent(this.roomId, this.type, this.stateKey);
+
+  /**
+   * Publishes this event to the matrix homeserver.
+   * @returns {Promise<AxiosResponse | undefined>} a Promise that resolves to the HTTP response or undefined if the request failed
+   */
+  public async publish(): Promise<AxiosResponse | undefined> {
+    const client = AuthenticatedMatrixClient.getClient();
+
+    const url = apiEndpoints.putStateEvent(this.getRoomId(), this.getType(), this.getStateKey());
+    const data = this.toEventContent();
+
+    const response = await client.putRequest(url, data);
+
+    if (!response?.data.event_id) {
+      return undefined;
+    }
+
+    this.setEventId(response.data.event_id);
+
+    return response;
+  }
+
+  /**
+   * Gets the state key of this event.
+   * @returns the state key
+   */
+  public getStateKey(): string {
+    return this.stateKey;
   }
 }
 
