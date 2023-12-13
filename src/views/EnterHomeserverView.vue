@@ -35,26 +35,25 @@ async function continueToLogin() {
 
 <template>
   <LoginProcessBase>
-    <form @submit.prevent="continueToLogin" class="mt-8 flex flex-col gap-6 w-full">
+    <form class="mt-8 flex flex-col gap-6 w-full" @submit.prevent="continueToLogin">
       <LoginStepsBar :active="1" />
       <div>
         <InputFieldWithLabelAndError
-          type="text"
           id="homeserver"
+          v-model:model-value="homeserverUrl"
+          type="text"
           name="homeserver"
           placeholder="z.B. https://matrix.org"
           label="Homeserver-URL"
-          v-bind:error="error"
-          v-model:model-value="homeserverUrl"
+          :error="error"
         />
       </div>
 
       <div class="sm:flex sm:items-center sm:gap-4">
-        <LoginContinueButton :loading="loading" @continue="continueToLogin" id="goToLoginButton">
+        <LoginContinueButton id="goToLoginButton" :loading="loading" @continue="continueToLogin">
           Weiter zum Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>
     </form>
   </LoginProcessBase>
 </template>
-@/logic/models/clients/MatrixClient.js

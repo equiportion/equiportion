@@ -25,11 +25,11 @@ const searchValue = computed({
       <label class="sr-only" for="search"> Suche </label>
 
       <input
-        class="h-10 w-full rounded-full border-none bg-white pe-10 ps-4 text-sm shadow-sm sm:w-56"
         id="search"
+        v-model="searchValue"
+        class="h-10 w-full rounded-full border-none bg-white pe-10 ps-4 text-sm shadow-sm sm:w-56"
         type="search"
         placeholder="Raum suchen..."
-        v-model="searchValue"
       />
 
       <div
