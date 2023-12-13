@@ -4,12 +4,10 @@ import LandingPageView from '@/views/LandingPageView.vue';
 import LoginView from '@/views/LoginView.vue';
 import EnterHomeserverView from '@/views/EnterHomeserverView.vue';
 import ProfilePageView from '@/views/ProfilePageView.vue';
-<<<<<<< src/router/index.ts
+
 import NewTransactionView from '@/views/NewTransactionView.vue';
-=======
 import TransactionOverviewView from '@/views/TransactionOverviewView.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
->>>>>>> src/router/index.ts
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +55,9 @@ const router = createRouter({
       path: '/new-transaction/:roomId',
       name: 'new-transaction',
       component: NewTransactionView,
+      meta: {
+        requiresAuth: true,
+      },
     },
   ],
 });
@@ -66,9 +67,8 @@ router.beforeEach((to) => {
     return;
   }
 
-  AuthenticatedMatrixClient.createClient().catch((error) => {
-    console.log(error);
-    //Redirect
+  AuthenticatedMatrixClient.createClient().catch(() => {
+    router.push({ name: 'login' });
   });
 });
 

@@ -31,6 +31,7 @@ abstract class MessageEvent extends MatrixEvent {
       return undefined;
     }
 
+    // TODO: implement proper transaction id
     clientStateStore.incrementTransactionId();
     this.setEventId(response.data.event_id);
 

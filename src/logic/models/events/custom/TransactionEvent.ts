@@ -4,7 +4,7 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 
 /**
  * A transaction event modelled after this project's documentation.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 class TransactionEvent extends MessageEvent {
@@ -49,7 +49,6 @@ class TransactionEvent extends MessageEvent {
    * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
   public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    console.log('Transaction from Event');
     if (event.type !== this.TYPE) {
       return undefined;
     }

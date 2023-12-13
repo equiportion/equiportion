@@ -6,10 +6,8 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import User from '@/logic/models/User';
-import {ref, reactive, watch} from 'vue';
-import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import type AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
+import {ref, watch} from 'vue';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import {useRoute} from 'vue-router';
 import UserAvatar from '@/components/media/UserAvatar.vue';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
@@ -17,42 +15,32 @@ import MemberDropdown from '@/views/partials/MemberDropdown.vue';
 import DebtorTile from '@/views/partials/DebtorTile.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 import TransactionEntryWidget from '@/views/partials/TransactionEntryWidget.vue';
+import { useRoomsStore } from '@/stores/rooms';
+import { useLoggedInUserStore } from '@/stores/loggedInUser';
+import MatrixEvent from '@/logic/models/events/MatrixEvent';
 
 const roomId = useRoute().params.roomId.toString();
-const error = ref();
-let creditorId = '';
-const sum = ref('');
-const purpose = ref('');
-var client: AuthenticatedMatrixClient;
-
-const debtors = ref<User[]>([]);
-const members: {[userId: string]: User} = reactive({});
-
-const isCreditorSelected = ref(false);
-const isDropdownOpen1 = ref(false);
-const isDropdownOpen2 = ref(false);
-const showError = ref(false);
 
 const {bus} = useGlobalEventBus();
 
-// Load client data and room information
-useAuthenticatedMatrixClient(loadData);
+const roomsStore = useRoomsStore();
+const loggedInUserStore = useLoggedInUserStore();
 
-/**
- * Load data from the authenticated matrix client and initialize values.
- *
- * @param {AuthenticatedMatrixClient} clientInstance - The authenticated matrix client instance.
- */
-function loadData(clientInstance: AuthenticatedMatrixClient) {
-  client = clientInstance;
-  const room = client.getRoom(roomId);
-  const memberIds = room.getMemberIds();
-  for (const memberId of memberIds) {
-    members[memberId] = client.getUser(memberId);
-  }
-  creditorId = client.getLoggedInUser().getUserId();
-  isCreditorSelected.value = true;
-}
+const room = roomsStore.getRoom(roomId);
+const members = room?.getMembers();
+
+const creditorId = ref(loggedInUserStore.user.getUserId());
+const sum = ref('');
+const purpose = ref('');
+const debtors = ref<User[]>([]);
+
+const isCreditorSelected = ref(true);
+const isDropdownOpen1 = ref(false);
+const isDropdownOpen2 = ref(false);
+
+const error = ref();
+const showError = ref(false);
+
 
 /**
  * Toggle the visibility of the first dropdown.
@@ -71,7 +59,7 @@ function toggleDropdown2() {
  * Clear the selected creditor.
  */
 function deleteCreditor() {
-  creditorId = '';
+  creditorId.value = '';
   isCreditorSelected.value = false;
 }
 
@@ -79,23 +67,28 @@ function deleteCreditor() {
  * Create a new transaction event with the provided information.
  */
 function createTransaction() {
-  if (creditorId && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
-    const debtorArray = debtors.value.map((debtor) => ({
+  if (creditorId.value !== '' && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
+    const sumValue = parseFloat(sum.value);
+    const debtorsJson = debtors.value.map((debtor) => ({
       user: debtor.getUserId(),
-      amount: parseInt(sum.value) / debtors.value.length,
+      amount: sumValue / debtors.value.length,
     }));
     try {
       const transactionEvent = new TransactionEvent(
+        MatrixEvent.EVENT_ID_NEW,
         roomId,
         purpose.value,
-        parseInt(sum.value),
-        creditorId,
-        debtorArray
+        sumValue,
+        creditorId.value,
+        debtorsJson,
       );
-      client.publishEvent(transactionEvent);
+
+      transactionEvent.publish();
+      
       showError.value = false;
     } catch (err) {
       error.value = err;
+      showError.value = true;
     }
   } else {
     showError.value = true;
@@ -105,9 +98,14 @@ function createTransaction() {
 /**
  * Add a new debtor to the list.
  *
- * @param {string} id - The user ID of the debtor to add.
+ * @param {string} id - The userId of the debtor to add.
+ * @return {void}
  */
-function addNewDebtor(id: string) {
+function addNewDebtor(id: string): void {
+  if (!members) {
+    return;
+  }
+
   const userToAdd = members[id];
 
   if (userToAdd) {
@@ -119,8 +117,9 @@ function addNewDebtor(id: string) {
  * Remove a debtor from the list.
  *
  * @param {string} id - The user ID of the debtor to remove.
+ * @return {void}
  */
-function deleteDebtor(id: string) {
+function deleteDebtor(id: string): void {
   const index = debtors.value.findIndex((member) => member.getUserId() === id);
   if (index !== -1) {
     debtors.value.splice(index, 1);
@@ -130,17 +129,20 @@ function deleteDebtor(id: string) {
 /**
  * Select a creditor from the members.
  *
- * @param {string} id - The user ID of the selected creditor.
+ * @param {string} id - The userId of the selected creditor.
+ * @return {void}
  */
-function selectCreditor(id: string) {
-  creditorId = id;
+function selectCreditor(id: string): void {
+  creditorId.value = id;
   isCreditorSelected.value = true;
 }
 
 /**
  * Validate the input for the sum field.
+ * 
+ * @return {void}
  */
-function validateSum() {
+function validateSum(): void {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
   if (!currencyRegex.test(sum.value)) {
     const parsedValue = parseFloat(sum.value);
@@ -185,8 +187,8 @@ watch(
         <RoundButton
           v-if="!isCreditorSelected"
           title="Mitgliederliste anzeigen"
-          @click="toggleDropdown1"
           class="relative"
+          @click="toggleDropdown1"
         >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown1 -->
@@ -205,7 +207,7 @@ watch(
           </div>
         </RoundButton>
         <!--creditor selected-->
-        <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
+        <div v-if="members && isCreditorSelected" class="flex flex-row items-center lg:items-start">
           <div class="relative group transition duration-200 hover:scale-110">
             <!--'x'-->
             <div
@@ -248,11 +250,11 @@ watch(
       </div>
 
       <div
-        v-if="debtors.length < Object.keys(members).length"
+        v-if="members && debtors.length < Object.keys(members).length"
         class="flex flex-col items-center m-16 relative"
       >
         <!--Add button-->
-        <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2" class="relative">
+        <RoundButton title="Mitgliederliste anzeigen" class="relative" @click="toggleDropdown2" >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown2 -->
           <div
@@ -275,11 +277,11 @@ watch(
     <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
       <!--entry widgets sum-->
       <div class="flex flex-row items-center">
-        <TransactionEntryWidget @input="validateSum" tag="Betrag" v-model="sum" />
+        <TransactionEntryWidget v-model="sum" tag="Betrag" @input="validateSum"/>
         <i class="fa-solid fa-euro-sign"></i>
       </div>
       <!--entry widgets purpose-->
-      <TransactionEntryWidget tag="Zweck" v-model="purpose" />
+      <TransactionEntryWidget v-model="purpose" tag="Zweck"/>
     </div>
     <!--validate and create new transaction-->
     <div class="flex justify-end m-10">
