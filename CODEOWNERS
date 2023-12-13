@@ -9,7 +9,6 @@
 /.gitlab-ci.yml
 
 [Cypress] @uelbi @philippstappert
-/cypress
 /cypress/**/*
 
 [Backend-Logik] @ufgfg @philippstappert
@@ -27,6 +26,5 @@
 /src/views/**/*
 
 [Vue Configuration] @ufgfg @philippstappert
-/src
 /src/*
 /src/router/**/*
