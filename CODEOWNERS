@@ -1,0 +1,30 @@
+[Project Configuration] @philippstappert
+/*
+.vscode/
+
+[Codeowners file] @uelbi @philippstappert @ufgfg @ubpch @usslz
+CODEOWNERS
+
+[CI/CD Pipeline][2] @ubpch @philippstappert
+.gitlab-ci.yml
+
+[Cypress] @uelbi @philippstappert
+cypress/
+
+[Backend-Logik] @ufgfg @philippstappert
+src/logic/
+src/stores/
+
+[Global Frontend] @philippstappert
+src/components/
+src/composables/
+src/layouts/
+src/assets/
+public/
+
+[Frontend] @ufgfg @philippstappert
+src/views/
+
+[Vue Configuration] @ufgfg @philippstappert
+src/*
+src/router/
