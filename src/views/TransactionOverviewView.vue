@@ -12,6 +12,7 @@ import TransactionTile from './partials/TransactionTile.vue';
 import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
+import UserBadge from '@/components/user/UserBadge.vue';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -50,15 +51,12 @@ function newTransaction(): void {
             <h1 class="flex text-3xl font-bold text-gray-900">
               {{ room?.getName() ?? roomId }}
             </h1>
-            <div class="flex flex-col lg:flex-row lg:gap-2">
+            <div class="flex flex-col lg:flex-row">
               <!--shows the display names of all members in a room if possible or the member id if not-->
-              <span
-                v-for="member in room?.getMembers()"
-                :key="member.getUserId()"
-                class="flex truncate"
-              >
-                {{ member.getDisplayname() ?? member.getUserId() }}
-              </span>
+              <UserBadge :user="client.getUser(member)" v-for="member in room?.getMemberIds()" :key="member" class="mr-2"></UserBadge>
+              <div class="flex">
+                <RoundButton class="w-8 h-8"><i class="fa-solid fa-2xs fa-angles-right"></i></RoundButton>
+              </div>
             </div>
           </div>
         </div>
