@@ -1,6 +1,6 @@
-import eventTypes from '../constants/eventTypes';
-import type MatrixEvent from '../models/events/MatrixEvent';
-import TransactionEvent from '../models/events/TransactionEvent';
+import eventTypes from '@/logic/constants/eventTypes';
+import type MatrixEvent from '@/logic/models/events/MatrixEvent';
+import TransactionEvent from '@/logic/models/events/TransactionEvent';
 
 /**
  * Parses an event received from the Matrix API as a json object to a new MatrixEvent object.
@@ -46,7 +46,8 @@ function parseTransactionEvent(eventJson: any): TransactionEvent {
     eventJson.purpose,
     eventJson.sum,
     eventJson.creditor,
-    debtors
+    debtors,
+    eventJson.eventId
   );
 }
 

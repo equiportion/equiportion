@@ -1,3 +1,5 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 // ***********************************************************
 // This example support/index.js is processed and
 // loaded automatically before your test files.
@@ -15,6 +17,35 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import testAccounts from "../fixtures/test-accounts.json"
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+beforeEach('logs in', () => {
+  //do nothing
+})
+
+export function login(userType: string) {
+    cy.visit('http://localhost:5173/welcome') 
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
+    cy.get('#login-button-on-landing-page').click()
+    cy.wait(1000) // eslint-disable-line cypress/no-unnecessary-waiting
+    cy.get('#homeserver').type(testAccounts[userType]["homeserver"])
+    cy.get('#goToLoginButton').click()
+    cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
+    cy.get('#homeserver').type(testAccounts[userType]["password"])
+    cy.get('#loginbutton').click()
+}
+
+export function logout() {
+  cy.get('#profile-picture').click()
+  cy.get('#logout-button').click()
+}
+
+export function loginCookiesActive(userType: string) {
+  cy.get('#login-button-on-landing-page').click()
+  cy.get('#username', {timeout: 10000}).type(testAccounts[userType]["username"])
+  cy.get('#homeserver').type(testAccounts[userType]["password"])
+  cy.get('#loginbutton').click()
+}

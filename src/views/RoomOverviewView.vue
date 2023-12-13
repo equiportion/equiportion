@@ -24,7 +24,7 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
 }
 </script>
 <template>
-  <MainLayout>
+  <MainLayout id="main-layout">
     <div class="bg-gray-50">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
@@ -38,18 +38,17 @@ async function loadData(clientInstance: AuthenticatedMatrixClient) {
     </div>
 
     <!--Rooms-->
-    <div class="flex flex-col items-center gap-2 p-2 lg:p-5">
+    <div class="flex flex-col items-center gap-2 p-2 lg:p-5" id="rooms">
       <span class="text-3xl text-gray-300" v-if="loading">
         <i class="fa-solid fa-spinner animate-spin"></i>
       </span>
-      <span class="text-sm text-gray-300" v-if="rooms && Object.keys(rooms).length <= 0">
+      <span class="text-sm text-gray-300" v-if="rooms && Object.keys(rooms).length <= 0" id="no-rooms-message">
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">
-        <RoomTile :room="room" />
+        <RoomTile :room="room"/>
       </template>
     </div>
     <!--End of rooms-->
   </MainLayout>
 </template>
-@/logic/models/clients/AuthenticatedMatrixClient
