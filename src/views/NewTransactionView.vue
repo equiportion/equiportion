@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * @component {NewTransactionView} - Component for creating a new transaction in a Matrix room.
+ * @author Yinlei Ba
+ */
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import User from '@/logic/models/User';
@@ -9,6 +13,10 @@ import TransactionEvent from '@/logic/models/events/TransactionEvent';
 import {useRoute} from 'vue-router';
 import UserAvatar from '@/components/media/UserAvatar.vue';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
+import MemberDropdown from '@/views/partials/MemberDropdown.vue';
+import DebtorTile from '@/views/partials/DebtorTile.vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
+import TransactionEntryWidget from '@/views/partials/TransactionEntryWidget.vue';
 
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
@@ -27,8 +35,14 @@ const showError = ref(false);
 
 const {bus} = useGlobalEventBus();
 
+// Load client data and room information
 useAuthenticatedMatrixClient(loadData);
 
+/**
+ * Load data from the authenticated matrix client and initialize values.
+ *
+ * @param {AuthenticatedMatrixClient} clientInstance - The authenticated matrix client instance.
+ */
 function loadData(clientInstance: AuthenticatedMatrixClient) {
   client = clientInstance;
   const room = client.getRoom(roomId);
@@ -40,18 +54,30 @@ function loadData(clientInstance: AuthenticatedMatrixClient) {
   isCreditorSelected.value = true;
 }
 
+/**
+ * Toggle the visibility of the first dropdown.
+ */
 function toggleDropdown1() {
   isDropdownOpen1.value = !isDropdownOpen1.value;
 }
+/**
+ * Toggle the visibility of the second dropdown.
+ */
 function toggleDropdown2() {
   isDropdownOpen2.value = !isDropdownOpen2.value;
 }
 
+/**
+ * Clear the selected creditor.
+ */
 function deleteCreditor() {
   creditorId = '';
   isCreditorSelected.value = false;
 }
 
+/**
+ * Create a new transaction event with the provided information.
+ */
 function createTransaction() {
   if (creditorId && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
     const debtorArray = debtors.value.map((debtor) => ({
@@ -76,23 +102,44 @@ function createTransaction() {
   }
 }
 
-function addNewMember(id: string) {
+/**
+ * Add a new debtor to the list.
+ *
+ * @param {string} id - The user ID of the debtor to add.
+ */
+function addNewDebtor(id: string) {
   const userToAdd = members[id];
 
   if (userToAdd) {
     debtors.value.push(userToAdd);
   }
 }
-function deleteMember(id: string) {
+
+/**
+ * Remove a debtor from the list.
+ *
+ * @param {string} id - The user ID of the debtor to remove.
+ */
+function deleteDebtor(id: string) {
   const index = debtors.value.findIndex((member) => member.getUserId() === id);
   if (index !== -1) {
     debtors.value.splice(index, 1);
   }
 }
+
+/**
+ * Select a creditor from the members.
+ *
+ * @param {string} id - The user ID of the selected creditor.
+ */
 function selectCreditor(id: string) {
   creditorId = id;
   isCreditorSelected.value = true;
 }
+
+/**
+ * Validate the input for the sum field.
+ */
 function validateSum() {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
   if (!currencyRegex.test(sum.value)) {
@@ -121,13 +168,14 @@ watch(
 <template>
   <MainLayout>
     <!--error message-->
-    <div
+    <SystemAlert
       v-if="showError"
-      class="p-4 mb-4 text-yellow-800 flex flex-row items-center gap-2 border border-yellow-300 rounded-lg bg-yellow-50 ml-32 mr-32 mt-5"
+      severity="warning"
+      class="ml-32 mr-32 mt-5 flex flex-row items-center gap-2"
     >
-    <i class="fa-solid fa-circle-exclamation"></i>
-      <div>Bitte vervollständigen Sie die Angaben</div>
-    </div>
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <p>Bitte vervollständigen Sie die Angaben</p>
+    </SystemAlert>
 
     <!--Profile of creditor-->
     <div class="flex flex-col items-center lg:flex-row mt-2 ml-10">
@@ -138,30 +186,40 @@ watch(
           v-if="!isCreditorSelected"
           title="Mitgliederliste anzeigen"
           @click="toggleDropdown1"
+          class="relative"
         >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown1 -->
-          <div v-show="isDropdownOpen1" class="bg-white absolute left-40 z-10 shadow-sm">
+          <div
+            v-show="isDropdownOpen1"
+            class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+          >
             <div
               v-for="member in members"
               :key="member.getUserId()"
               class="flex flex-col items-center m-10"
               @click="selectCreditor(member.getUserId())"
             >
-              <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-              <span class="text-md text-gray-700 font-bold mt-3">{{
-                member.getDisplayname()
-              }}</span>
+              <MemberDropdown :member="member" />
             </div>
           </div>
         </RoundButton>
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
-          <UserAvatar
-            :user="members[creditorId]"
-            class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
-            @click="deleteCreditor"
-          />
+          <div class="relative group transition duration-200 hover:scale-110">
+            <!--'x'-->
+            <div
+              class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+              @click="deleteCreditor"
+            >
+              <i class="text-white fa-solid fa-xmark text-2xl"></i>
+            </div>
+            <UserAvatar
+              :user="members[creditorId]"
+              class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
+            />
+          </div>
+
           <div class="flex-col ml-8">
             <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
               {{ members[creditorId].getDisplayname() }}
@@ -177,7 +235,7 @@ watch(
       <span class="text-2xl font-bold text-gray-800 mb-5">hat bezahlt für...</span>
     </div>
 
-    <!--list of member-->
+    <!--list of debtors-->
     <div
       class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg ml-10"
     >
@@ -186,34 +244,28 @@ watch(
         :key="debtor.getUserId()"
         class="flex flex-col items-center m-10"
       >
-        <UserAvatar
-          :user="members[debtor.getUserId()]"
-          class="w-20 h-20 rounded-full transition duration-200 hover:scale-110 hover:brightness-50"
-          @click="deleteMember(debtor.getUserId())"
-        />
-        <span class="text-md text-gray-700 font-bold mt-3">{{ debtor.getDisplayname() }}</span>
+        <DebtorTile :debtor="debtor" @click="deleteDebtor(debtor.getUserId())"/>
       </div>
+
       <div
         v-if="debtors.length < Object.keys(members).length"
         class="flex flex-col items-center m-16 relative"
       >
         <!--Add button-->
-        <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2">
+        <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2" class="relative">
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown2 -->
-          <div v-show="isDropdownOpen2" class="bg-white absolute left-16 shadow-sm">
+          <div
+            v-show="isDropdownOpen2"
+            class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+          >
             <div
               v-for="member in members"
               :key="member.getUserId()"
               class="flex flex-col items-center m-10"
-              @click="addNewMember(member.getUserId())"
+              @click="addNewDebtor(member.getUserId())"
             >
-              <template v-if="!debtors.some((debtor) => debtor.getUserId() === member.getUserId())">
-                <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-                <span class="text-md text-gray-700 font-bold mt-3">{{
-                  member.getDisplayname()
-                }}</span>
-              </template>
+              <MemberDropdown :member="member" />
             </div>
           </div>
         </RoundButton>
@@ -223,30 +275,12 @@ watch(
     <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
       <!--entry widgets sum-->
       <div class="flex flex-row items-center">
-        <div>Betrag :</div>
-        <div>
-          <input
-            @input="validateSum"
-            v-model="sum"
-            type="text"
-            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-          />
-        </div>
+        <TransactionEntryWidget @input="validateSum" tag="Betrag" v-model="sum" />
         <i class="fa-solid fa-euro-sign"></i>
       </div>
       <!--entry widgets purpose-->
-      <div class="flex flex-row items-center">
-        <div>Zweck :</div>
-        <div>
-          <input
-            v-model="purpose"
-            type="text"
-            class="block p-3 bg-slate-100 sm:text-md rounded-md m-3"
-          />
-        </div>
-      </div>
+      <TransactionEntryWidget tag="Zweck" v-model="purpose" />
     </div>
-
     <!--validate and create new transaction-->
     <div class="flex justify-end m-10">
       <RoundButton title="Bestätigen" @click="createTransaction">
