@@ -6,6 +6,7 @@ import MatrixEvent from './MatrixEvent';
 import type {MatrixEventConstructor} from './MatrixEventConstructor';
 import type {RawMatrixEvent} from './RawMatrixEvent';
 import TransactionEvent from './custom/TransactionEvent';
+import EventParseError from './EventParseError';
 
 /**
  * Parses events received from the Matrix API as json objects to MatrixEvent objects.

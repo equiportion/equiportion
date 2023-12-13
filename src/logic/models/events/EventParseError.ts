@@ -1,1 +1,3 @@
-class EventParseError extends Error {}
+class EventParseError extends Error { }
+
+export default EventParseError;

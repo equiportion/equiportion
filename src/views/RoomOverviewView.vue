@@ -37,7 +37,7 @@ const rooms = roomsStore.rooms;
     <div id="rooms" class="flex flex-col items-center gap-2 p-2 lg:p-5">
       <HeightFade>
         <span
-          v-show="clientStateStore.syncing || clientStateStore.numberOfSyncs < 1"
+          v-show="clientStateStore.syncing && clientStateStore.numberOfSyncs < 1"
           class="transition duration-700 text-3xl text-gray-300"
         >
           <i class="fa-solid fa-spinner animate-spin"></i>

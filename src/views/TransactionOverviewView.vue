@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 /**
  * @component {TransactionOverview} - Shows all transactions in a group.
  * @author Leandro El Omari
@@ -8,31 +7,28 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
-import Room from '@/logic/models/Room';
-import useAuthenticatedMatrixClient from '@/composables/useAuthenticatedMatrixClient';
-import {ref, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
-import router from '@/router';
 import TransactionTile from './partials/TransactionTile.vue';
+import {useRoomsStore} from '@/stores/rooms';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
+import router from '@/router';
 
-var client: AuthenticatedMatrixClient;
 const roomId = useRoute().params.roomId.toString();
-var room: Ref<Room | undefined> = ref();
-const loading = ref(true);
 
-//loads the necessary data
-useAuthenticatedMatrixClient(loadData);
+const roomsStore = useRoomsStore();
+const room = roomsStore.getRoom(roomId);
 
-//function used in loading the necessary data
-async function loadData(clientInstance: AuthenticatedMatrixClient) {
-  client = clientInstance;
-  room.value = client.getRoom(roomId);
-  loading.value = false;
-}
+const transactionEvents = room?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
 
-function newTransaction() {
-  router.push({name: 'new-transaction', params: {roomId: roomId}})
+/**
+ * Opens NewTransactionView of the room of this TransactionOverviewView.
+ * @returns {void}
+ */
+function newTransaction(): void {
+  router.push({
+    name: 'new-transaction',
+    params: {roomId: roomId},
+  });
 }
 </script>
 
@@ -46,8 +42,8 @@ function newTransaction() {
           <!--shows the room picture-->
           <MxcOrPlaceholderImage
             :mxcUrl="room?.getAvatarUrl() ?? ''"
-            class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
             :placeholderText="room?.getName() ?? '?'"
+            class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
           />
           <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">
             <!--shows the room name if possible or the room id if not-->
@@ -56,16 +52,19 @@ function newTransaction() {
             </h1>
             <div class="flex flex-col lg:flex-row lg:gap-2">
               <!--shows the display names of all members in a room if possible or the member id if not-->
-              <span v-for="member in room?.getMemberIds()" :key="member" class="flex truncate">
-                {{ client.getUser(member)?.getDisplayname() ?? client.getUser(member)?.getUserId()}}
-            </span>
+              <span
+                v-for="member in room?.getMembers()"
+                :key="member.getUserId()"
+                class="flex truncate"
+              >
+                {{ member.getDisplayname() ?? member.getUserId() }}
+              </span>
             </div>
           </div>
         </div>
-        <div v-if="!loading && room" class="flex flex-col lg:mt-2">
-
+        <div v-if="room" class="flex flex-col lg:mt-2">
           <!--default message if no transactions were made-->
-          <template v-if="room?.getTransactionEvents().length <= 0">
+          <template v-if="transactionEvents && transactionEvents.length <= 0">
             <div class="flex flex-col text-sm text-gray-400 items-center mt-5">
               Keine Transaktionen vorhanden
             </div>
@@ -83,11 +82,11 @@ function newTransaction() {
 
             <!--shows all transaction using the transacion tile partial-->
             <div
+              v-for="transactionEvent in transactionEvents"
+              :key="transactionEvent.getEventId()"
               class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200"
-              v-for="transaction in room.getTransactionEvents()"
-              :key="transaction.getEventId()"
             >
-            <TransactionTile :transaction="transaction"></TransactionTile>
+              <TransactionTile :transaction="transactionEvent"></TransactionTile>
             </div>
           </div>
         </div>

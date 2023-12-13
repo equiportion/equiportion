@@ -85,7 +85,6 @@ class MRoomMemberEvent extends StateEvent {
     const room = roomsStore.getRoom(this.getRoomId())!;
     const member = room?.getMember(this.userId);
 
-    console.log(member);
     member?.setAvatarUrl(this.avatarUrl);
     member?.setDisplayname(this.displayname);
   }

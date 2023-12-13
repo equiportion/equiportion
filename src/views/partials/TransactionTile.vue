@@ -7,7 +7,7 @@
  * @prop {TransactionEvent} transaction - A transaction event of a transaction (sent into a room).
  */
 
-import TransactionEvent from '@/logic/models/events/TransactionEvent';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 
 const props = defineProps({
     transaction: {

@@ -117,7 +117,7 @@ class Room {
   }
 
   /**
-   * Returns all users in this room
+   * Gets all users in this room.
    * @returns {{[userId: string]: User}} all users in this room
    */
   public getMembers(): {[userId: string]: User} {
@@ -125,7 +125,7 @@ class Room {
   }
 
   /**
-   * Returns a specific member of this room
+   * Gets a specific member of this room.
    * @param userId the id of the user
    * @returns {User} the user with the given id, or a new user with the given id if the user is not loaded yet
    */
@@ -135,6 +135,43 @@ class Room {
     }
 
     return this.members[userId];
+  }
+
+  /**
+   * Gets the eventIds of all events of a certain type this room has loaded.
+   * @param [type] the type of event to get the eventIds for
+   * @returns {string[]} the eventIds
+   */
+  public getEventIds(type?: string): string[] {
+    if (!type) {
+      return this.eventIds;
+    }
+
+    return this.eventIds.filter((eventId) => this.getEvent(eventId)!.getType() === type);
+  }
+
+  /**
+   * Gets the all events of a certain type this room has loaded.
+   * @param [type] the type of event to get
+   * @returns {MatrixEvent[]} the events
+   */
+  public getEvents(type?: string): MatrixEvent[] {
+    const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
+
+    if (!type) {
+      return events;
+    }
+
+    return events.filter((event) => event.getType() == type);
+  }
+
+  /**
+   * Gets a specific event this room has loaded.
+   * @param eventId the eventId of the event to get
+   * @returns {MatrixEvent | undefined} the event if it exists and was loaded, undefinded otherwise
+   */
+  public getEvent(eventId: string): MatrixEvent | undefined {
+    return this.events[eventId];
   }
 }
 

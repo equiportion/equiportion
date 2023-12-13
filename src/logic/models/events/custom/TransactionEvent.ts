@@ -1,6 +1,7 @@
 import MessageEvent from '../MessageEvent';
 import MatrixEvent from '../MatrixEvent';
 import type {RawMatrixEvent} from '../RawMatrixEvent';
+import {useRoomsStore} from '@/stores/rooms';
 
 /**
  * A transaction event modelled after this project's documentation.
@@ -46,16 +47,17 @@ class TransactionEvent extends MessageEvent {
    * @static
    * @param {RawMatrixEvent} event the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
-   * @returns {MatrixEvent|undefined} Either the parsed event or undefined if the event could not be parsed (type missmatch)
+   * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
   public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
+    console.log('Transaction from Event');
     if (event.type !== this.TYPE) {
       return undefined;
     }
 
     const debtors: {user: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({user: debtor.user, amount: debtor.amount});
+      debtors.push({user: debtor.user, amount: parseFloat(debtor.amount)});
     }
 
     return new TransactionEvent(
@@ -69,7 +71,7 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Executes this event on its room
+   * Executes this event on its room.
    * @returns {void}
    */
   public execute(): void {
@@ -77,15 +79,23 @@ class TransactionEvent extends MessageEvent {
   }
 
   /**
-   * Gets the content of this event as a Json object (for matrix api)
+   * Gets the content of this event as a Json object (for matrix api).
    * @returns {any} the content of this event
    */
   public toEventContent(): any {
+    const debtors = [];
+    for (const debtor of this.debtors) {
+      debtors.push({
+        user: debtor.user,
+        amount: debtor.amount.toString(),
+      });
+    }
+
     return {
       purpose: this.purpose,
-      sum: this.sum,
+      sum: this.sum.toString(),
       creditor: this.creditor,
-      debtors: this.debtors,
+      debtors: debtors,
     };
   }
 
