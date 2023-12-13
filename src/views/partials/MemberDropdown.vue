@@ -1,20 +1,17 @@
 <script setup lang="ts">
+/**
+ * @component {MemberDropdown} - Component for displaying a member's information in a dropdown.
+ * @author Yinlei Ba
+ *
+ * @prop {User} member - The member to display.
+ */
 import UserAvatar from '@/components/media/UserAvatar.vue';
 
-const props = defineProps(['isOpen', 'members', 'handleClick']);
+const props = defineProps(['member']);
 </script>
 <template>
-    <div v-show="isOpen" class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded">
-      <div
-        v-for="member in members"
-        :key="member.getUserId()"
-        class="flex flex-col items-center m-10"
-        @click="() => handleClick(member.getUserId())"
-      >
-        <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-        <div class="flex flex-col items-center">
-        <span class="text-md text-gray-700 font-bold mt-3">{{ member.getDisplayname() }}</span>
-        </div>
-      </div>
-    </div>
-  </template>
+  <UserAvatar :user="props.member" class="w-10 h-10 rounded-full" />
+  <div class="flex flex-col items-center">
+    <span class="text-md text-gray-700 font-bold mt-3">{{ props.member.getDisplayname() }}</span>
+  </div>
+</template>

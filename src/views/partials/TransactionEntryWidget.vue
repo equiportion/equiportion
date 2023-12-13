@@ -1,6 +1,15 @@
-<!-- TransactionEntryWidgets.vue -->
 <script setup lang="ts">
-defineProps(['modelValue', 'tag']);
+/**
+ * @component {TransactionEntryWidget} - Component for creating a new transaction in a Matrix room.
+ * @author Yinlei Ba
+ * 
+ * @prop {any} modelValue - v-model of the parent component
+ * @prop {String} tag - context of the widget
+ */
+ defineProps({
+  modelValue: null as any,
+  tag: String,
+});
 defineEmits(['update:modelValue']);
 </script>
 

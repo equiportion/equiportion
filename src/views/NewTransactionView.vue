@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * @component {NewTransactionView} - Component for creating a new transaction in a Matrix room.
+ * @author Yinlei Ba
+ */
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import User from '@/logic/models/User';
@@ -12,7 +16,7 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import MemberDropdown from '@/views/partials/MemberDropdown.vue';
 import DebtorTile from '@/views/partials/DebtorTile.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
-import TransactionEntryWidgets from './partials/TransactionEntryWidgets.vue';
+import TransactionEntryWidget from '@/views/partials/TransactionEntryWidget.vue';
 
 const roomId = useRoute().params.roomId.toString();
 const error = ref();
@@ -186,11 +190,19 @@ watch(
         >
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown1 -->
-          <MemberDropdown
-            :isOpen="isDropdownOpen1"
-            :members="members"
-            :handleClick="selectCreditor"
-          />
+          <div
+            v-show="isDropdownOpen1"
+            class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+          >
+            <div
+              v-for="member in members"
+              :key="member.getUserId()"
+              class="flex flex-col items-center m-10"
+              @click="selectCreditor(member.getUserId())"
+            >
+              <MemberDropdown :member="member" />
+            </div>
+          </div>
         </RoundButton>
         <!--creditor selected-->
         <div v-if="isCreditorSelected" class="flex flex-row items-center lg:items-start">
@@ -232,7 +244,7 @@ watch(
         :key="debtor.getUserId()"
         class="flex flex-col items-center m-10"
       >
-        <DebtorTile :debtor="debtor" :members="members" :handleClick="deleteDebtor"> </DebtorTile>
+        <DebtorTile :debtor="debtor" @click="deleteDebtor(debtor.getUserId())"/>
       </div>
 
       <div
@@ -243,11 +255,19 @@ watch(
         <RoundButton title="Mitgliederliste anzeigen" @click="toggleDropdown2" class="relative">
           <i class="fa-solid fa-plus"></i>
           <!-- Dropdown2 -->
-          <MemberDropdown
-            :isOpen="isDropdownOpen2"
-            :members="members"
-            :handleClick="addNewDebtor"
-          />
+          <div
+            v-show="isDropdownOpen2"
+            class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+          >
+            <div
+              v-for="member in members"
+              :key="member.getUserId()"
+              class="flex flex-col items-center m-10"
+              @click="addNewDebtor(member.getUserId())"
+            >
+              <MemberDropdown :member="member" />
+            </div>
+          </div>
         </RoundButton>
       </div>
     </div>
@@ -255,11 +275,11 @@ watch(
     <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
       <!--entry widgets sum-->
       <div class="flex flex-row items-center">
-        <TransactionEntryWidgets @input="validateSum" tag="Betrag" v-model="sum" />
+        <TransactionEntryWidget @input="validateSum" tag="Betrag" v-model="sum" />
         <i class="fa-solid fa-euro-sign"></i>
       </div>
       <!--entry widgets purpose-->
-      <TransactionEntryWidgets tag="Zweck" v-model="purpose" />
+      <TransactionEntryWidget tag="Zweck" v-model="purpose" />
     </div>
     <!--validate and create new transaction-->
     <div class="flex justify-end m-10">
