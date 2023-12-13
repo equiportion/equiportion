@@ -1,7 +1,6 @@
 import MessageEvent from '../MessageEvent';
 import MatrixEvent from '../MatrixEvent';
 import type {RawMatrixEvent} from '../RawMatrixEvent';
-import {useRoomsStore} from '@/stores/rooms';
 
 /**
  * A transaction event modelled after this project's documentation.
