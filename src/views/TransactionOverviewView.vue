@@ -53,7 +53,7 @@ function newTransaction(): void {
             </h1>
             <div class="flex flex-col lg:flex-row">
               <!--shows the display names of all members in a room if possible or the member id if not-->
-              <UserBadge :user="client.getUser(member)" v-for="member in room?.getMemberIds()" :key="member" class="mr-2"></UserBadge>
+              <UserBadge v-for="member in room?.getMembers()" :key="member.getUserId()" :user="member" class="mr-2"></UserBadge>
               <div class="flex">
                 <RoundButton class="w-8 h-8"><i class="fa-solid fa-2xs fa-angles-right"></i></RoundButton>
               </div>
