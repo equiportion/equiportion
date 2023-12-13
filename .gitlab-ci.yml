@@ -170,5 +170,11 @@ deploy-production:
   tags:
     - build-2
 
+
+# dependency scanning
 include:
 - template: Security/Dependency-Scanning.gitlab-ci.yml
+
+gemnasium-dependency_scanning:
+  tags:
+    - infra-2
