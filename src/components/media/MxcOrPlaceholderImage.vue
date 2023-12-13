@@ -23,6 +23,7 @@ const props = defineProps({
   },
   mxcUrl: {
     type: String,
+    default: undefined,
   },
   alt: {
     type: String,
@@ -59,7 +60,6 @@ const placeholderUrl = computed(() => {
     '&background=random'
   );
 });
-
 </script>
 <template>
   <MxcThumbnail

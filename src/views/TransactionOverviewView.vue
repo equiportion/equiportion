@@ -41,8 +41,8 @@ function newTransaction(): void {
         <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
           <!--shows the room picture-->
           <MxcOrPlaceholderImage
-            :mxcUrl="room?.getAvatarUrl() ?? ''"
-            :placeholderText="room?.getName() ?? '?'"
+            :mxc-url="room?.getAvatarUrl() ?? ''"
+            :placeholder-text="room?.getName() ?? '?'"
             class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
           />
           <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">

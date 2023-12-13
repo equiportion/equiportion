@@ -98,13 +98,20 @@ async function loadThumbnail(): Promise<void> {
 }
 
 const clientStateStore = useClientStateStore();
-watch(() => clientStateStore.created, () => {
-  loadThumbnail();
-});
+watch(
+  () => clientStateStore.created,
+  () => {
+    loadThumbnail();
+  }
+);
 
-watch(props, () => {
-  loadThumbnail();
-}, {immediate: true});
+watch(
+  props,
+  () => {
+    loadThumbnail();
+  },
+  {immediate: true}
+);
 </script>
 <template>
   <div>

@@ -57,11 +57,10 @@ router.beforeEach((to) => {
     return;
   }
 
-  AuthenticatedMatrixClient.createClient()
-    .catch((error) => {
-      console.log(error);
-      //Redirect
-    });
+  AuthenticatedMatrixClient.createClient().catch((error) => {
+    console.log(error);
+    //Redirect
+  });
 });
 
 export default router;

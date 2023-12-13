@@ -11,6 +11,7 @@ const props = defineProps({
   id: {
     type: String,
     required: false,
+    default: undefined,
   },
   name: {
     type: String,

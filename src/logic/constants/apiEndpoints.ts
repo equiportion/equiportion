@@ -6,7 +6,13 @@ const apiEndpoints = {
     `/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`,
   putMessageEvent: (roomId: string, eventType: string, transactionId: number) =>
     `/_matrix/client/v3/rooms/${roomId}/send/${eventType}/${transactionId}`,
-  thumbnailGet: (serverName: string, mediaId: string, width: number, height: number, method: string) => {
+  thumbnailGet: (
+    serverName: string,
+    mediaId: string,
+    width: number,
+    height: number,
+    method: string
+  ) => {
     return `/_matrix/media/v3/thumbnail/${serverName}/${mediaId}?width=${width}&height=${height}&method=${method}`;
   },
 };

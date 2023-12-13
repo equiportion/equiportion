@@ -1,7 +1,7 @@
-import LogoSquare from '@/components/brand/LogoSquare.vue'
+import LogoSquare from '@/components/brand/LogoSquare.vue';
 
 describe('<LogoSquare />', () => {
   it('renders', () => {
-    cy.mount(LogoSquare)
-  })
-})
+    cy.mount(LogoSquare);
+  });
+});
