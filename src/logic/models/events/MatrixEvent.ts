@@ -3,10 +3,12 @@ import type {AxiosResponse} from 'axios';
 /**
  * An event modelled after the matrix specs. All types of events inherit from this class.
  * The constructors of the class is defined by {@link MatrixEventConstructor}
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 abstract class MatrixEvent {
+  public static EVENT_ID_NEW = 'new_event';
+
   protected roomId: string;
   protected eventId: string;
 
@@ -21,7 +23,7 @@ abstract class MatrixEvent {
   }
 
   /**
-   * Publishes this event to the matrix homeserver.
+   * Publishes this event to the matrix homeserver, adds it to its room and executes it.
    * @returns {Promise<AxiosResponse | undefined>} the HTTP response or undefined if the request failed
    */
   public abstract publish(): Promise<AxiosResponse | undefined>;

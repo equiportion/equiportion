@@ -20,7 +20,7 @@ import {getCookie} from '@/logic/utils/cookies';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 class AuthenticatedMatrixClient extends MatrixClient {

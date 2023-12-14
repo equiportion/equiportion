@@ -4,7 +4,7 @@ const apiEndpoints = {
   profile: (userId: string) => `/_matrix/client/v3/profile/${userId}`,
   putStateEvent: (roomId: string, eventType: string, stateKey: string) =>
     `/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`,
-  putMessageEvent: (roomId: string, eventType: string, transactionId: number) =>
+  putMessageEvent: (roomId: string, eventType: string, transactionId: string) =>
     `/_matrix/client/v3/rooms/${roomId}/send/${eventType}/${transactionId}`,
   thumbnailGet: (
     serverName: string,

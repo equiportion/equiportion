@@ -26,7 +26,7 @@ const props = defineProps({
     default: '',
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '',
   },
@@ -40,13 +40,28 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  min: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  max: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
 });
 
 const inputValue = computed({
-  get() {
+  get(): string | number {
     return props.modelValue;
   },
-  set(value: string) {
+  set(value: string | number) {
     emit('update:modelValue', value);
   },
 });
@@ -57,10 +72,13 @@ const inputValue = computed({
     <InputField
       :id="id"
       v-model="inputValue"
-      class="mt-1"
+      class="mt-1 w-full"
       :type="type"
       :name="name"
       :placeholder="placeholder"
+      :min="min"
+      :max="max"
+      :step="step"
     />
     <small v-if="error" id="error-message" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
