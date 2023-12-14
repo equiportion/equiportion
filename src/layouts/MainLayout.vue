@@ -2,7 +2,6 @@
 import {ref} from 'vue';
 import {RouterLink} from 'vue-router';
 import SearchField from '@/layouts/partials/SearchField.vue';
-import MenuDivider from '@/layouts/partials/MenuDivider.vue';
 import MenuProfilePicture from '@/layouts/partials/MenuProfilePicture.vue';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
