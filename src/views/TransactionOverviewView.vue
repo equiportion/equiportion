@@ -21,6 +21,8 @@ const room = roomsStore.getRoom(roomId);
 
 const transactionEvents = room?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
 
+var showMemberList = false;
+
 /**
  * Opens NewTransactionView of the room of this TransactionOverviewView.
  * @returns {void}
@@ -31,12 +33,23 @@ function newTransaction(): void {
     params: {roomId: roomId},
   });
 }
+
+function openMemberList(): void {
+  const change = document.getElementById("change");
+  if(showMemberList) {
+    change?.classList.replace("fa-angles-left","fa-angles-right");
+  } else {
+    change?.classList.replace("fa-angles-right","fa-angles-left");
+  }
+  showMemberList = !showMemberList;
+}
 </script>
 
 <template>
   <MainLayout>
     <div class="flex flex-col px-5 items-center">
       <!--The main body of the transaction overview, being 4/6 wide-->
+      <div class=""></div>
       <div class="flex flex-col lg:w-4/6 w-full">
         <!--Profile image and username -->
         <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
@@ -61,8 +74,8 @@ function newTransaction(): void {
                 :user="member"
               />
 
-              <RoundButton class="w-8 h-8 shadow-md">
-                <i class="fa-solid fa-2xs fa-angles-right"></i>
+              <RoundButton class="w-8 h-8 shadow-md" @click="openMemberList">
+                <i id="change" class="fa-solid fa-angles-right"></i>
               </RoundButton>
             </div>
           </div>
