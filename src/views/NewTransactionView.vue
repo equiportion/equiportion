@@ -5,6 +5,7 @@
  */
 import MainLayout from '@/layouts/MainLayout.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
+import StandardButton from '@/components/buttons/StandardButton.vue';
 import User from '@/logic/models/User';
 import {ref, watch} from 'vue';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
@@ -38,8 +39,11 @@ const isCreditorSelected = ref(true);
 const isDropdownOpen1 = ref(false);
 const isDropdownOpen2 = ref(false);
 
-const error = ref();
+const loading = ref(false);
+const errorPurpose = ref('');
+const errorSum = ref('');
 const showError = ref(false);
+
 
 
 /**
@@ -67,6 +71,7 @@ function deleteCreditor() {
  * Create a new transaction event with the provided information.
  */
 function createTransaction() {
+  loading.value = true;
   if (creditorId.value !== '' && debtors.value.length > 0 && parseFloat(sum.value) !== 0 && sum.value !== '') {
     const sumValue = parseFloat(sum.value);
     const debtorsJson = debtors.value.map((debtor) => ({
@@ -87,10 +92,20 @@ function createTransaction() {
       
       showError.value = false;
     } catch (err) {
-      error.value = err;
+      console.log(err);
       showError.value = true;
     }
   } else {
+    if(!purpose.value){
+      errorPurpose.value = 'Gib einen Zweck an.'
+    } else{
+      errorPurpose.value = '';
+    }
+    if(!validateSum()){
+      errorSum.value = 'ungültige Eingabe'
+    }else{
+      errorSum.value = '';
+    }
     showError.value = true;
   }
 }
@@ -140,19 +155,11 @@ function selectCreditor(id: string): void {
 /**
  * Validate the input for the sum field.
  * 
- * @return {void}
+ * @return {boolean} - true if input correct
  */
-function validateSum(): void {
+function validateSum(): boolean {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
-  if (!currencyRegex.test(sum.value)) {
-    const parsedValue = parseFloat(sum.value);
-
-    if (!isNaN(parsedValue)) {
-      sum.value = parsedValue.toFixed(2);
-    } else {
-      sum.value = '';
-    }
-  }
+  return(currencyRegex.test(sum.value));
 }
 
 // close dropdown on click outside
@@ -173,7 +180,7 @@ watch(
     <!--error message-->
     <SystemAlert
       v-if="showError"
-      severity="warning"
+      severity="danger"
       class="ml-32 mr-32 mt-5 flex flex-row items-center gap-2"
     >
       <i class="fa-solid fa-circle-exclamation"></i>
@@ -208,7 +215,7 @@ watch(
           </div>
         </RoundButton>
         <!--creditor selected-->
-        <div v-if="members && isCreditorSelected" class="flex flex-row items-center lg:items-start">
+        <div v-if="members && isCreditorSelected" class="flex flex-col lg:flex-row items-center lg:items-start">
           <div class="relative group transition duration-200 hover:scale-110">
             <!--'x'-->
             <div
@@ -278,16 +285,19 @@ watch(
 
     <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
       <!--entry widgets sum-->
-        <InputFieldWithLabelAndError v-model="sum" class="w-full lg:w-1/4" type="number" min="0" step="0.01" label="Betrag in Euro" @input="validateSum"/>
+        <InputFieldWithLabelAndError v-model="sum" :error="errorSum" class="w-full lg:w-1/4" type="number" :min="0" :step="0.01" label="Betrag in Euro"/>
       <!--entry widgets purpose-->
-      <InputFieldWithLabelAndError v-model="purpose" class="w-full" type="text" label="Zweck"/>
+      <InputFieldWithLabelAndError v-model="purpose" :error="errorPurpose" class="w-full" type="text" label="Zweck"/>
     </div>
     <!--validate and create new transaction-->
-    <div class="flex justify-end m-10">
+    <div class="hidden lg:flex justify-end mt-5">
       <RoundButton title="Bestätigen" @click="createTransaction">
         <i class="fa-solid fa-check"></i>
       </RoundButton>
     </div>
+    <StandardButton class="block lg:hidden mt-5" title="Bestätigen" @click="createTransaction">
+        <i class="fa-solid fa-check"></i>
+      </StandardButton>
   </div>
   </MainLayout>
 </template>
