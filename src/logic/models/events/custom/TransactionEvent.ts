@@ -55,7 +55,7 @@ class TransactionEvent extends MessageEvent {
 
     const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({userId: debtor.userId, amount: parseFloat(debtor.amount)});
+      debtors.push({userId: debtor.user, amount: parseFloat(debtor.amount)});
     }
 
     return new TransactionEvent(
@@ -84,7 +84,7 @@ class TransactionEvent extends MessageEvent {
     const debtors = [];
     for (const debtor of this.debtors) {
       debtors.push({
-        userId: debtor.userId,
+        user: debtor.userId,
         amount: debtor.amount.toString(),
       });
     }
