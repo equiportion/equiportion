@@ -58,10 +58,10 @@ const props = defineProps({
 });
 
 const inputValue = computed({
-  get() {
+  get(): string | number {
     return props.modelValue;
   },
-  set(value: string) {
+  set(value: string | number) {
     emit('update:modelValue', value);
   },
 });
