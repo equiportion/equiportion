@@ -6,12 +6,21 @@
  * @prop {User} member - The member to display.
  */
 import UserAvatar from '@/components/media/UserAvatar.vue';
+import User from '@/logic/models/User';
 
-const props = defineProps(['member']);
+defineProps({
+  member: {
+    type: User,
+    required: true,
+  },
+});
+
 </script>
 <template>
-  <UserAvatar :user="props.member" class="w-10 h-10 rounded-full" />
+  <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
   <div class="flex flex-col items-center">
-    <span class="text-md text-gray-700 font-bold mt-3">{{ props.member.getDisplayname() }}</span>
+    <span class="text-md text-gray-700 font-bold mt-3">
+      {{ member.getDisplayname() }}
+    </span>
   </div>
 </template>
