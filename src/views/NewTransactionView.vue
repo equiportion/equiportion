@@ -246,7 +246,7 @@ watch(
           </div>
         </div>
       </div>
-      <div class="flex flex-col items-center lg:flex-row ml-14">
+      <div class="flex flex-col items-center lg:flex-row">
         <span class="text-2xl font-bold text-gray-800 mb-5">hat bezahlt für...</span>
       </div>
 
