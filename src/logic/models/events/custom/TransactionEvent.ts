@@ -78,9 +78,9 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets the content of this event as a Json object (for matrix api).
-   * @returns {any} the content of this event
+   * @returns {{}} the content of this event
    */
-  public toEventContent(): any {
+  public toEventContent(): {} {
     const debtors = [];
     for (const debtor of this.debtors) {
       debtors.push({
