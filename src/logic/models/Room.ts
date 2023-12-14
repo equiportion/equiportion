@@ -49,13 +49,7 @@ class Room {
       if (!event) {
         continue;
       }
-
-      const eventId = event.getEventId()!;
-      if (!this.events[eventId]) {
-        this.eventIds.push(eventId);
-      }
-      this.events[eventId] = event;
-
+      this.addEvent(event);
       event.execute();
     }
   }
@@ -172,6 +166,20 @@ class Room {
    */
   public getEvent(eventId: string): MatrixEvent | undefined {
     return this.events[eventId];
+  }
+
+  /**
+   * Adds a specific event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
+   * @param event the event to add
+   */
+  public addEvent(event: MatrixEvent) {
+    const eventId = event.getEventId();
+
+    if (!this.events[eventId]) {
+      this.eventIds.push(eventId);
+    }
+
+    this.events[eventId] = event;
   }
 }
 

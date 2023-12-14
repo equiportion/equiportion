@@ -23,7 +23,7 @@ abstract class MatrixEvent {
   }
 
   /**
-   * Publishes this event to the matrix homeserver.
+   * Publishes this event to the matrix homeserver, adds it to its room and executes it.
    * @returns {Promise<AxiosResponse | undefined>} the HTTP response or undefined if the request failed
    */
   public abstract publish(): Promise<AxiosResponse | undefined>;
