@@ -57,7 +57,7 @@ const inputValue = computed({
     <InputField
       :id="id"
       v-model="inputValue"
-      class="mt-1"
+      class="mt-1 w-full"
       :type="type"
       :name="name"
       :placeholder="placeholder"
