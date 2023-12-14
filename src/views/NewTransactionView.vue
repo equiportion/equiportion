@@ -181,7 +181,7 @@ watch(
     <SystemAlert
       v-if="showError"
       severity="danger"
-      class="ml-32 mr-32 mt-5 flex flex-row items-center gap-2"
+      class="mt-5 flex flex-row items-center gap-2"
     >
       <i class="fa-solid fa-circle-exclamation"></i>
       <p>Bitte vervollständigen Sie die Angaben</p>
@@ -233,7 +233,6 @@ watch(
           <div class="flex-col ml-8">
             <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
               {{ members[creditorId].getDisplayname() }}
-              aaaaaaaaaaaaaaaashidhasdi
             </h1>
             <span class="text-md text-gray-500">
               {{ members[creditorId].getUserId() }}
