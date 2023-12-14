@@ -17,12 +17,12 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Creates a new TransactionEvent
-   * @param eventId the eventId of this event (optional, only to be set if this event was received from the matrix api)
-   * @param roomId the roomId of the room this event is published to
-   * @param purpose the description of the transaction
-   * @param sum the total amount spent
-   * @param creditor the userId of the creditor
-   * @param debtors the debtors as an array, each debtor containing their userId and the amount they owe
+   * @param {string} eventId the eventId of this event (optional, only to be set if this event was received from the matrix api)
+   * @param {string} roomId the roomId of the room this event is published to
+   * @param {string} purpose the description of the transaction
+   * @param {number} sum the total amount spent
+   * @param {string} creditor the userId of the creditor
+   * @param {{userId: string; amount: number}[]} debtors the debtors as an array, each debtor containing their userId and the amount they owe
    */
   constructor(
     eventId: string,
@@ -107,7 +107,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's purpose.
-   * @returns the purpose
+   * @returns {string} the purpose
    */
   public getPurpose(): string {
     return this.purpose;
@@ -115,7 +115,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's sum.
-   * @returns the sum
+   * @returns {number} the sum
    */
   public getSum(): number {
     return this.sum;
@@ -123,7 +123,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's creditor.
-   * @returns the userId of the creditor
+   * @returns {string} the userId of the creditor
    */
   public getCreditorId(): string {
     return this.creditor;
@@ -131,7 +131,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's debtors.
-   * @returns an array of debtors each containing a userId and the amount they owe
+   * @returns {{userId: string; amount: number}[]} an array of debtors each containing a userId and the amount they owe
    */
   public getDebtorIds(): {userId: string; amount: number}[] {
     return this.debtors;
