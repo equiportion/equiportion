@@ -28,6 +28,21 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  min: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  max: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: undefined,
+  }
 });
 
 const inputValue = computed({
@@ -47,6 +62,8 @@ const inputValue = computed({
     :name="name"
     class="w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
     :placeholder="placeholder"
-    v-bind="$attrs"
+    :min="min"
+    :max="max"
+    :step="step"
   />
 </template>

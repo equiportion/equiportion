@@ -40,6 +40,21 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  min: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  max: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: undefined,
+  }
 });
 
 const inputValue = computed({
@@ -61,7 +76,9 @@ const inputValue = computed({
       :type="type"
       :name="name"
       :placeholder="placeholder"
-      v-bind="$attrs"
+      :min="min"
+      :max="max"
+      :step="step"
     />
     <small v-if="error" id="error-message" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
