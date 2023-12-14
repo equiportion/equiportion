@@ -26,7 +26,7 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
 
 <template>
   <div
-    class="flex flex-col w-full rounded-lg bg-gray-100 shadow-lg lg:hover:bg-gray-200 transition p-5 gap-5"
+    class="flex flex-col w-full rounded-lg bg-gray-100 shadow-lg lg:hover:bg-gray-200 transition p-5 gap-2"
   >
     <!--Zweck-->
     <h2 class="text-2xl font-bold w-full text-center lg:text-left break-all">
@@ -35,7 +35,9 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
 
     <div class="flex flex-col lg:flex-row w-full">
       <!--Gläubiger-->
-      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-2 items-center w-full">
+      <div
+        class="self-start flex flex-col lg:flex-row flex-wrap gap-1 lg:gap-2 items-center w-full"
+      >
         <UserBadge class="shadow-md" :user="creditor!" />
         <span>
           hat <b>{{ transaction.getSum() }}€</b> ausgelegt
@@ -43,11 +45,13 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
       </div>
 
       <!--Schuldner-->
-      <div class="flex flex-col gap-5 lg:gap-2 w-full">
+      <div
+        class="flex flex-col gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
+      >
         <div
           v-for="debtor in transaction.getDebtorIds()"
           :key="debtor.userId"
-          class="flex flex-col lg:flex-row gap-2"
+          class="flex flex-col lg:flex-row gap-1 lg:gap-2 items-center"
         >
           <UserBadge :user="room!.getMember(debtor.userId)" />
           <span>

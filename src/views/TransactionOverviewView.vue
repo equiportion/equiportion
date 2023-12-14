@@ -51,16 +51,16 @@ const iconClasses = computed(() => {
 <template>
   <MainLayout>
     <!--shows a button that enables the user to add a new transaction-->
-    <div class="fixed bottom-0 flex flex-row justify-end w-full p-5">
-      <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
-    </div>
+    <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
+      <i class="fa-solid fa-plus"></i>
+    </RoundButton>
 
     <!--content-->
-    <div class="flex flex-col px-5 items-center">
+    <div class="flex flex-col p-5 items-center">
       <!--The main body of the transaction overview, being 80% wide-->
       <div class="flex flex-col lg:max-w-[80%] w-full">
-        <!--Profile image and username -->
-        <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
+        <!--Room image and name -->
+        <div class="flex flex-col items-center lg:flex-row mt-4">
           <!--shows the room picture-->
           <MxcOrPlaceholderImage
             :mxc-url="room?.getAvatarUrl() ?? ''"
@@ -68,13 +68,13 @@ const iconClasses = computed(() => {
             class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
           />
 
-          <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">
+          <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
             <!--shows the room name if possible or the room id if not-->
             <h1 class="flex text-3xl font-bold text-gray-900">
               {{ room?.getName() ?? roomId }}
             </h1>
 
-            <div class="flex flex-col lg:flex-row gap-2">
+            <div class="flex flex-col lg:flex-row gap-2 items-center">
               <!--shows the display names of all members in a room if possible or the member id if not-->
               <UserBadge
                 v-for="member in room?.getMembers()"
@@ -90,7 +90,7 @@ const iconClasses = computed(() => {
           </div>
         </div>
 
-        <div v-if="room" class="flex flex-col mt-5">
+        <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
           <!--default message if no transactions were made-->
           <template v-if="transactionEvents && transactionEvents.length <= 0">
             <span class="text-sm text-gray-400 text-center"> Keine Transaktionen vorhanden </span>
