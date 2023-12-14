@@ -70,7 +70,7 @@ const iconClasses = computed(() => {
 
           <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
             <!--shows the room name if possible or the room id if not-->
-            <h1 class="flex text-3xl font-bold text-gray-900">
+            <h1 class="flex text-3xl font-bold text-gray-900 break-all">
               {{ room?.getName() ?? roomId }}
             </h1>
 
