@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import User from '@/logic/models/User';
-import ProfileImage from '../media/ProfileImage.vue';
+import MxcOrPlaceholderImage from '../media/MxcOrPlaceholderImage.vue';
 
-const props = defineProps({
+defineProps({
   user: {
     type: User,
     required: true,
@@ -10,8 +10,12 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="flex flex-row bg-gray-100 rounded-full items-center">
-    <ProfileImage class="rounded-full h-8 w-8"></ProfileImage>
-    <span class="mx-2">{{ props.user.getDisplayname() ?? props.user.getUserId() }}</span>
+  <div class="flex flex-row bg-gray-100 rounded-full items-center pr-3 shadow-md">
+    <MxcOrPlaceholderImage
+      class="rounded-full h-8 w-8"
+      :mxc-url="user.getAvatarUrl()"
+      :placeholder-text="user.getDisplayname() ?? '@' + user.getUserId()"
+    />
+    <span class="ml-1">{{ user.getDisplayname() ?? '@' + user.getUserId() }}</span>
   </div>
 </template>

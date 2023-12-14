@@ -33,7 +33,7 @@ function logout() {
 
 <template>
   <div @click="emitClick($event)">
-    <header class="fixed top-0 bg-gray-50 w-full">
+    <header class="fixed top-0 bg-gray-100 w-full z-50 shadow-md">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex items-center justify-end lg:justify-between">
           <!-- Logo on the left sisde -->
@@ -57,9 +57,6 @@ function logout() {
 
             <!-- search -->
             <SearchField v-model="searchInputValue" />
-
-            <!-- divider -->
-            <MenuDivider />
 
             <!-- profile pic & dropdown -->
             <DropdownMenu>

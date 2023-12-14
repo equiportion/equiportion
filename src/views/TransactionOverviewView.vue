@@ -44,22 +44,30 @@ function newTransaction(): void {
           <MxcOrPlaceholderImage
             :mxc-url="room?.getAvatarUrl() ?? ''"
             :placeholder-text="room?.getName() ?? '?'"
-            class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
+            class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
           />
+
           <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">
             <!--shows the room name if possible or the room id if not-->
             <h1 class="flex text-3xl font-bold text-gray-900">
               {{ room?.getName() ?? roomId }}
             </h1>
-            <div class="flex flex-col lg:flex-row">
+
+            <div class="flex flex-col lg:flex-row gap-2">
               <!--shows the display names of all members in a room if possible or the member id if not-->
-              <UserBadge v-for="member in room?.getMembers()" :key="member.getUserId()" :user="member" class="mr-2"></UserBadge>
-              <div class="flex">
-                <RoundButton class="w-8 h-8"><i class="fa-solid fa-2xs fa-angles-right"></i></RoundButton>
-              </div>
+              <UserBadge
+                v-for="member in room?.getMembers()"
+                :key="member.getUserId()"
+                :user="member"
+              />
+
+              <RoundButton class="w-8 h-8 shadow-md">
+                <i class="fa-solid fa-2xs fa-angles-right"></i>
+              </RoundButton>
             </div>
           </div>
         </div>
+
         <div v-if="room" class="flex flex-col lg:mt-2">
           <!--default message if no transactions were made-->
           <template v-if="transactionEvents && transactionEvents.length <= 0">

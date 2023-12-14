@@ -22,7 +22,7 @@ function newTransaction() {
 </script>
 <template>
   <div
-    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg border-r-8 border-b-8 bg-gray-100 border-gray-200 cursor-pointer"
+    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 transition"
     @click="openTransactions()"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">

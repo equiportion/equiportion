@@ -8,15 +8,17 @@ const loggedInUser = useLoggedInUserStore().user;
 </script>
 <template>
   <MainLayout>
-    <div class="flex flex-col px-5 mt-2 items-center gap-5">
+    <div class="flex flex-col px-5 mt-5 items-center gap-5">
       <!--Profile image and username -->
       <div class="flex flex-col items-center lg:flex-row justify-center gap-5">
         <ProfileImage class="w-40 h-40 rounded-full" />
         <div class="flex flex-col items-center lg:items-start">
           <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
-            {{ loggedInUser.getDisplayname() }}
+            {{ loggedInUser.getDisplayname() ?? '@' + loggedInUser.getUserId() }}
           </h1>
-          <span class="text-md text-gray-500">{{ loggedInUser.getUserId() }}</span>
+          <span v-if="loggedInUser.getDisplayname()" class="text-md text-gray-500">
+            {{ loggedInUser.getUserId() }}
+          </span>
         </div>
       </div>
     </div>
