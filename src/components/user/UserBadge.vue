@@ -10,7 +10,7 @@ defineProps({
 });
 </script>
 <template>
-  <div class="flex flex-row bg-gray-100 rounded-full items-center pr-3 shadow-md">
+  <div class="flex flex-row bg-blue-600 text-gray-100 rounded-full items-center pr-3">
     <MxcOrPlaceholderImage
       class="rounded-full h-8 w-8"
       :mxc-url="user.getAvatarUrl()"

@@ -13,6 +13,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
+import {computed, ref} from 'vue';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -20,8 +21,6 @@ const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(roomId);
 
 const transactionEvents = room?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
-
-var showMemberList = false;
 
 /**
  * Opens NewTransactionView of the room of this TransactionOverviewView.
@@ -34,15 +33,19 @@ function newTransaction(): void {
   });
 }
 
-function openMemberList(): void {
-  const change = document.getElementById("change");
-  if(showMemberList) {
-    change?.classList.replace("fa-angles-left","fa-angles-right");
-  } else {
-    change?.classList.replace("fa-angles-right","fa-angles-left");
-  }
-  showMemberList = !showMemberList;
+function toggleMemberList(): void {
+  memberListOpen.value = !memberListOpen.value;
 }
+
+const memberListOpen = ref(false);
+
+const iconClasses = computed(() => {
+  if (memberListOpen.value) {
+    return 'fa-solid fa-angles-right rotate-180 transition';
+  } else {
+    return 'fa-solid fa-angles-right transition';
+  }
+});
 </script>
 
 <template>
@@ -50,7 +53,7 @@ function openMemberList(): void {
     <div class="flex flex-col px-5 items-center">
       <!--The main body of the transaction overview, being 4/6 wide-->
       <div class=""></div>
-      <div class="flex flex-col lg:w-4/6 w-full">
+      <div class="flex flex-col lg:max-w-[80%] w-full">
         <!--Profile image and username -->
         <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
           <!--shows the room picture-->
@@ -72,41 +75,30 @@ function openMemberList(): void {
                 v-for="member in room?.getMembers()"
                 :key="member.getUserId()"
                 :user="member"
+                class="shadow-md"
               />
 
-              <RoundButton class="w-8 h-8 shadow-md" @click="openMemberList">
-                <i id="change" class="fa-solid fa-angles-right"></i>
+              <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
+                <i :class="iconClasses"></i>
               </RoundButton>
             </div>
           </div>
         </div>
 
-        <div v-if="room" class="flex flex-col lg:mt-2">
+        <div v-if="room" class="flex flex-col mt-5">
           <!--default message if no transactions were made-->
           <template v-if="transactionEvents && transactionEvents.length <= 0">
-            <div class="flex flex-col text-sm text-gray-400 items-center mt-5">
-              Keine Transaktionen vorhanden
-            </div>
+            <span class="text-sm text-gray-400 text-center"> Keine Transaktionen vorhanden </span>
           </template>
 
           <!--the header of the table containing the transactions-->
-          <div v-else class="grid justify-center-center grid-cols-1 lg:grid-cols-3">
-            <div class="col-span-3 lg:m-5 invisible lg:visible">
-              <div class="flex flex-row">
-                <div class="w-1/3 text-center font-bold text-gray-900">Zweck</div>
-                <div class="w-1/3 text-center font-bold text-gray-900">Gläubiger</div>
-                <div class="w-1/3 text-center font-bold text-gray-900">Schuldner</div>
-              </div>
-            </div>
-
+          <div v-else class="flex flex-col justify-center gap-5">
             <!--shows all transaction using the transacion tile partial-->
-            <div
+            <TransactionTile
               v-for="transactionEvent in transactionEvents"
               :key="transactionEvent.getEventId()"
-              class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200"
-            >
-              <TransactionTile :transaction="transactionEvent"></TransactionTile>
-            </div>
+              :transaction="transactionEvent"
+            />
           </div>
         </div>
 

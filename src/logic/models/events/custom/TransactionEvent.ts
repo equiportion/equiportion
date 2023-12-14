@@ -13,7 +13,7 @@ class TransactionEvent extends MessageEvent {
   private purpose: string;
   private sum: number;
   private creditor: string;
-  private debtors: {user: string; amount: number}[];
+  private debtors: {userId: string; amount: number}[];
 
   /**
    * Creates a new TransactionEvent
@@ -31,7 +31,7 @@ class TransactionEvent extends MessageEvent {
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {user: string; amount: number}[]
+    debtors: {userId: string; amount: number}[]
   ) {
     super(eventId, roomId);
 
@@ -53,9 +53,9 @@ class TransactionEvent extends MessageEvent {
       return undefined;
     }
 
-    const debtors: {user: string; amount: number}[] = [];
+    const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({user: debtor.user, amount: parseFloat(debtor.amount)});
+      debtors.push({userId: debtor.userId, amount: parseFloat(debtor.amount)});
     }
 
     return new TransactionEvent(
@@ -84,7 +84,7 @@ class TransactionEvent extends MessageEvent {
     const debtors = [];
     for (const debtor of this.debtors) {
       debtors.push({
-        user: debtor.user,
+        userId: debtor.userId,
         amount: debtor.amount.toString(),
       });
     }
@@ -125,7 +125,7 @@ class TransactionEvent extends MessageEvent {
    * Gets this TransactionEvent's creditor.
    * @returns the userId of the creditor
    */
-  public getCreditor(): string {
+  public getCreditorId(): string {
     return this.creditor;
   }
 
@@ -133,7 +133,7 @@ class TransactionEvent extends MessageEvent {
    * Gets this TransactionEvent's debtors.
    * @returns an array of debtors each containing a userId and the amount they owe
    */
-  public getDebtors(): {user: string; amount: number}[] {
+  public getDebtorIds(): {userId: string; amount: number}[] {
     return this.debtors;
   }
 }
