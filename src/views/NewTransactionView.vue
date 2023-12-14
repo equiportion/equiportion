@@ -83,6 +83,22 @@ async function createTransaction() {
       userId: debtor.getUserId(),
       amount: sumValue / debtors.value.length,
     }));
+
+    if (!purpose.value || purpose.value == '') {
+      errorPurpose.value = 'Zweck ist ein Pflichtfeld!';
+    } else {
+      errorPurpose.value = '';
+    }
+    if (!validateSum()) {
+      errorSum.value = 'Ungültige Summe!';
+    } else {
+      errorSum.value = '';
+    }
+    if (errorPurpose.value !== '' || errorSum.value !== '') {
+      loading.value = false;
+      return;
+    }
+
     try {
       const transactionEvent = new TransactionEvent(
         MatrixEvent.EVENT_ID_NEW,
@@ -102,16 +118,6 @@ async function createTransaction() {
       showError.value = true;
     }
   } else {
-    if (!purpose.value) {
-      errorPurpose.value = 'Gib einen Zweck an.';
-    } else {
-      errorPurpose.value = '';
-    }
-    if (!validateSum()) {
-      errorSum.value = 'ungültige Eingabe';
-    } else {
-      errorSum.value = '';
-    }
     showError.value = true;
   }
 }
