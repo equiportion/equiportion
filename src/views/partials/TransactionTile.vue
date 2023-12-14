@@ -46,7 +46,7 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
       <div class="flex flex-col gap-5 lg:gap-2">
         <div
           v-for="debtor in transaction.getDebtorIds()"
-          :key="debtor.user"
+          :key="debtor.userId"
           class="flex flex-col lg:flex-row"
         ></div>
       </div>
