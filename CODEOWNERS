@@ -9,6 +9,7 @@
 /.gitlab-ci.yml
 
 [Cypress] @uelbi @philippstappert
+__tests__/**/*
 /cypress/**/*
 
 [Backend-Logik] @ufgfg @philippstappert
