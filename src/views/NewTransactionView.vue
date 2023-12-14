@@ -20,7 +20,7 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import router from '@/router';
-
+import type {Ref} from 'vue';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -35,7 +35,7 @@ const members = room?.getMembers();
 const creditorId = ref(loggedInUserStore.user.getUserId());
 const sum = ref('');
 const purpose = ref('');
-const debtors = ref<User[]>([]);
+const debtors: Ref<User[]> = ref([]);
 
 const isCreditorSelected = ref(true);
 const isDropdownOpen1 = ref(false);
@@ -259,7 +259,7 @@ watch(
           :key="debtor.getUserId()"
           class="flex flex-col items-center m-10"
         >
-          <DebtorTile :debtor="members[debtor.getUserId()]" @click="deleteDebtor(debtor.getUserId())" />
+          <DebtorTile :debtor="debtor" @click="deleteDebtor(debtor.getUserId())" />
         </div>
 
         <div
