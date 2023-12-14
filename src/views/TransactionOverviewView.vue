@@ -74,7 +74,7 @@ const iconClasses = computed(() => {
               {{ room?.getName() ?? roomId }}
             </h1>
 
-            <div class="flex flex-col lg:flex-row gap-2 items-center">
+            <div class="flex flex-row gap-2 justify-center flex-wrap">
               <!--shows the display names of all members in a room if possible or the member id if not-->
               <UserBadge
                 v-for="member in room?.getMembers()"
