@@ -61,6 +61,7 @@ const inputValue = computed({
       :type="type"
       :name="name"
       :placeholder="placeholder"
+      v-bind="$attrs"
     />
     <small v-if="error" id="error-message" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
