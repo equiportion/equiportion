@@ -1,12 +1,12 @@
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
 import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
-import type { AxiosResponse } from 'axios';
-import { useRoomsStore } from '@/stores/rooms';
+import type {AxiosResponse} from 'axios';
+import {useRoomsStore} from '@/stores/rooms';
 
 /**
  * A message event modelled after the matrix specs.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 abstract class MessageEvent extends MatrixEvent {

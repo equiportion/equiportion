@@ -2,11 +2,11 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
 import type {AxiosResponse} from 'axios';
 import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
-import { useRoomsStore } from '@/stores/rooms';
+import {useRoomsStore} from '@/stores/rooms';
 
 /**
  * A state event modelled after the matrix specs. All types of state events inherit from this class.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 abstract class StateEvent extends MatrixEvent {
@@ -25,7 +25,7 @@ abstract class StateEvent extends MatrixEvent {
   }
 
   /**
-   * Publishes this event to the matrix homeserver, adds it to its room and executes it.   
+   * Publishes this event to the matrix homeserver, adds it to its room and executes it.
    * @returns {Promise<AxiosResponse | undefined>} a Promise that resolves to the HTTP response or undefined if the request failed
    */
   public async publish(): Promise<AxiosResponse | undefined> {

@@ -1,6 +1,6 @@
 /**
  * A matrix user. Can be either the current logged in user or any member of any joined room.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 class User {

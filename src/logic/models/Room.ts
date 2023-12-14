@@ -4,7 +4,7 @@ import User from './User';
 
 /**
  * A matrix room the logged in user has joined.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 class Room {
