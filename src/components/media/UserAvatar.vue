@@ -2,14 +2,17 @@
 import User from '@/logic/models/User';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 
-const props = defineProps({
+defineProps({
   user: {
     type: User,
     required: true,
-  }
-})
+  },
+});
 </script>
 
 <template>
-  <MxcOrPlaceholderImage :mxcUrl="props.user.getAvatarUrl() ?? ''" :placeholderText="props.user.getDisplayname() ?? props.user.getUserId()" />
+  <MxcOrPlaceholderImage
+    :mxc-url="user.getAvatarUrl()"
+    :placeholder-text="user.getDisplayname() ?? user.getUserId()"
+  />
 </template>
