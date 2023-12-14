@@ -68,7 +68,7 @@ router.beforeEach((to) => {
   }
 
   AuthenticatedMatrixClient.createClient().catch(() => {
-    router.push({ name: 'login' });
+    router.push({name: 'login'});
   });
 });
 

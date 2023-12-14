@@ -14,7 +14,6 @@ defineProps({
     required: true,
   },
 });
-
 </script>
 <template>
   <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
