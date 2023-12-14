@@ -14,10 +14,10 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import MemberDropdown from '@/views/partials/MemberDropdown.vue';
 import DebtorTile from '@/views/partials/DebtorTile.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
-import TransactionEntryWidget from '@/views/partials/TransactionEntryWidget.vue';
 import { useRoomsStore } from '@/stores/rooms';
 import { useLoggedInUserStore } from '@/stores/loggedInUser';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
+import InputFieldWithLabelAndError from'@/components/input/InputFieldWithLabelAndError.vue';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -169,6 +169,7 @@ watch(
 
 <template>
   <MainLayout>
+    <div class="px-2 lg:px-10">
     <!--error message-->
     <SystemAlert
       v-if="showError"
@@ -180,7 +181,7 @@ watch(
     </SystemAlert>
 
     <!--Profile of creditor-->
-    <div class="flex flex-col items-center lg:flex-row mt-2 ml-10">
+    <div class="flex flex-col items-center lg:flex-row mt-2">
       <div class="flex flex-col items-center m-8">
         <!--creditor not selected-->
         <!--Add button-->
@@ -225,6 +226,7 @@ watch(
           <div class="flex-col ml-8">
             <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
               {{ members[creditorId].getDisplayname() }}
+              aaaaaaaaaaaaaaaashidhasdi
             </h1>
             <span class="text-md text-gray-500">
               {{ members[creditorId].getUserId() }}
@@ -239,7 +241,7 @@ watch(
 
     <!--list of debtors-->
     <div
-      class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg ml-10"
+      class="w-fit flex flex-wrap lg:items-start lg:flex-row justify-center bg-slate-100 mt-3 rounded-lg"
     >
       <div
         v-for="debtor in debtors"
@@ -274,14 +276,11 @@ watch(
       </div>
     </div>
 
-    <div class="flex flex-col items-center justify-center lg:gap-32 lg:flex-row mt-24">
+    <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
       <!--entry widgets sum-->
-      <div class="flex flex-row items-center">
-        <TransactionEntryWidget v-model="sum" tag="Betrag" @input="validateSum"/>
-        <i class="fa-solid fa-euro-sign"></i>
-      </div>
+        <InputFieldWithLabelAndError v-model="sum" class="w-full lg:w-1/4" type="number" min="0" step="0.01" label="Betrag in Euro" @input="validateSum"/>
       <!--entry widgets purpose-->
-      <TransactionEntryWidget v-model="purpose" tag="Zweck"/>
+      <InputFieldWithLabelAndError v-model="purpose" class="w-full" type="text" label="Zweck"/>
     </div>
     <!--validate and create new transaction-->
     <div class="flex justify-end m-10">
@@ -289,5 +288,6 @@ watch(
         <i class="fa-solid fa-check"></i>
       </RoundButton>
     </div>
+  </div>
   </MainLayout>
 </template>
