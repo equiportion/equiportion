@@ -80,7 +80,7 @@ async function createTransaction() {
   ) {
     const sumValue = parseFloat(sum.value);
     const debtorsJson = debtors.value.map((debtor) => ({
-      user: debtor.getUserId(),
+      userId: debtor.getUserId(),
       amount: sumValue / debtors.value.length,
     }));
     try {
