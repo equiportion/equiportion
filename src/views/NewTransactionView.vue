@@ -230,10 +230,10 @@ watch(
             <div class="relative group transition duration-200 hover:scale-110">
               <!--'x'-->
               <div
-                class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
+                class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
                 @click="deleteCreditor"
               >
-                <i class="text-white fa-solid fa-xmark text-2xl"></i>
+                <i class="text-white fa-solid fa-trash text-2xl"></i>
               </div>
               <UserAvatar
                 :user="members[creditorId]"
