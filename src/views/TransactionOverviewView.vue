@@ -50,9 +50,14 @@ const iconClasses = computed(() => {
 
 <template>
   <MainLayout>
+    <!--shows a button that enables the user to add a new transaction-->
+    <div class="fixed bottom-0 flex flex-row justify-end w-full p-5">
+      <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
+    </div>
+
+    <!--content-->
     <div class="flex flex-col px-5 items-center">
-      <!--The main body of the transaction overview, being 4/6 wide-->
-      <div class=""></div>
+      <!--The main body of the transaction overview, being 80% wide-->
       <div class="flex flex-col lg:max-w-[80%] w-full">
         <!--Profile image and username -->
         <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
@@ -99,15 +104,6 @@ const iconClasses = computed(() => {
               :key="transactionEvent.getEventId()"
               :transaction="transactionEvent"
             />
-          </div>
-        </div>
-
-        <!--shows a button that enables the user to add a new transaction-->
-        <div class="flex flex-row justify-end">
-          <div class="static">
-            <div class="absolute bottom-5 right-5 lg:left-1/2 lg:transform">
-              <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
-            </div>
           </div>
         </div>
       </div>
