@@ -39,6 +39,20 @@ class TransactionEvent extends MessageEvent {
     this.sum = sum;
     this.creditor = creditor;
     this.debtors = debtors;
+
+    this.cleanFloats();
+  }
+
+  /**
+   * Cleans the floats of this event (rounds them to 2 digits after the comma)
+   * @returns {void}
+   */
+  private async cleanFloats(): Promise<void> {
+    this.sum = parseFloat(this.sum.toFixed(2));
+
+    for (const debtor of this.debtors) {
+      debtor.amount = parseFloat(debtor.amount.toFixed(2));
+    }
   }
 
   /**
@@ -55,7 +69,7 @@ class TransactionEvent extends MessageEvent {
 
     const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({userId: debtor.user, amount: parseFloat(debtor.amount)});
+      debtors.push({userId: debtor.user, amount: parseFloat(parseFloat(debtor.amount).toFixed(2))});
     }
 
     return new TransactionEvent(
@@ -85,13 +99,13 @@ class TransactionEvent extends MessageEvent {
     for (const debtor of this.debtors) {
       debtors.push({
         user: debtor.userId,
-        amount: debtor.amount.toString(),
+        amount: debtor.amount.toFixed(2).toString(),
       });
     }
 
     return {
       purpose: this.purpose,
-      sum: this.sum.toString(),
+      sum: this.sum.toFixed(2).toString(),
       creditor: this.creditor,
       debtors: debtors,
     };
