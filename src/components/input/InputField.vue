@@ -24,7 +24,7 @@ const props = defineProps({
     default: '',
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '',
   },
@@ -42,7 +42,7 @@ const props = defineProps({
     type: Number,
     required: false,
     default: undefined,
-  }
+  },
 });
 
 const inputValue = computed({
