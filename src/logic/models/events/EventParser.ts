@@ -11,7 +11,7 @@ import EventParseError from './EventParseError';
 /**
  * Parses events received from the Matrix API as json objects to MatrixEvent objects.
  * This class is a singleton for performance reasons.
- * @author Jakob Gießibel
+ * @author Jakob Gießibl
  * @author Philipp Stappert
  */
 class EventParser {
