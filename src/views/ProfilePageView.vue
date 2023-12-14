@@ -14,7 +14,7 @@ const loggedInUser = useLoggedInUserStore().user;
         <ProfileImage class="w-40 h-40 rounded-full" />
         <div class="flex flex-col items-center lg:items-start">
           <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
-            {{ loggedInUser.getDisplayname() ?? '@' + loggedInUser.getUserId() }}
+            {{ loggedInUser.getDisplayname() ?? loggedInUser.getUserId() }}
           </h1>
           <span v-if="loggedInUser.getDisplayname()" class="text-md text-gray-500">
             {{ loggedInUser.getUserId() }}

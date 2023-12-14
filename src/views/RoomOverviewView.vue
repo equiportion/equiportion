@@ -22,7 +22,7 @@ const rooms = roomsStore.rooms;
           v-if="loggedInUser.getUserId() != ''"
           class="text-2xl font-bold text-gray-100 sm:text-3xl"
         >
-          Willkommen zurück, {{ loggedInUser.getDisplayname() ?? '@' + loggedInUser.getUserId() }}!
+          Willkommen zurück, {{ loggedInUser.getDisplayname() ?? loggedInUser.getUserId() }}!
         </h1>
         <div v-else class="animate-pulse bg-gray-200 h-8 w-full rounded-lg"></div>
 
