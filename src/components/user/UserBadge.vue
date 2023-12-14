@@ -10,12 +10,17 @@ defineProps({
 });
 </script>
 <template>
-  <div class="flex flex-row bg-blue-600 text-gray-100 rounded-full items-center pr-3">
+  <div
+    class="flex flex-row max-h-8 bg-blue-600 text-gray-100 rounded-full items-center pr-3"
+    :title="user.getUserId()"
+  >
     <MxcOrPlaceholderImage
-      class="rounded-full h-8 w-8"
+      class="rounded-full w-8 h-8"
       :mxc-url="user.getAvatarUrl()"
-      :placeholder-text="user.getDisplayname() ?? '@' + user.getUserId()"
+      :placeholder-text="user.getDisplayname() ?? user.getUserId()"
     />
-    <span class="ml-1">{{ user.getDisplayname() ?? '@' + user.getUserId() }}</span>
+    <span class="ml-1 truncate">
+      {{ user.getDisplayname() ?? user.getUserId() ?? 'unbekannter Benutzer' }}
+    </span>
   </div>
 </template>
