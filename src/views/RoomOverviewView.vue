@@ -51,7 +51,8 @@ const rooms = roomsStore.rooms;
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">
-        <RoomTile :room="room" />
+        <RoomTile :id="room.getRoomId().substring(1, 19)" :room="room" />
+        {{ room.getRoomId().substring(1, 19) }}
       </template>
     </div>
     <!--End of rooms-->
