@@ -1,3 +1,4 @@
+// @ts-nocheck
 import RoundButton from '../RoundButton.vue';
 
 describe('<RoundButton />', () => {
@@ -5,9 +6,6 @@ describe('<RoundButton />', () => {
     const onClickSpy = cy.spy().as('onClickSpy');
 
     cy.mount(RoundButton, {
-      slots: {
-        default: 'p',
-      },
       props: {
         id: 'test',
         onClick: onClickSpy,

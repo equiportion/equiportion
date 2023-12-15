@@ -36,10 +36,3 @@ function logout() {
   cy.get('#profile-picture').click();
   cy.get('#logout-button').click();
 }
-
-function loginCookiesActive(userType: string) {
-  cy.get('#login-button-on-landing-page').click();
-  cy.get('#username', {timeout: 10000}).type(testAccounts[userType]['username']);
-  cy.get('#homeserver').type(testAccounts[userType]['password']);
-  cy.get('#loginbutton').click();
-}

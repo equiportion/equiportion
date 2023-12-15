@@ -1,3 +1,4 @@
+// @ts-nocheck
 import StandardButton from '../StandardButton.vue';
 
 describe('<StandardButton />', () => {
@@ -5,9 +6,6 @@ describe('<StandardButton />', () => {
     const onClickSpy = cy.spy().as('onClickSpy');
 
     cy.mount(StandardButton, {
-      slots: {
-        default: 'p',
-      },
       props: {
         id: 'test',
         onClick: onClickSpy,
