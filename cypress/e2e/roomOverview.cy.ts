@@ -1,9 +1,27 @@
-import {login} from '../support/e2e';
+import {authenticated} from '../support/stubs';
 
-describe('account-with-two-rooms-has-three-rooms-displayed', () => {
-  it('account-with-two-rooms-has-two-rooms-displayed', () => {
-    login('two-filled-rooms');
-    cy.get('#main-layout').should('be.visible');
-    cy.get('#main-layout').get('#rooms').children().should('have.length', 2);
+describe('/', () => {
+  it('renders', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+
+      cy.get('#main-layout').should('be.visible');
+      cy.get('#no-rooms-message').should('not.be.visible');
+      cy.get('#main-layout').get('#rooms').children().should('have.length', 7);
+    });
+  });
+
+  it('renders without rooms', () => {
+    authenticated(
+      () => {
+        cy.visit('http://localhost:5173/');
+
+        cy.get('#main-layout').should('be.visible');
+        cy.get('#no-rooms-message').should('be.visible');
+      },
+      {
+        syncOption: 'norooms',
+      }
+    );
   });
 });

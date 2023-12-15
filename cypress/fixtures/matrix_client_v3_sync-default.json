@@ -1,0 +1,2433 @@
+{
+  "next_batch": "s592_6740_0_79_133_1_27_2892_0_2",
+  "account_data": {
+    "events": [
+      {
+        "type": "org.matrix.msc3890.local_notification_settings.CLVKPBLCWN",
+        "content": {
+          "is_silenced": false
+        }
+      },
+      {
+        "type": "org.matrix.msc3890.local_notification_settings.CEONFPITVS",
+        "content": {
+          "is_silenced": false
+        }
+      },
+      {
+        "type": "im.vector.analytics",
+        "content": {
+          "pseudonymousAnalyticsOptIn": false
+        }
+      },
+      {
+        "type": "m.direct",
+        "content": {
+          "@test1:stub.example.com": ["!StCOQDTKnBapHcfNVd:phsta.de"]
+        }
+      },
+      {
+        "type": "org.matrix.msc3890.local_notification_settings.YMMBWDVYVB",
+        "content": {
+          "is_silenced": false
+        }
+      },
+      {
+        "type": "org.matrix.msc3890.local_notification_settings.PJGSCSAORA",
+        "content": {
+          "is_silenced": false
+        }
+      },
+      {
+        "type": "org.matrix.msc3890.local_notification_settings.AXKOIYRSJJ",
+        "content": {
+          "is_silenced": false
+        }
+      },
+      {
+        "type": "io.element.recent_emoji",
+        "content": {
+          "recent_emoji": []
+        }
+      },
+      {
+        "type": "im.vector.web.settings",
+        "content": {
+          "MessageComposerInput.insertTrailingColon": true,
+          "developerMode": true
+        }
+      },
+      {
+        "type": "im.vector.setting.breadcrumbs",
+        "content": {
+          "recent_rooms": [
+            "!SJXMEAxQXZCupBJXQS:stub.pse.dsn.kastel.kit.edu",
+            "!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu",
+            "!AovfRJyqtfNuSlegxT:stub.pse.dsn.kastel.kit.edu",
+            "!StCOQDTKnBapHcfNVd:phsta.de",
+            "!CbZGCkWHkRmssFalNr:stub.pse.dsn.kastel.kit.edu"
+          ]
+        }
+      },
+      {
+        "type": "m.push_rules",
+        "content": {
+          "global": {
+            "underride": [
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.call.invite"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "sound",
+                    "value": "ring"
+                  },
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".m.rule.call",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.message"
+                  },
+                  {
+                    "kind": "room_member_count",
+                    "is": "2"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  },
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".m.rule.room_one_to_one",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.encrypted"
+                  },
+                  {
+                    "kind": "room_member_count",
+                    "is": "2"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  },
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".m.rule.encrypted_room_one_to_one",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.message"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".m.rule.message",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.encrypted"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".m.rule.encrypted",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "im.vector.modular.widgets"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "content.type",
+                    "pattern": "jitsi"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "state_key",
+                    "pattern": "*"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  }
+                ],
+                "rule_id": ".im.vector.jitsi",
+                "default": true,
+                "enabled": true
+              }
+            ],
+            "sender": [],
+            "room": [],
+            "content": [
+              {
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  },
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  }
+                ],
+                "rule_id": ".m.rule.contains_user_name",
+                "default": true,
+                "pattern": "philipp",
+                "enabled": true
+              }
+            ],
+            "override": [
+              {
+                "conditions": [],
+                "actions": [],
+                "rule_id": ".m.rule.master",
+                "default": true,
+                "enabled": false
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "content.msgtype",
+                    "pattern": "m.notice"
+                  }
+                ],
+                "actions": [],
+                "rule_id": ".m.rule.suppress_notices",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.member"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "content.membership",
+                    "pattern": "invite"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "state_key",
+                    "pattern": "@stub:stub.pse.dsn.kastel.kit.edu"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight",
+                    "value": false
+                  },
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  }
+                ],
+                "rule_id": ".m.rule.invite_for_me",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.member"
+                  }
+                ],
+                "actions": [],
+                "rule_id": ".m.rule.member_event",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_property_contains",
+                    "key": "content.m\\.mentions.user_ids",
+                    "value": "@stub:stub.pse.dsn.kastel.kit.edu"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  },
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  }
+                ],
+                "rule_id": ".m.rule.is_user_mention",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "contains_display_name"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  },
+                  {
+                    "set_tweak": "sound",
+                    "value": "default"
+                  }
+                ],
+                "rule_id": ".m.rule.contains_display_name",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_property_is",
+                    "key": "content.m\\.mentions.room",
+                    "value": true
+                  },
+                  {
+                    "kind": "sender_notification_permission",
+                    "key": "room"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  }
+                ],
+                "rule_id": ".m.rule.is_room_mention",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "sender_notification_permission",
+                    "key": "room"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "content.body",
+                    "pattern": "@room"
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  }
+                ],
+                "rule_id": ".m.rule.roomnotif",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.tombstone"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "state_key",
+                    "pattern": ""
+                  }
+                ],
+                "actions": [
+                  "notify",
+                  {
+                    "set_tweak": "highlight"
+                  }
+                ],
+                "rule_id": ".m.rule.tombstone",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.reaction"
+                  }
+                ],
+                "actions": [],
+                "rule_id": ".m.rule.reaction",
+                "default": true,
+                "enabled": true
+              },
+              {
+                "conditions": [
+                  {
+                    "kind": "event_match",
+                    "key": "type",
+                    "pattern": "m.room.server_acl"
+                  },
+                  {
+                    "kind": "event_match",
+                    "key": "state_key",
+                    "pattern": ""
+                  }
+                ],
+                "actions": [],
+                "rule_id": ".m.rule.room.server_acl",
+                "default": true,
+                "enabled": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "presence": {
+    "events": [
+      {
+        "type": "m.presence",
+        "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+        "content": {
+          "presence": "online",
+          "last_active_ago": 86642,
+          "currently_active": true
+        }
+      },
+      {
+        "type": "m.presence",
+        "sender": "@test1:stub.example.com",
+        "content": {
+          "presence": "unavailable",
+          "last_active_ago": 506193
+        }
+      }
+    ]
+  },
+  "device_one_time_keys_count": {
+    "signed_curve25519": 0
+  },
+  "org.matrix.msc2732.device_unused_fallback_key_types": [],
+  "device_unused_fallback_key_types": [],
+  "rooms": {
+    "join": {
+      "!AovfRJyqtfNuSlegxT:stub.pse.dsn.kastel.kit.edu": {
+        "timeline": {
+          "events": [
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755089,
+              "unsigned": {
+                "age": 94864830,
+                "transaction_id": "243ac7bf-d5a5-44d6-ab04-f938eb7308b6"
+              },
+              "event_id": "$4vuSPq7N-ej-veav4jfsCaV4fLQ46We0ixJH89XHTcM"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755151,
+              "unsigned": {
+                "age": 94864768,
+                "transaction_id": "add03dd5-c795-4a47-820f-9d8cc764e57f"
+              },
+              "event_id": "$_tynrqlIq5MJ-KfGc-0w4TRzVXBkDBEWzqv9qJODEXY"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755319,
+              "unsigned": {
+                "age": 94864600,
+                "transaction_id": "7b2b11ba-ede0-43ac-877c-a11b9336d9b3"
+              },
+              "event_id": "$YlcCGaMCjbwy137-Q0RLJqqHRPwoMV7kjBYZqZbB9Ic"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755497,
+              "unsigned": {
+                "age": 94864422,
+                "transaction_id": "83612dea-ed71-4684-98c6-85c6a554b9e3"
+              },
+              "event_id": "$alGa6Dp9dJcEzftgj4aJRviyQQHa0y1Eg3M4iPn7aMo"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755661,
+              "unsigned": {
+                "age": 94864258,
+                "transaction_id": "ce8d6d61-283e-4026-a7d8-ca7125129879"
+              },
+              "event_id": "$2i-Ao3_msjXrRqMtizjck6RLHjQTla0PkoPxAOTF5Dk"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553755839,
+              "unsigned": {
+                "age": 94864080,
+                "transaction_id": "19807b85-f8c2-4921-9d58-7dcce45af9e8"
+              },
+              "event_id": "$WwfaimtLZ3bNM_FSIRFj1wcuYd_IkgRS4RPsU75ti4U"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553756000,
+              "unsigned": {
+                "age": 94863919,
+                "transaction_id": "b86bcf8b-0314-4251-945e-14391c03f3f7"
+              },
+              "event_id": "$WCQkllX_-se6PYbMGe6bu2gExrlPxkCGbALJy_DBJu4"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "347587",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "347587"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553756174,
+              "unsigned": {
+                "age": 94863745,
+                "transaction_id": "af8d4f91-9700-4ccc-961a-6251b41b6a1d"
+              },
+              "event_id": "$u8eLNZH6dX-S8CwbyQA-zOadn09XnYdghkwecfyCKYE"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "ich",
+                "sum": "45",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "45"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702554169037,
+              "unsigned": {
+                "age": 94450882,
+                "transaction_id": "7b679e21-ff4d-4b93-8caf-8bcf2c165ce1"
+              },
+              "event_id": "$Jrpr3UZLUd9cmEqhZVGyxVT_M5hkVp4OUOJ6EaU2Ws4"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "test",
+                "sum": "1.67",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "1.67"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702577327948,
+              "unsigned": {
+                "age": 71291971,
+                "transaction_id": "9b7cbc0b-7ba8-4982-bd76-128a6c2b8fc2"
+              },
+              "event_id": "$LRB3FH3nxpUzPEJwhIlfeIgEBtiIdiCMXGo8PdDLcdg"
+            }
+          ],
+          "prev_batch": "t16-557_6740_0_79_133_1_27_2892_0_2",
+          "limited": true
+        },
+        "state": {
+          "events": [
+            {
+              "type": "m.room.create",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "room_version": "10",
+                "creator": "@stub:stub.pse.dsn.kastel.kit.edu"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643006,
+              "unsigned": {
+                "age": 1213976913
+              },
+              "event_id": "$KTZlx8n6X8_b-w4gUUhtHS9GnFgG_P4lE84oXtcJQiI"
+            },
+            {
+              "type": "m.room.name",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "name": "test1"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643115,
+              "unsigned": {
+                "age": 1213976804
+              },
+              "event_id": "$_mtjtE2nhxT3SdG3bgkQIxDgv9LBdz1deBxSfTOGrXo"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rQymFHCTepGPsfFxotvgSSWa"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702544609774,
+              "unsigned": {
+                "replaces_state": "$2VrdZEWQ1VE0P3kFF4uxo62kwL1FTfgPgO723cVu1q8",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 104010145
+              },
+              "event_id": "$gIuGHjcmmTFlk0LlLZd-5O-B5ZyVc0Lmf8_QSz71qdg"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "0": {
+                  "type": "iban",
+                  "information": {
+                    "iban": "DE1234567890"
+                  }
+                },
+                "1": {
+                  "type": "paypal",
+                  "information": {
+                    "mail": ""
+                  }
+                }
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701455927549,
+              "unsigned": {
+                "age": 1192692370
+              },
+              "event_id": "$rYgl-h5sbV_28BJ_ZaeSqen0aZCX15kO8bvU7lSMYxY"
+            },
+            {
+              "type": "m.room.guest_access",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "guest_access": "can_join"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643113,
+              "unsigned": {
+                "age": 1213976806
+              },
+              "event_id": "$0aoEVkzYBWxnZ59-MQsEFloz-YKVIdnH3EUOuWM2G5o"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643114,
+              "unsigned": {
+                "age": 1213976805
+              },
+              "event_id": "$_hYlPsgRI0SU1apz--Ljdvki5j2TkwTD8hMyYn8Nhdg"
+            },
+            {
+              "type": "m.room.join_rules",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "join_rule": "invite"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643111,
+              "unsigned": {
+                "age": 1213976808
+              },
+              "event_id": "$3N5LlrDl56H_w-1xSVuxIBkeSkT4FTQDclRvQ0l1ggE"
+            },
+            {
+              "type": "m.room.topic",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "topic": "Thema!",
+                "org.matrix.msc3765.topic": [
+                  {
+                    "body": "Thema!",
+                    "mimetype": "text/plain"
+                  }
+                ]
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434836141,
+              "unsigned": {
+                "age": 1213783778
+              },
+              "event_id": "$1vFt6X0epzONZ8aRxJnPk1yOtKs2-oW73z7SdJX2esY"
+            },
+            {
+              "type": "m.room.power_levels",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "users": {
+                  "@stub:stub.pse.dsn.kastel.kit.edu": 100
+                },
+                "users_default": 0,
+                "events": {
+                  "m.room.name": 50,
+                  "m.room.power_levels": 100,
+                  "m.room.history_visibility": 100,
+                  "m.room.canonical_alias": 50,
+                  "m.room.avatar": 50,
+                  "m.room.tombstone": 100,
+                  "m.room.server_acl": 100,
+                  "m.room.encryption": 100
+                },
+                "events_default": 0,
+                "state_default": 50,
+                "ban": 50,
+                "kick": 50,
+                "redact": 50,
+                "invite": 0,
+                "historical": 100
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643096,
+              "unsigned": {
+                "age": 1213976823
+              },
+              "event_id": "$Uo7SVj-sPfQ8Rc75BnWIxfvXc1Nf143Elb2iZ-_7jJE"
+            },
+            {
+              "type": "m.room.history_visibility",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "history_visibility": "shared"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434643112,
+              "unsigned": {
+                "age": 1213976807
+              },
+              "event_id": "$N1ILo_Wzq39_gjnw57r4y-HV5PjQHIDJMpCNdsI5N9c"
+            }
+          ]
+        },
+        "account_data": {
+          "events": [
+            {
+              "type": "m.fully_read",
+              "content": {
+                "event_id": "$gIuGHjcmmTFlk0LlLZd-5O-B5ZyVc0Lmf8_QSz71qdg"
+              }
+            }
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {
+              "type": "m.receipt",
+              "content": {
+                "$gIuGHjcmmTFlk0LlLZd-5O-B5ZyVc0Lmf8_QSz71qdg": {
+                  "m.read": {
+                    "@stub:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702544610371,
+                      "thread_id": "main"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "unread_notifications": {
+          "notification_count": 0,
+          "highlight_count": 0
+        },
+        "summary": {}
+      },
+      "!CbZGCkWHkRmssFalNr:stub.pse.dsn.kastel.kit.edu": {
+        "timeline": {
+          "events": [
+            {
+              "type": "m.room.power_levels",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "users": {
+                  "@stub:stub.pse.dsn.kastel.kit.edu": 100
+                },
+                "users_default": 0,
+                "events": {
+                  "m.room.name": 50,
+                  "m.room.power_levels": 100,
+                  "m.room.history_visibility": 100,
+                  "m.room.canonical_alias": 50,
+                  "m.room.avatar": 50,
+                  "m.room.tombstone": 100,
+                  "m.room.server_acl": 100,
+                  "m.room.encryption": 100
+                },
+                "events_default": 0,
+                "state_default": 50,
+                "ban": 50,
+                "kick": 50,
+                "redact": 50,
+                "invite": 0,
+                "historical": 100
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956134,
+              "unsigned": {
+                "age": 1213663785
+              },
+              "event_id": "$0lNlGi_5XQqP-27SZNiI6lg8mtzADlpYPGDQEHmfExU"
+            },
+            {
+              "type": "m.room.join_rules",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "join_rule": "invite"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956151,
+              "unsigned": {
+                "age": 1213663768
+              },
+              "event_id": "$-U3j_On1WnugA7Mo7mYyCpS3TpsxFN4BQ3K60HSyCVU"
+            },
+            {
+              "type": "m.room.history_visibility",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "history_visibility": "shared"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956152,
+              "unsigned": {
+                "age": 1213663767
+              },
+              "event_id": "$gf9NvIqUYTIsSBXbVwrZQha6RgIbjeKdEgnXhuZRBuE"
+            },
+            {
+              "type": "m.room.guest_access",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "guest_access": "can_join"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956152,
+              "unsigned": {
+                "age": 1213663767
+              },
+              "event_id": "$U1DrmHKxndqw4YDK59tj_ja6v1N_3mqIQxw7DByaPZ4"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956153,
+              "unsigned": {
+                "age": 1213663766
+              },
+              "event_id": "$viwG4DOFrRqTyMuHzFPCd1dNuYs8Lt5qG1dMeJA-rpM"
+            },
+            {
+              "type": "m.room.name",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "name": "raum ohne topic"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434956153,
+              "unsigned": {
+                "age": 1213663766
+              },
+              "event_id": "$rp6U39v_IwWLj2E1K1o75jmSRon-0VXB4W72EQhZZag"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "0": {
+                  "type": "iban",
+                  "information": {
+                    "iban": "DE1234567890"
+                  }
+                },
+                "1": {
+                  "type": "paypal",
+                  "information": {
+                    "mail": ""
+                  }
+                }
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701455927698,
+              "unsigned": {
+                "age": 1192692221
+              },
+              "event_id": "$sqcvc65x18krQrpyMPXjObvIACAk1kRzCkZ7wH4FZD8"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701516743149,
+              "unsigned": {
+                "replaces_state": "$VCpGvXIWW1lr95_u8_FbCUYN1gKg_YRp6ozAVXTh79s",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1131876770
+              },
+              "event_id": "$zNtyuycWyoRE2RPF859Pk2knyD9s9fI9n2TcmCAi3nk"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701789202883,
+              "unsigned": {
+                "replaces_state": "$zNtyuycWyoRE2RPF859Pk2knyD9s9fI9n2TcmCAi3nk",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 859417036
+              },
+              "event_id": "$zIlakjtc3FrIMHhOjQZ_XPmc-gFy80OdoqJhsxTk8vM"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rQymFHCTepGPsfFxotvgSSWa"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702544609832,
+              "unsigned": {
+                "replaces_state": "$zIlakjtc3FrIMHhOjQZ_XPmc-gFy80OdoqJhsxTk8vM",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 104010087
+              },
+              "event_id": "$siayoMtz6C_f72yqR3qA6W9zlaDV2We9eILlrmuY3o4"
+            }
+          ],
+          "prev_batch": "t3-16_6740_0_79_133_1_27_2892_0_2",
+          "limited": true
+        },
+        "state": {
+          "events": [
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701434956094,
+              "unsigned": {
+                "age": 1213663825
+              },
+              "event_id": "$VCpGvXIWW1lr95_u8_FbCUYN1gKg_YRp6ozAVXTh79s"
+            },
+            {
+              "type": "m.room.create",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "room_version": "10",
+                "creator": "@stub:stub.pse.dsn.kastel.kit.edu"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701434955949,
+              "unsigned": {
+                "age": 1213663970
+              },
+              "event_id": "$m1Qr4YY-dz7n4FmcNlwmb8dSKmLIiQTZNEKtgDvmkdA"
+            }
+          ]
+        },
+        "account_data": {
+          "events": [
+            {
+              "type": "m.fully_read",
+              "content": {
+                "event_id": "$rp6U39v_IwWLj2E1K1o75jmSRon-0VXB4W72EQhZZag"
+              }
+            }
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {
+              "type": "m.receipt",
+              "content": {
+                "$rp6U39v_IwWLj2E1K1o75jmSRon-0VXB4W72EQhZZag": {
+                  "m.read": {
+                    "@stub:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1701434956873,
+                      "thread_id": "main"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "unread_notifications": {
+          "notification_count": 0,
+          "highlight_count": 0
+        },
+        "summary": {}
+      },
+      "!SJXMEAxQXZCupBJXQS:stub.pse.dsn.kastel.kit.edu": {
+        "timeline": {
+          "events": [
+            {
+              "type": "m.room.topic",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "topic": "",
+                "org.matrix.msc3765.topic": [
+                  {
+                    "body": "",
+                    "mimetype": "text/plain"
+                  }
+                ]
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435015430,
+              "unsigned": {
+                "replaces_state": "$Tpx_kd6HGH-RPgAmbWKHVRCCmRqSSbB5v9ZRTI1jC5A",
+                "prev_content": {
+                  "topic": "hi"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1213604489
+              },
+              "event_id": "$MLAN6Rj6knL3WDlpx9e8R1KXkPNmXCXS8U3-CfZP5eQ"
+            },
+            {
+              "type": "m.room.encrypted",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2",
+                "sender_key": "uOBUasPHTG0c1AB//GIMbBEh5qgWBSpM8yFLkhIfVSg",
+                "ciphertext": "AwgAEpABxSGWgVH0lMDEGPHQU7J0ibBnKEWelXBO66viPczUVonJOk5NAJEDHsn4tLhQmG9bM/IwfTylcZIWmQuL4jI825PYqSE3952orzCottJMmz5AeUT0Vim8TXLl0aadTLoGn3AuyNNRNbGO2sxfOa7DWtU3qtwGuvPWq6EZeeZmsyynUXiJmneSGpCXKZrVz3PO9KjR5dR7fmGUa64xQ6bKdgakupzMEI7DkaafjDDEHhoUDhSCQaVsuNXQ+k5NZljN/LAEnl6f26zdxabnrRMcar2iPmdvj5EP",
+                "session_id": "IAZ3O4Yp+Ckdvn74h01RjxxM1y9cuXyUz7RFr/N4fOg",
+                "device_id": "YMMBWDVYVB"
+              },
+              "origin_server_ts": 1701435079840,
+              "unsigned": {
+                "age": 1213540079
+              },
+              "event_id": "$Iv4FxyQsv8FthH1fvoNkQxMtOy1c3Ad_11n6OrMDlUc"
+            },
+            {
+              "type": "m.room.topic",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "topic": "thema",
+                "org.matrix.msc3765.topic": [
+                  {
+                    "body": "thema",
+                    "mimetype": "text/plain"
+                  }
+                ]
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435112652,
+              "unsigned": {
+                "replaces_state": "$MLAN6Rj6knL3WDlpx9e8R1KXkPNmXCXS8U3-CfZP5eQ",
+                "prev_content": {
+                  "topic": "",
+                  "org.matrix.msc3765.topic": [
+                    {
+                      "body": "",
+                      "mimetype": "text/plain"
+                    }
+                  ]
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1213507267
+              },
+              "event_id": "$DHKM3ltfYO7-quRMeiuNiTKBUSYd5PDRmI4tPst3o7s"
+            },
+            {
+              "type": "m.room.topic",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "topic": "",
+                "org.matrix.msc3765.topic": [
+                  {
+                    "body": "",
+                    "mimetype": "text/plain"
+                  }
+                ]
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435122769,
+              "unsigned": {
+                "replaces_state": "$DHKM3ltfYO7-quRMeiuNiTKBUSYd5PDRmI4tPst3o7s",
+                "prev_content": {
+                  "topic": "thema",
+                  "org.matrix.msc3765.topic": [
+                    {
+                      "body": "thema",
+                      "mimetype": "text/plain"
+                    }
+                  ]
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1213497150
+              },
+              "event_id": "$b6ee3DPNgGm6Hcg5ylL2RAv5PrzB9cK2sfKVRxZ4UKI"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "0": {
+                  "type": "iban",
+                  "information": {
+                    "iban": "DE1234567890"
+                  }
+                },
+                "1": {
+                  "type": "paypal",
+                  "information": {
+                    "mail": ""
+                  }
+                }
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701455927841,
+              "unsigned": {
+                "age": 1192692078
+              },
+              "event_id": "$Zm63Ykpe6EpEeoCwrSe5UvArRbSubqGzCHF2BbhgA_E"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701516743301,
+              "unsigned": {
+                "replaces_state": "$tmnLmSTlGDT6lcJ4LLe_CwIuQf59FBM7nJX0QoAWhSI",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1131876618
+              },
+              "event_id": "$SkRKgdd_ZasV0AwG2OJqncGuJQ2A4CUQkO8shdFdf3A"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701789203084,
+              "unsigned": {
+                "replaces_state": "$SkRKgdd_ZasV0AwG2OJqncGuJQ2A4CUQkO8shdFdf3A",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 859416835
+              },
+              "event_id": "$9al6AyKO2p8KXdQyjWy-v-dupAteykVXvJNlUVwRPdQ"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rQymFHCTepGPsfFxotvgSSWa"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702544610760,
+              "unsigned": {
+                "replaces_state": "$9al6AyKO2p8KXdQyjWy-v-dupAteykVXvJNlUVwRPdQ",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 104009159
+              },
+              "event_id": "$wsYlgQA1FVJ6GgKEH1FVqZ1R3dR2Jqg66EGLhcsE-p4"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "invite",
+                "displayname": "philipptest3"
+              },
+              "state_key": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702545798714,
+              "unsigned": {
+                "age": 102821205
+              },
+              "event_id": "$krwDAUEhcRUkO4016WVwrZ22XUJX1rM9CLBOO3aussM"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "philipptest3"
+              },
+              "state_key": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702545802300,
+              "unsigned": {
+                "replaces_state": "$krwDAUEhcRUkO4016WVwrZ22XUJX1rM9CLBOO3aussM",
+                "prev_content": {
+                  "membership": "invite",
+                  "displayname": "philipptest3"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 102817619
+              },
+              "event_id": "$mVUmJjuRsOwtLy03nl6QxKfU51WDuiAcUJF6HVnfmqk"
+            }
+          ],
+          "prev_batch": "t10-31_6740_0_79_133_1_27_2892_0_2",
+          "limited": true
+        },
+        "state": {
+          "events": [
+            {
+              "type": "m.room.power_levels",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "users": {
+                  "@stub:stub.pse.dsn.kastel.kit.edu": 100
+                },
+                "users_default": 0,
+                "events": {
+                  "m.room.name": 50,
+                  "m.room.power_levels": 100,
+                  "m.room.history_visibility": 100,
+                  "m.room.canonical_alias": 50,
+                  "m.room.avatar": 50,
+                  "m.room.tombstone": 100,
+                  "m.room.server_acl": 100,
+                  "m.room.encryption": 100
+                },
+                "events_default": 0,
+                "state_default": 50,
+                "ban": 50,
+                "kick": 50,
+                "redact": 50,
+                "invite": 0,
+                "historical": 100
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009118,
+              "unsigned": {
+                "age": 1213610801
+              },
+              "event_id": "$wVc4_gIYO_UmnboJRvOuXZd74hhy5y6g9v9VdYpdpx4"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701435009094,
+              "unsigned": {
+                "age": 1213610825
+              },
+              "event_id": "$tmnLmSTlGDT6lcJ4LLe_CwIuQf59FBM7nJX0QoAWhSI"
+            },
+            {
+              "type": "m.room.history_visibility",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "history_visibility": "shared"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009134,
+              "unsigned": {
+                "age": 1213610785
+              },
+              "event_id": "$qVnEcKz_anizQEBbGeGZ5VmdSGKAX8xeqq75J51sAOk"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009135,
+              "unsigned": {
+                "age": 1213610784
+              },
+              "event_id": "$MnP6a3t21rlMo_zt-SWjJiwN0uSfmkcHdZkcQYqKdDw"
+            },
+            {
+              "type": "m.room.join_rules",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "join_rule": "invite"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009134,
+              "unsigned": {
+                "age": 1213610785
+              },
+              "event_id": "$HMCcJW6fFfS9JeZYSu6V6uBFBRAgZgEW8WtcogpCSxo"
+            },
+            {
+              "type": "m.room.create",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "room_version": "10",
+                "creator": "@stub:stub.pse.dsn.kastel.kit.edu"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009058,
+              "unsigned": {
+                "age": 1213610861
+              },
+              "event_id": "$dHA0eQ7L-YmwUagOg7e-MQl5c8_-cFbBUAkmkoaQ3cE"
+            },
+            {
+              "type": "m.room.name",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "name": "raum mit leerem topic"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009136,
+              "unsigned": {
+                "age": 1213610783
+              },
+              "event_id": "$p6d9ioUQdOyxqwe8VkWu7Or4Fksy_XE6ERWd8nzhNhc"
+            },
+            {
+              "type": "m.room.guest_access",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "guest_access": "can_join"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435009135,
+              "unsigned": {
+                "age": 1213610784
+              },
+              "event_id": "$xmm1jqbosTfeUrReTHH_0ipRn7scElkHZhgF6LusyZo"
+            },
+            {
+              "type": "m.room.topic",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "topic": "",
+                "org.matrix.msc3765.topic": [
+                  {
+                    "body": "",
+                    "mimetype": "text/plain"
+                  }
+                ]
+              },
+              "state_key": "",
+              "origin_server_ts": 1701435015430,
+              "unsigned": {
+                "replaces_state": "$Tpx_kd6HGH-RPgAmbWKHVRCCmRqSSbB5v9ZRTI1jC5A",
+                "prev_content": {
+                  "topic": "hi"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1213604489
+              },
+              "event_id": "$MLAN6Rj6knL3WDlpx9e8R1KXkPNmXCXS8U3-CfZP5eQ"
+            }
+          ]
+        },
+        "account_data": {
+          "events": [
+            {
+              "type": "m.fully_read",
+              "content": {
+                "event_id": "$krwDAUEhcRUkO4016WVwrZ22XUJX1rM9CLBOO3aussM"
+              }
+            }
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {
+              "type": "m.receipt",
+              "content": {
+                "$krwDAUEhcRUkO4016WVwrZ22XUJX1rM9CLBOO3aussM": {
+                  "m.read": {
+                    "@philipptest3:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702545802593,
+                      "thread_id": "main"
+                    }
+                  }
+                },
+                "$mVUmJjuRsOwtLy03nl6QxKfU51WDuiAcUJF6HVnfmqk": {
+                  "m.read": {
+                    "@stub:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702545816353,
+                      "thread_id": "main"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "unread_notifications": {
+          "notification_count": 0,
+          "highlight_count": 0
+        },
+        "summary": {}
+      },
+      "!StCOQDTKnBapHcfNVd:phsta.de": {
+        "timeline": {
+          "events": [
+            {
+              "type": "m.room.encryption",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163559,
+              "unsigned": {
+                "age": 78848
+              },
+              "event_id": "$tlGYCB8DZxDyBqQYhLBP7XEXfhzukU-3Enhwo6jcrBA"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163560,
+              "unsigned": {
+                "replaces_state": "$tlGYCB8DZxDyBqQYhLBP7XEXfhzukU-3Enhwo6jcrBA",
+                "prev_content": {
+                  "algorithm": "m.megolm.v1.aes-sha2"
+                },
+                "prev_sender": "@test1:stub.example.com",
+                "age": 78364
+              },
+              "event_id": "$l_Am4piZRrZUumixwp_bt24xVWvUhgZ8Nutwq6Texq8"
+            },
+            {
+              "content": {
+                "displayname": "Testbenutzer drölf",
+                "is_direct": true,
+                "membership": "invite"
+              },
+              "origin_server_ts": 1701339163860,
+              "sender": "@test1:stub.example.com",
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "type": "m.room.member",
+              "unsigned": {
+                "age": 49
+              },
+              "event_id": "$2OUuWm_KThGcpHKKr3ej4vy4ngeO7Y8SBL-UzjYDvrE"
+            },
+            {
+              "type": "m.room.encrypted",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2",
+                "sender_key": "Sc4Ow9d/q+4d3aIevkyxA6daFLHcUi8d0LSHwtlZERQ",
+                "ciphertext": "AwgAEoAB1SsVdCWYAOXSVRMWZKTcMuT5PC2PeFQgSuQPhvT+ZxsZnJUJbr5Z2Zk1L2d1vVZ6/14JNQPVd59PlKDqofM+wocJwg9QbNElp40t6TI06agUk5fVoyfQh+/jp/4Wbx8+fiCOiFHOOC4n1hlme01Pm6kbDmTxnwhNYCp4zeHXCONLXjRPMJ2zR/0S8BsnT/UP5ifcoaD0AoAJsfIVJHyrRzLI2KwX2Ke76ZT20Coo4lYU/llBrrxEAG3gTZfOLV6O7eox9J09ZQY",
+                "session_id": "013UArGF1FLEuv4qk9NynyxrJfzEtI/HGPnEvvUUDZ8",
+                "device_id": "QDHZKSDCBB"
+              },
+              "origin_server_ts": 1701339165149,
+              "unsigned": {
+                "age": 77037
+              },
+              "event_id": "$XUDcMhOFWYqBE_1eQVzmzgRQrS_ij8avQPkpx1oUCDg"
+            },
+            {
+              "content": {
+                "avatar_url": null,
+                "displayname": "Testbenutzer",
+                "membership": "join"
+              },
+              "origin_server_ts": 1701339241670,
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "type": "m.room.member",
+              "unsigned": {
+                "age": 2,
+                "replaces_state": "$2OUuWm_KThGcpHKKr3ej4vy4ngeO7Y8SBL-UzjYDvrE",
+                "prev_content": {
+                  "displayname": "Testbenutzer drölf",
+                  "is_direct": true,
+                  "membership": "invite"
+                },
+                "prev_sender": "@test1:stub.example.com"
+              },
+              "event_id": "$YNOmiBZUYavq7tGLhlO9lTv8wH6QAIOxN11FeOj9mhQ"
+            },
+            {
+              "type": "m.room.encrypted",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2",
+                "sender_key": "kMro6R7WJycCjJFWuqNKd15SAbP73emOhpHV7EtF4Rc",
+                "ciphertext": "AwgAEoABIzpGI8e5P3byMwmaiq35Cpo+zpzHxseQbtdIUiimEZJfXit4JP1Y0xWTS7m05CUU9rmsyJZfVmsFnPxLcP+jIPZVkP8G04RQr6/SJB6wKOrmSB/8Zorkl9R8Is948ZJnl/Z1lVsKnw+r+y42YZQByIHkYo0P3X2Ei0tIau2x4DCgkMQWR5T9iGCTOOcOecliMwAxsPKbDtE1M4sJgRbMDNNVd83iNuMg+0GMtpFcpgoHYzZNWcZ9rpED86EGwT/eI3v3mjwGaw8",
+                "session_id": "Jsuyd6kTd/VUr/tlAbb/wAuWcMGXqdid9uN2nS6Mk3I",
+                "device_id": "CEONFPITVS"
+              },
+              "origin_server_ts": 1701339265782,
+              "unsigned": {
+                "age": 1309354137
+              },
+              "event_id": "$-LCd2ZalzJegijdSL87zeNYqLMg5zHY4vdsp0elR7I4"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "0": {
+                  "type": "iban",
+                  "information": {
+                    "iban": "DE1234567890"
+                  }
+                },
+                "1": {
+                  "type": "paypal",
+                  "information": {
+                    "mail": ""
+                  }
+                }
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701455927981,
+              "unsigned": {
+                "age": 1192691938
+              },
+              "event_id": "$Gj9mrRYEVEe_fh7GE5bp28It8jWABy6dVVlP0xtW8Kw"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701516743201,
+              "unsigned": {
+                "replaces_state": "$YNOmiBZUYavq7tGLhlO9lTv8wH6QAIOxN11FeOj9mhQ",
+                "prev_content": {
+                  "avatar_url": null,
+                  "displayname": "Testbenutzer",
+                  "membership": "join"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 1131876718
+              },
+              "event_id": "$3wlsf7TUd3fnzhqm51bEQI6fnOtRt27rtBcbd-TqWPc"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701789203016,
+              "unsigned": {
+                "replaces_state": "$3wlsf7TUd3fnzhqm51bEQI6fnOtRt27rtBcbd-TqWPc",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 859416903
+              },
+              "event_id": "$yNUd0J8fs5sxxDArDBXYdHnOv3eIZ8ZpejXWl6d0aqw"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rQymFHCTepGPsfFxotvgSSWa"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702544610452,
+              "unsigned": {
+                "replaces_state": "$yNUd0J8fs5sxxDArDBXYdHnOv3eIZ8ZpejXWl6d0aqw",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "Testbenutzer",
+                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 104009467
+              },
+              "event_id": "$1enV17K-JJEYQQ_sxv4_dUBT3d53UijPCpuJ7YdKymw"
+            }
+          ],
+          "prev_batch": "t7--17_6740_0_79_133_1_27_2892_0_2",
+          "limited": true
+        },
+        "state": {
+          "events": [
+            {
+              "type": "m.room.join_rules",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "join_rule": "invite"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163557,
+              "unsigned": {
+                "age": 78367
+              },
+              "event_id": "$-9rrlPSdExVR3UWxop8TQz8rD4B6iheoCwwkw7NRhYY"
+            },
+            {
+              "type": "m.room.guest_access",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "guest_access": "can_join"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163559,
+              "unsigned": {
+                "age": 78365
+              },
+              "event_id": "$YKfXveFPohyB_zZB1OL07xtXJuvkGWe831H7LfhhwKU"
+            },
+            {
+              "type": "m.room.history_visibility",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "history_visibility": "shared"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163558,
+              "unsigned": {
+                "age": 78366
+              },
+              "event_id": "$kruvkE2IK1z_WejjXM8OLE10AjaPNvZj-rp3qUPsamM"
+            },
+            {
+              "type": "m.room.create",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "room_version": "10",
+                "creator": "@test1:stub.example.com"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163352,
+              "unsigned": {
+                "age": 78572
+              },
+              "event_id": "$wG2NkkOckp7df285LKJ3YlsPplLdQOcqvExbX6Z15UE"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163559,
+              "unsigned": {
+                "age": 78848
+              },
+              "event_id": "$tlGYCB8DZxDyBqQYhLBP7XEXfhzukU-3Enhwo6jcrBA"
+            },
+            {
+              "type": "m.room.power_levels",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "users": {
+                  "@test1:stub.example.com": 100,
+                  "@stub:stub.pse.dsn.kastel.kit.edu": 100
+                },
+                "users_default": 0,
+                "events": {
+                  "m.room.name": 50,
+                  "m.room.power_levels": 100,
+                  "m.room.history_visibility": 100,
+                  "m.room.canonical_alias": 50,
+                  "m.room.avatar": 50,
+                  "m.room.tombstone": 100,
+                  "m.room.server_acl": 100,
+                  "m.room.encryption": 100
+                },
+                "events_default": 0,
+                "state_default": 50,
+                "ban": 50,
+                "kick": 50,
+                "redact": 50,
+                "invite": 0,
+                "historical": 100
+              },
+              "state_key": "",
+              "origin_server_ts": 1701339163530,
+              "unsigned": {
+                "age": 78394
+              },
+              "event_id": "$kM7y0Sr5xW9resK8TGFRznrm7jxCSJJBenoQGKgx83k"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@test1:stub.example.com",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer drölf",
+                "avatar_url": "mxc://phsta.de/dIzIxEsoahHhjNzIUuBsnIIl"
+              },
+              "state_key": "@test1:stub.example.com",
+              "origin_server_ts": 1701339163444,
+              "unsigned": {
+                "age": 78480
+              },
+              "event_id": "$Zz5J7J5uW6rYEQxHvoa6fuucNx2UcQNiU6sUK_gAedg"
+            }
+          ]
+        },
+        "account_data": {
+          "events": [
+            {
+              "type": "m.fully_read",
+              "content": {
+                "event_id": "$yNUd0J8fs5sxxDArDBXYdHnOv3eIZ8ZpejXWl6d0aqw"
+              }
+            }
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {
+              "type": "m.receipt",
+              "content": {
+                "$YNOmiBZUYavq7tGLhlO9lTv8wH6QAIOxN11FeOj9mhQ": {
+                  "m.read": {
+                    "@stub:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1701339242299,
+                      "thread_id": "main"
+                    }
+                  }
+                },
+                "$1enV17K-JJEYQQ_sxv4_dUBT3d53UijPCpuJ7YdKymw": {
+                  "m.read": {
+                    "@test1:stub.example.com": {
+                      "thread_id": "main",
+                      "ts": 1702544614709
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "unread_notifications": {
+          "notification_count": 0,
+          "highlight_count": 0
+        },
+        "summary": {}
+      },
+      "!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu": {
+        "timeline": {
+          "events": [
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "456456",
+                "sum": "456",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "228"
+                  },
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "228"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702553839385,
+              "unsigned": {
+                "age": 94780534,
+                "transaction_id": "e2455b8b-2bc2-4bfc-86a1-4a8e592115d4"
+              },
+              "event_id": "$bYPflVdO8DclPS8n4GV_EXIDAV8dFJEYv7I_D38tX0w"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "deine Mudda",
+                "sum": "5",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "amount": "5"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702573466529,
+              "unsigned": {
+                "age": 75153390,
+                "transaction_id": "29d38314-a659-4c94-a8f8-13a7c5eeef58"
+              },
+              "event_id": "$uh5M_cD1lCSeeQARxTU5X2uyLwf4mLsZkw1v5Y0F0kQ"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "gG!",
+                "sum": "5",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "5"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702576126581,
+              "unsigned": {
+                "age": 72493338,
+                "transaction_id": "fa2d4f03-5ef8-4eac-a475-def73c79c599"
+              },
+              "event_id": "$Vg2Bwe8IeWIibgLtU7OYINeMBMnpjTE4oNxNp4A3AnE"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "laaaaaaaaaaanger Text",
+                "sum": "5",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@stub:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "1.6666666666666667"
+                  },
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "1.6666666666666667"
+                  },
+                  {
+                    "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "1.6666666666666667"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702576153416,
+              "unsigned": {
+                "age": 72466503,
+                "transaction_id": "227fbdfe-cd73-4aab-8439-0e32755400ec"
+              },
+              "event_id": "$7Sf2bzKVal9K55UO84ZxW2zIUDorYapuvGxX_n5A1S8"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "noch l\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4\u00e4ngerer Text",
+                "sum": "45",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "45"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702576175634,
+              "unsigned": {
+                "age": 72444285,
+                "transaction_id": "996511ab-c261-4119-a314-e8bbc05bdcd7"
+              },
+              "event_id": "$YqbaNzb4Zgu09Edk9_pWk90iFuMTMWWhMrh06Yrj3AI"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "joa",
+                "sum": "15.00",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "15.00"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702581195955,
+              "unsigned": {
+                "age": 67423964,
+                "transaction_id": "a76df9e5-758f-4c59-910d-e86e34faa616"
+              },
+              "event_id": "$668VJa0xTmLTvwPmnaMku3u0_VloUaKyLFbzXWwVPow"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "test",
+                "sum": "16.67",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "16.67"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702581211204,
+              "unsigned": {
+                "age": 67408715,
+                "transaction_id": "5bc5f0e4-82e9-4f94-bf6a-f1e0016788aa"
+              },
+              "event_id": "$ReOxFsU8eCzrtE2aTdX1xKyoTmBzWusYFme9OFkWdy8"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "45.00",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "45.00"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702581395325,
+              "unsigned": {
+                "age": 67224594,
+                "transaction_id": "2ca97e4d-443b-422a-b8af-23eba02a93d9"
+              },
+              "event_id": "$9rMpAeMv9C2_QNM-pSuTSlI7RhNl7-J7WqP8Q6cK9-k"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "",
+                "sum": "45.00",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "45.00"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702581417570,
+              "unsigned": {
+                "age": 67202349,
+                "transaction_id": "f44cf600-f1f1-480b-912a-bd923e22e29d"
+              },
+              "event_id": "$N15oX0T51V5_shHMdg-goei-UINQEIMjADRi93bgNB4"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.transaction",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "purpose": "hi",
+                "sum": "5.00",
+                "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "debtors": [
+                  {
+                    "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+                    "amount": "5.00"
+                  }
+                ]
+              },
+              "origin_server_ts": 1702581697055,
+              "unsigned": {
+                "age": 66922864,
+                "transaction_id": "9e463a1c-4208-4712-b987-85b632ed23c7"
+              },
+              "event_id": "$9mjC0yoS-BbxpV7-XI8MG5AwDetSQ5B8gqGgSbJsl0I"
+            }
+          ],
+          "prev_batch": "t34-575_6740_0_79_133_1_27_2892_0_2",
+          "limited": true
+        },
+        "state": {
+          "events": [
+            {
+              "type": "m.room.power_levels",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "users": {
+                  "@stub:stub.pse.dsn.kastel.kit.edu": 100
+                },
+                "users_default": 0,
+                "events": {
+                  "m.room.name": 50,
+                  "m.room.power_levels": 100,
+                  "m.room.history_visibility": 100,
+                  "m.room.canonical_alias": 50,
+                  "m.room.avatar": 50,
+                  "m.room.tombstone": 100,
+                  "m.room.server_acl": 100,
+                  "m.room.encryption": 100
+                },
+                "events_default": 0,
+                "state_default": 50,
+                "ban": 50,
+                "kick": 50,
+                "redact": 50,
+                "invite": 0,
+                "historical": 100
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160053,
+              "unsigned": {
+                "age": 1206459866
+              },
+              "event_id": "$wVJB_1_aQ2rtCXVtHeUr1lKbDmS8dgFmv6ilA48rmZg"
+            },
+            {
+              "type": "m.room.name",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "name": "Raum mit Bild"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160073,
+              "unsigned": {
+                "age": 1206459846
+              },
+              "event_id": "$l3_2H0-Nodu4bCrxV61RT69jGXP24c7EeLllISP_nGQ"
+            },
+            {
+              "type": "m.room.avatar",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "url": "mxc://stub.pse.dsn.kastel.kit.edu/eUcuDpRFBmxegvcymuuYGRVf"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442172041,
+              "unsigned": {
+                "age": 1206447878
+              },
+              "event_id": "$2R7GWvrffr6fJvJ2RNZCm_i3OpYEtw1KQ2AJsMPk8tM"
+            },
+            {
+              "type": "m.room.create",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "room_version": "10",
+                "creator": "@stub:stub.pse.dsn.kastel.kit.edu"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442159983,
+              "unsigned": {
+                "age": 1206459936
+              },
+              "event_id": "$vPzUsuOY3ayllnlrCa3rvLrkLBidYF2ph_gbaooGZi8"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "philipptest2"
+              },
+              "state_key": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702545720704,
+              "unsigned": {
+                "replaces_state": "$xXcMzd-vyPLCmD_BfBWYskKsq5EuZtygpPPO_FOpz-w",
+                "age": 102899215
+              },
+              "event_id": "$aPAKMjMdeO07oEyrWn0mid041zKPcDWM9diXewH4emQ"
+            },
+            {
+              "type": "m.room.encryption",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "algorithm": "m.megolm.v1.aes-sha2"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459847
+              },
+              "event_id": "$aIluZP3OTZs2WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "0": {
+                  "type": "iban",
+                  "information": {
+                    "iban": "DE1234567890"
+                  }
+                },
+                "1": {
+                  "type": "paypal",
+                  "information": {
+                    "mail": ""
+                  }
+                }
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1701455928117,
+              "unsigned": {
+                "age": 1192691802
+              },
+              "event_id": "$Br3AIaPvmBZz2d9hr2nxVCS7mAmJqFtR9u6N1wvqAQM"
+            },
+            {
+              "type": "m.room.guest_access",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "guest_access": "can_join"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459847
+              },
+              "event_id": "$ZcEzE5mI7bPJ_rUEjQwoX5dbXJLkdv48z6sZ4h--iwE"
+            },
+            {
+              "type": "m.room.history_visibility",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "history_visibility": "shared"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160071,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$s7-WuUD29KMOT-P_nksu2Go-ZH7w11XUuPCB3Bgru0o"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "philipptest3"
+              },
+              "state_key": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702545788920,
+              "unsigned": {
+                "replaces_state": "$EFnkh9NsYbIvJb_O-gjcFYfoIjz62DwFK43gXzt0Ut0",
+                "age": 102830999
+              },
+              "event_id": "$gqHXyzkLS6t88ALhuNqqxS72zSEvkUo01UVg6xaKbwk"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "join",
+                "displayname": "Testbenutzer",
+                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rQymFHCTepGPsfFxotvgSSWa"
+              },
+              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702544609887,
+              "unsigned": {
+                "replaces_state": "$Cqyq1Q7JcXDvnL5k6brWEoyhwo9mZHiYy0F9pnEFNQc",
+                "age": 104010032
+              },
+              "event_id": "$19umJV5SuaIMCvOJjUntVRKFBsdAkuYplKm1T84m3DI"
+            },
+            {
+              "type": "m.room.join_rules",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "join_rule": "invite"
+              },
+              "state_key": "",
+              "origin_server_ts": 1701442160070,
+              "unsigned": {
+                "age": 1206459849
+              },
+              "event_id": "$ppsnrtR-EGOw0XZ81I1rqOvRFMetKy2Rf58xTEC84lM"
+            }
+          ]
+        },
+        "account_data": {
+          "events": [
+            {
+              "type": "m.fully_read",
+              "content": {
+                "event_id": "$aPAKMjMdeO07oEyrWn0mid041zKPcDWM9diXewH4emQ"
+              }
+            }
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {
+              "type": "m.receipt",
+              "content": {
+                "$EFnkh9NsYbIvJb_O-gjcFYfoIjz62DwFK43gXzt0Ut0": {
+                  "m.read": {
+                    "@philipptest2:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702545721019,
+                      "thread_id": "main"
+                    }
+                  }
+                },
+                "$aPAKMjMdeO07oEyrWn0mid041zKPcDWM9diXewH4emQ": {
+                  "m.read": {
+                    "@philipptest3:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702545789378,
+                      "thread_id": "main"
+                    }
+                  }
+                },
+                "$gqHXyzkLS6t88ALhuNqqxS72zSEvkUo01UVg6xaKbwk": {
+                  "m.read": {
+                    "@stub:stub.pse.dsn.kastel.kit.edu": {
+                      "ts": 1702545791001,
+                      "thread_id": "main"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "unread_notifications": {
+          "notification_count": 0,
+          "highlight_count": 0
+        },
+        "summary": {}
+      }
+    }
+  }
+}
