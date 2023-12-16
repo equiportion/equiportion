@@ -5,7 +5,7 @@ describe('/', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
-      cy.get('#AovfRJyqtfNuSlegxT').click(); // eslint-disable-line
+      cy.get('#AovfRJyqtfNuSlegxT').click();
       cy.get('#347587').children().should('have.length', 3);
       cy.get('#347587').should(
         'contain.text',
