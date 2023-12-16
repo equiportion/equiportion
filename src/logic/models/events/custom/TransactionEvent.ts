@@ -48,10 +48,14 @@ class TransactionEvent extends MessageEvent {
    * @returns {void}
    */
   private async cleanFloats(): Promise<void> {
-    this.sum = parseFloat(this.sum.toFixed(2));
+    if (typeof this.sum == 'number') {
+      this.sum = parseFloat(this.sum.toFixed(2));
+    }
 
-    for (const debtor of this.debtors) {
-      debtor.amount = parseFloat(debtor.amount.toFixed(2));
+    if (typeof this.debtors == 'object') {
+      for (const debtor of this.debtors) {
+        debtor.amount = parseFloat(debtor.amount.toFixed(2));
+      }
     }
   }
 
