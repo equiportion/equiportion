@@ -184,7 +184,7 @@ watch(
   <MainLayout>
     <div class="px-2 lg:px-10">
       <!--error message-->
-      <SystemAlert v-if="showError" severity="danger" class="mt-5 flex flex-row items-center gap-2">
+      <SystemAlert v-if="showError" id="error-mesage-top" severity="danger" class="mt-5 flex flex-row items-center gap-2">
         <i class="fa-solid fa-circle-exclamation"></i>
         <p>Bitte vervollständigen Sie die Angaben</p>
       </SystemAlert>
@@ -196,6 +196,7 @@ watch(
           <!--Add button-->
           <RoundButton
             v-if="!isCreditorSelected"
+            id="addCreditorButton"
             title="Mitgliederliste anzeigen"
             class="relative"
             @click="toggleDropdown1"
@@ -221,7 +222,7 @@ watch(
             v-if="members && isCreditorSelected"
             class="flex flex-col lg:flex-row items-center lg:items-start"
           >
-            <div class="relative group transition duration-200 hover:scale-110">
+            <div id="creditorAvatar" class="relative group transition duration-200 hover:scale-110">
               <!--'x'-->
               <div
                 class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200"
@@ -236,10 +237,10 @@ watch(
             </div>
 
             <div class="flex-col ml-8">
-              <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+              <h1 id="creditorDisplayName" class="text-2xl font-bold text-gray-900 sm:text-3xl">
                 {{ members[creditorId].getDisplayname() }}
               </h1>
-              <span class="text-md text-gray-500">
+              <span id="creditorUserId" class="text-md text-gray-500">
                 {{ members[creditorId].getUserId() }}
               </span>
             </div>
@@ -256,6 +257,7 @@ watch(
       >
         <div
           v-for="debtor in debtors"
+          id="debtorTiles"
           :key="debtor.getUserId()"
           class="flex flex-col items-center m-10"
         >
@@ -280,8 +282,8 @@ watch(
               class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
             >
               <div
-                id="memberDropdown"
                 v-for="member in members"
+                id="memberDropdown"
                 :key="member.getUserId()"
                 class="flex flex-col items-center m-10"
                 @click="addNewDebtor(member.getUserId())"
