@@ -17,4 +17,7 @@ export default defineConfig({
     mochaFile: 'cypress-report.xml',
     toConsole: false,
   },
+  env: {
+    as_token: 'test-valid',
+  },
 });

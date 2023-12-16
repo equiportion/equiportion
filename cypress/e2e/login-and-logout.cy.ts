@@ -1,18 +1,38 @@
-import {login} from '../support/e2e';
+/* eslint-disable cypress/no-unnecessary-waiting */
 
-describe('login-and-logout', () => {
-  it('wrong-password-does-not-log-in', () => {
+import * as any from '../fixtures/test-accounts.json';
+
+const testAccounts: any = any;
+
+describe('login and logout', () => {
+  it('wrong password does not login', () => {
     login('wrong-password');
     cy.get('#error-message').should('contain.text', 'Ungültiger Benutzername oder Passwort');
   });
-  it('correct-login-data-logs-in', () => {
+  it('correct login data logs in', () => {
     login('no-rooms');
     cy.get('#rooms').should('exist');
   });
-  it('logout-works', () => {
+  it('logout works', () => {
     login('no-rooms');
-    cy.get('#profile-picture').click();
-    cy.get('#logout-button').click();
+    logout();
     cy.get('#login-button-on-landing-page').should('exist');
   });
 });
+
+function login(userType: string) {
+  cy.visit('http://localhost:5173/welcome');
+  cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
+  cy.get('#login-button-on-landing-page').click();
+  cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
+  cy.get('#homeserver').type(testAccounts[userType]['homeserver']);
+  cy.get('#goToLoginButton').click();
+  cy.get('#username', {timeout: 10000}).type(testAccounts[userType]['username']);
+  cy.get('#homeserver').type(testAccounts[userType]['password']);
+  cy.get('#loginbutton').click();
+}
+
+function logout() {
+  cy.get('#profile-picture').click();
+  cy.get('#logout-button').click();
+}
