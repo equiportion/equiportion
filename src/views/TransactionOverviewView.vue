@@ -14,6 +14,7 @@ import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, ref} from 'vue';
+import type User from '@/logic/models/User';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -47,74 +48,71 @@ const iconClasses = computed(() => {
   }
 });
 
-const addBuffer = computed(() => {
+const contentClasses = computed(() => {
   if (memberListOpen.value) {
-    return 'flex max-w-[12%] w-full';
+    return 'hidden lg:flex flex-col p-5 items-center w-full';
   } else {
-    return 'flex max-w-[12%] w-full hidden';
+    return 'flex flex-col p-5 items-center w-full';
   }
 });
 
-const showRoomOverview = computed(() => {
-  if (memberListOpen.value) {
-    return 'flex flex-col w-full';
-  } else {
-    return 'flex flex-col lg:max-w-[80%] w-full';
+const showUserBadges = computed(() => {
+  var i = 0;
+  var badgeList: User[] = [];
+  const members = room?.getMembers();
+  for (const userId in members) {
+    if (i < 3) {
+      badgeList.push(members[userId]);
+    } else {
+      break;
+    }
+    i++;
   }
-});
-
-const showMemberList = computed(() => {
-  if (memberListOpen.value) {
-    return 'flex flex-col h-full max-w-[20%] w-full h-screen shadow-lg transition flex-grow p-5';
-  } else {
-    return 'flex flex-col h-full max-w-[20%] w-full hidden';
-  }
+  return badgeList;
 });
 </script>
 
 <template>
   <MainLayout>
+    <!--shows a button that enables the user to add a new transaction-->
     <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
 
-    <!--Content-->
-    <div class="flex flex-row justify-center gap-5">
-      <!--transaction overview-->
-      <div :class="showRoomOverview">
-        <!--Room info-->
-        <div class="flex flex-row p-5">
-          <!--Buffer-->
-          <div :class="addBuffer"></div>
-          <!--Room image-->
-          <MxcOrPlaceholderImage
-            :mxc-url="room?.getAvatarUrl() ?? ''"
-            :placeholder-text="room?.getName() ?? '?'"
-            class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
-          />
-          <!--Room name and members-->
-          <div class="flex flex-col p-5">
-            <!--Room name-->
-            <h1 class="flex text-3xl font-bold text-gray-900 break-all">
-              {{ room?.getName() ?? roomId }}
-            </h1>
-            <div class="flex flex-row gap-2 justify-center flex-wrap pt-5">
-              <!--shows the display names of all members in a room if possible or the member id if not-->
-              <UserBadge
-                v-for="member in room?.getMembers()"
-                :key="member.getUserId()"
-                :user="member"
-                class="shadow-md"
-              />
+    <div class="flex flex-col lg:flex-row">
+      <!--content-->
+      <div :class="contentClasses">
+        <!--The main body of the transaction overview, being 80% wide-->
+        <div class="flex flex-col lg:max-w-[1500px] w-full">
+          <!--Room image and name -->
+          <div class="flex flex-col items-center lg:flex-row mt-4">
+            <!--shows the room picture-->
+            <MxcOrPlaceholderImage
+              :mxc-url="room?.getAvatarUrl() ?? ''"
+              :placeholder-text="room?.getName() ?? '?'"
+              class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+            />
 
-              <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
-                <i :class="iconClasses"></i>
-              </RoundButton>
+            <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
+              <!--shows the room name if possible or the room id if not-->
+              <h1 class="flex text-3xl font-bold text-gray-900 break-all">
+                {{ room?.getName() ?? roomId }}
+              </h1>
+
+              <div class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap">
+                <!--shows the display names of all members in a room if possible or the member id if not-->
+                <template v-for="member in showUserBadges" :key="member.getUserId()">
+                  <UserBadge :user="member" class="shadow-md" />
+                </template>
+                <span v-if="Object.keys(room!.getMembers()).length >= 3">...</span>
+
+                <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
+                  <i :class="iconClasses"></i>
+                </RoundButton>
+              </div>
             </div>
           </div>
-        </div>
-        <!--Transaction tiles-->
-        <div class="flex flex-col">
+
           <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
             <template v-if="transactionEvents && transactionEvents.length <= 0">
@@ -133,9 +131,11 @@ const showMemberList = computed(() => {
           </div>
         </div>
       </div>
-
       <!--Member list-->
-      <div :class="showMemberList">
+      <div
+        v-show="memberListOpen"
+        class="flex flex-col h-full w-full lg:w-1/4 h-screen shadow-lg transition p-5"
+      >
         <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
           <i class="fa-solid fa-angles-right"></i>
         </RoundButton>
