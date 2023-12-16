@@ -116,11 +116,13 @@ const showUserBadges = computed(() => {
           <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
             <template v-if="transactionEvents && transactionEvents.length <= 0">
-              <span class="text-sm text-gray-400 text-center"> Keine Transaktionen vorhanden </span>
+              <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
+                Keine Transaktionen vorhanden
+              </span>
             </template>
 
             <!--the header of the table containing the transactions-->
-            <div v-else class="flex flex-col justify-center gap-5">
+            <div v-else id="transactions" class="flex flex-col justify-center gap-5">
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
                 v-for="transactionEvent in transactionEvents"
