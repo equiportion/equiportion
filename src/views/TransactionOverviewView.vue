@@ -103,14 +103,21 @@ const showUserBadges = computed(() => {
                 {{ room?.getName() ?? roomId }}
               </h1>
 
-              <div class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap">
+              <div
+                id="memberBadgesList"
+                class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
+              >
                 <!--shows the display names of all members in a room if possible or the member id if not-->
                 <template v-for="member in showUserBadges" :key="member.getUserId()">
                   <UserBadge :user="member" class="shadow-md" />
                 </template>
                 <span v-if="Object.keys(room!.getMembers()).length >= 3">...</span>
 
-                <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
+                <RoundButton
+                  id="toggleMemberListButton"
+                  class="w-8 h-8 shadow-md"
+                  @click="toggleMemberList()"
+                >
                   <i :class="iconClasses"></i>
                 </RoundButton>
               </div>
@@ -140,13 +147,14 @@ const showUserBadges = computed(() => {
       <!--Member list-->
       <div
         v-show="memberListOpen"
+        id="memberList"
         class="flex flex-col flex-grow w-full lg:w-1/4 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
         <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
           <i class="fa-solid fa-angles-right"></i>
         </RoundButton>
 
-        <div class="flex flex-col gap-2 overflow-y-auto">
+        <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
           <UserTile :user="room?.getMember(loggedInUser.getUserId())!" />
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
