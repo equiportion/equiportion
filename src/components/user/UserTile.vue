@@ -20,9 +20,9 @@ const isLoggedInUser = computed(() => {
 
 const displayNameClasses = computed(() => {
   if (isLoggedInUser.value) {
-    return 'font-bold text-ellipsis overflow-hidden';
+    return 'font-bold text-ellipsis overflow-hidden whitespace-nowrap';
   } else {
-    return 'text-ellipsis overflow-hidden';
+    return 'text-ellipsis overflow-hidden whitespace-nowrap';
   }
 });
 </script>
