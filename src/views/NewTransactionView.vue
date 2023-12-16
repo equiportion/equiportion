@@ -184,7 +184,12 @@ watch(
   <MainLayout>
     <div class="px-2 lg:px-10">
       <!--error message-->
-      <SystemAlert v-if="showError" id="error-mesage-top" severity="danger" class="mt-5 flex flex-row items-center gap-2">
+      <SystemAlert
+        v-if="showError"
+        id="error-mesage-top"
+        severity="danger"
+        class="mt-5 flex flex-row items-center gap-2"
+      >
         <i class="fa-solid fa-circle-exclamation"></i>
         <p>Bitte vervollständigen Sie die Angaben</p>
       </SystemAlert>
