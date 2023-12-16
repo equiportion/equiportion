@@ -14,7 +14,7 @@ describe('/', () => {
         );
     });
   });
-  it('all transaction are beeing shown', () => {
+  it('all transactions are beeing shown', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
