@@ -15,6 +15,7 @@ import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, ref} from 'vue';
 import type User from '@/logic/models/User';
+import UserTile from '@/components/user/UserTile.vue';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -136,27 +137,15 @@ const showUserBadges = computed(() => {
       <!--Member list-->
       <div
         v-show="memberListOpen"
-        class="flex flex-col h-full w-full lg:w-1/4 h-screen shadow-lg transition p-5"
+        class="flex flex-col h-full w-full lg:w-1/4 h-screen shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
-        <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
+        <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
           <i class="fa-solid fa-angles-right"></i>
         </RoundButton>
-        <div class="flex flex-row justify-center">
-          <h2 class="flex text-3xl font-bold text-gray-900 break-all text-center">Mitglieder</h2>
-        </div>
-        <div class="flex flex-col gap-2 justify-center flex-wrap pt-5">
+
+        <div class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
-          <div
-            v-for="member in room?.getMembers()"
-            :key="member.getUserId()"
-            class="flex flex-row items-center gap-2"
-          >
-            <!--Placeholder-->
-            <div class="h-12 w-12 rounded-full bg-gray-200"></div>
-            <span>
-              {{ member.getDisplayname() ?? member.getUserId() }}
-            </span>
-          </div>
+          <UserTile v-for="member in room?.getMembers()" :key="member.getUserId()" :user="member" />
         </div>
       </div>
     </div>
