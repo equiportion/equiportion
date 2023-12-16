@@ -267,7 +267,12 @@ watch(
           class="flex flex-col items-center m-16 relative"
         >
           <!--Add button-->
-          <RoundButton title="Mitgliederliste anzeigen" class="relative" @click="toggleDropdown2">
+          <RoundButton
+            id="addDebtorButton"
+            title="Mitgliederliste anzeigen"
+            class="relative"
+            @click="toggleDropdown2"
+          >
             <i class="fa-solid fa-plus"></i>
             <!-- Dropdown2 -->
             <div
@@ -275,6 +280,7 @@ watch(
               class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
             >
               <div
+                id="memberDropdown"
                 v-for="member in members"
                 :key="member.getUserId()"
                 class="flex flex-col items-center m-10"
@@ -290,6 +296,7 @@ watch(
       <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
         <!--entry widgets sum-->
         <InputFieldWithLabelAndError
+          id="inputFieldSum"
           v-model="sum"
           :error="errorSum"
           class="w-full lg:w-1/4"
@@ -300,6 +307,7 @@ watch(
         />
         <!--entry widgets purpose-->
         <InputFieldWithLabelAndError
+          id="inputFieldPurpose"
           v-model="purpose"
           :error="errorPurpose"
           class="w-full"
@@ -313,7 +321,12 @@ watch(
           <i class="fa-solid fa-check"></i>
         </RoundButton>
       </div>
-      <StandardButton class="block lg:hidden mt-5" title="Bestätigen" @click="createTransaction">
+      <StandardButton
+        id="validateButton"
+        class="block lg:hidden mt-5"
+        title="Bestätigen"
+        @click="createTransaction"
+      >
         <i class="fa-solid fa-check"></i>
       </StandardButton>
     </div>

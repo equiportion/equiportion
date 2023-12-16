@@ -58,7 +58,11 @@ function newTransaction() {
       <RoundButton title="Transaktionsliste anzeigen" @click="openTransactions">
         <i class="fas fa-solid fa-list"></i>
       </RoundButton>
-      <RoundButton title="Neue Transaktion anlegen" @click="newTransaction">
+      <RoundButton
+        id="newTransactionButton"
+        title="Neue Transaktion anlegen"
+        @click="newTransaction"
+      >
         <i class="fas fa-solid fa-plus"></i>
       </RoundButton>
     </div>
