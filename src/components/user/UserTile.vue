@@ -33,7 +33,7 @@ const displayNameClasses = computed(() => {
       :mxc-url="user.getAvatarUrl()"
       :placeholder-text="user.getDisplayname() ?? user.getUserId()"
     />
-    <div class="flex flex-col overflow-hidden">
+    <div class="flex flex-col overflow-hidden flex-shrink">
       <div class="flex flex-row text-gray-900">
         <span :class="displayNameClasses">
           {{ user.getDisplayname() ?? user.getUserId() ?? 'unbekannter Benutzer' }}
