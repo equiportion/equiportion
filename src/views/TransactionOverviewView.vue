@@ -65,13 +65,20 @@ function newTransaction(): void {
         <div v-if="room" class="flex flex-col lg:mt-2">
           <!--default message if no transactions were made-->
           <template v-if="transactionEvents && transactionEvents.length <= 0">
-            <div class="flex flex-col text-sm text-gray-400 items-center mt-5">
+            <div
+              id="no-transaction-message"
+              class="flex flex-col text-sm text-gray-400 items-center mt-5"
+            >
               Keine Transaktionen vorhanden
             </div>
           </template>
 
           <!--the header of the table containing the transactions-->
-          <div v-else class="grid justify-center-center grid-cols-1 lg:grid-cols-3">
+          <div
+            v-else
+            id="transactions"
+            class="grid justify-center-center grid-cols-1 lg:grid-cols-3"
+          >
             <div class="col-span-3 lg:m-5 invisible lg:visible">
               <div class="flex flex-row">
                 <div class="w-1/3 text-center font-bold text-gray-900">Zweck</div>
