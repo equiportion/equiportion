@@ -35,9 +35,7 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
 
     <div class="flex flex-col lg:flex-row w-full">
       <!--Gläubiger-->
-      <div
-        class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full"
-      >
+      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
         <UserBadge class="shadow-md" :user="creditor!" />
         <span>
           hat <b>{{ transaction.getSum() }}€</b> ausgelegt
