@@ -12,7 +12,7 @@ import router from '@/router';
 
 const loading = ref(false);
 
-const username = ref('');
+const userId = ref('');
 const password = ref('');
 
 const error = ref();
@@ -29,7 +29,7 @@ async function validateHomeserverUrl() {
 async function login() {
   loading.value = true;
 
-  const successful = await loginMatrixClient.login(username.value, password.value);
+  const successful = await loginMatrixClient.passwordLogin(userId.value, password.value);
   if (successful) {
     error.value = undefined;
     router.push({name: 'home'});
@@ -60,7 +60,7 @@ async function login() {
 
       <InputFieldWithLabelAndError
         id="username"
-        v-model:model-value="username"
+        v-model:model-value="userId"
         type="text"
         name="username"
         placeholder="z.B. @maxmustermann:matrix.org"

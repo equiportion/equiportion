@@ -1,4 +1,9 @@
 const apiEndpoints = {
+  //Don't require Authentification
+  versions: '',
+  login: '/_matrix/client/v3/login',
+
+  //Require Authentification
   whoami: '/_matrix/client/v3/account/whoami',
   sync: '/_matrix/client/v3/sync',
   profile: (userId: string) => `/_matrix/client/v3/profile/${userId}`,

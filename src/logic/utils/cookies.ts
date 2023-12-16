@@ -1,8 +1,12 @@
-function setCookie(cname: string, cvalue: string, exdays: number = 365): void {
-  const d = new Date();
-  d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-  const expires = 'expires=' + d.toUTCString();
-  document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
+function setCookie(
+  name: string,
+  value: string,
+  expiresInMs: number = 365 * 24 * 60 * 60 * 1000
+): void {
+  const date = new Date();
+  date.setTime(date.getTime() + expiresInMs);
+  const expires = 'expires=' + date.toUTCString();
+  document.cookie = name + '=' + value + ';' + expires + ';path=/';
 }
 
 function getCookie(cname: string): string | undefined {
