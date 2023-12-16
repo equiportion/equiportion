@@ -7,6 +7,9 @@
  */
 
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
+import {useRoomsStore} from '@/stores/rooms';
+import User from '@/logic/models/User';
+import UserBadge from '@/components/user/UserBadge.vue';
 
 const props = defineProps({
   transaction: {
@@ -14,31 +17,46 @@ const props = defineProps({
     required: true,
   },
 });
+
+const roomsStore = useRoomsStore();
+const room = roomsStore.getRoom(props.transaction.getRoomId());
+
+const creditor: User | undefined = room?.getMember(props.transaction.getCreditorId());
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row m-2">
-    <!--first column shows the purpose of the transaction-->
-    <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-      <span class="flex flex-col justify-center truncate text-gray-700">
-        {{ props.transaction.getPurpose() }}
-      </span>
-    </div>
-    <!--second column shows the creditor and the amount paid of the transaction-->
-    <div class="flex lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-      <span class="flex flex-col justify-center truncate text-gray-700">
-        {{ props.transaction.getSum() }}€, gezahlt von {{ props.transaction.getCreditor() }}
-      </span>
-    </div>
-    <!--third column shows all debitors and the amount they owe-->
-    <div class="flex flex-col lg:w-1/3 justify-center mx-2 mt-2 lg:mt-0">
-      <span
-        v-for="debitor in props.transaction.getDebtors()"
-        :key="debitor.user"
-        class="flex flex-col justify-center text-center truncate text-gray-700"
+  <div
+    class="flex flex-col w-full rounded-lg bg-gray-100 shadow-lg lg:hover:bg-gray-200 transition p-5 gap-2"
+  >
+    <!--Zweck-->
+    <h2 class="text-2xl font-bold w-full text-center lg:text-left break-all">
+      {{ transaction.getPurpose() }}
+    </h2>
+
+    <div class="flex flex-col lg:flex-row w-full">
+      <!--Gläubiger-->
+      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
+        <UserBadge class="shadow-md" :user="creditor!" />
+        <span>
+          hat <b>{{ transaction.getSum() }}€</b> ausgelegt
+        </span>
+      </div>
+
+      <!--Schuldner-->
+      <div
+        class="flex flex-col gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
       >
-        {{ debitor.user }} schuldet {{ debitor.amount }}€
-      </span>
+        <div
+          v-for="debtor in transaction.getDebtorIds()"
+          :key="debtor.userId"
+          class="flex flex-col lg:flex-row flex-wrap gap-1 items-center"
+        >
+          <UserBadge :user="room!.getMember(debtor.userId)" />
+          <span>
+            hat <b>{{ debtor.amount }}€</b> geliehen
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>

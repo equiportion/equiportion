@@ -33,7 +33,7 @@ const searchValue = computed({
       />
 
       <div
-        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full bg-gray-50 p-2 text-gray-600 transition hover:text-gray-700"
+        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700"
       >
         <span class="sr-only">Suchen</span>
         <i class="block fa-solid fa-search fa-fw"></i>

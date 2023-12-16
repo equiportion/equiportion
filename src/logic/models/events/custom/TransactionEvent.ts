@@ -13,16 +13,16 @@ class TransactionEvent extends MessageEvent {
   private purpose: string;
   private sum: number;
   private creditor: string;
-  private debtors: {user: string; amount: number}[];
+  private debtors: {userId: string; amount: number}[];
 
   /**
    * Creates a new TransactionEvent
-   * @param eventId the eventId of this event (optional, only to be set if this event was received from the matrix api)
-   * @param roomId the roomId of the room this event is published to
-   * @param purpose the description of the transaction
-   * @param sum the total amount spent
-   * @param creditor the userId of the creditor
-   * @param debtors the debtors as an array, each debtor containing their userId and the amount they owe
+   * @param {string} eventId the eventId of this event (optional, only to be set if this event was received from the matrix api)
+   * @param {string} roomId the roomId of the room this event is published to
+   * @param {string} purpose the description of the transaction
+   * @param {number} sum the total amount spent
+   * @param {string} creditor the userId of the creditor
+   * @param {{userId: string; amount: number}[]} debtors the debtors as an array, each debtor containing their userId and the amount they owe
    */
   constructor(
     eventId: string,
@@ -31,7 +31,7 @@ class TransactionEvent extends MessageEvent {
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {user: string; amount: number}[]
+    debtors: {userId: string; amount: number}[]
   ) {
     super(eventId, roomId);
 
@@ -39,6 +39,24 @@ class TransactionEvent extends MessageEvent {
     this.sum = sum;
     this.creditor = creditor;
     this.debtors = debtors;
+
+    this.cleanFloats();
+  }
+
+  /**
+   * Cleans the floats of this event (rounds them to 2 digits after the comma)
+   * @returns {void}
+   */
+  private async cleanFloats(): Promise<void> {
+    if (typeof this.sum == 'number') {
+      this.sum = parseFloat(this.sum.toFixed(2));
+    }
+
+    if (typeof this.debtors == 'object') {
+      for (const debtor of this.debtors) {
+        debtor.amount = parseFloat(debtor.amount.toFixed(2));
+      }
+    }
   }
 
   /**
@@ -53,9 +71,9 @@ class TransactionEvent extends MessageEvent {
       return undefined;
     }
 
-    const debtors: {user: string; amount: number}[] = [];
+    const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({user: debtor.user, amount: parseFloat(debtor.amount)});
+      debtors.push({userId: debtor.user, amount: parseFloat(parseFloat(debtor.amount).toFixed(2))});
     }
 
     return new TransactionEvent(
@@ -78,20 +96,20 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets the content of this event as a Json object (for matrix api).
-   * @returns {any} the content of this event
+   * @returns {{}} the content of this event
    */
-  public toEventContent(): any {
+  public toEventContent(): {} {
     const debtors = [];
     for (const debtor of this.debtors) {
       debtors.push({
-        user: debtor.user,
-        amount: debtor.amount.toString(),
+        user: debtor.userId,
+        amount: debtor.amount.toFixed(2).toString(),
       });
     }
 
     return {
       purpose: this.purpose,
-      sum: this.sum.toString(),
+      sum: this.sum.toFixed(2).toString(),
       creditor: this.creditor,
       debtors: debtors,
     };
@@ -107,7 +125,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's purpose.
-   * @returns the purpose
+   * @returns {string} the purpose
    */
   public getPurpose(): string {
     return this.purpose;
@@ -115,7 +133,7 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's sum.
-   * @returns the sum
+   * @returns {number} the sum
    */
   public getSum(): number {
     return this.sum;
@@ -123,17 +141,17 @@ class TransactionEvent extends MessageEvent {
 
   /**
    * Gets this TransactionEvent's creditor.
-   * @returns the userId of the creditor
+   * @returns {string} the userId of the creditor
    */
-  public getCreditor(): string {
+  public getCreditorId(): string {
     return this.creditor;
   }
 
   /**
    * Gets this TransactionEvent's debtors.
-   * @returns an array of debtors each containing a userId and the amount they owe
+   * @returns {{userId: string; amount: number}[]} an array of debtors each containing a userId and the amount they owe
    */
-  public getDebtors(): {user: string; amount: number}[] {
+  public getDebtorIds(): {userId: string; amount: number}[] {
     return this.debtors;
   }
 }

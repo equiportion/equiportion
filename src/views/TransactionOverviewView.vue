@@ -12,6 +12,11 @@ import TransactionTile from './partials/TransactionTile.vue';
 import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
+import UserBadge from '@/components/user/UserBadge.vue';
+import {computed, ref} from 'vue';
+import type User from '@/logic/models/User';
+import UserTile from '@/components/user/UserTile.vue';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 const roomId = useRoute().params.roomId.toString();
 
@@ -19,6 +24,8 @@ const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(roomId);
 
 const transactionEvents = room?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+
+const loggedInUser = useLoggedInUserStore().user;
 
 /**
  * Opens NewTransactionView of the room of this TransactionOverviewView.
@@ -30,81 +37,121 @@ function newTransaction(): void {
     params: {roomId: roomId},
   });
 }
+
+function toggleMemberList(): void {
+  memberListOpen.value = !memberListOpen.value;
+}
+
+const memberListOpen = ref(false);
+
+const iconClasses = computed(() => {
+  if (memberListOpen.value) {
+    return 'fa-solid fa-angles-right rotate-180 transition';
+  } else {
+    return 'fa-solid fa-angles-right transition';
+  }
+});
+
+const contentClasses = computed(() => {
+  if (memberListOpen.value) {
+    return 'hidden lg:flex flex-col p-5 items-center w-full';
+  } else {
+    return 'flex flex-col p-5 items-center w-full';
+  }
+});
+
+const showUserBadges = computed(() => {
+  let i = 0;
+  let badgeList: User[] = [];
+  const members = room?.getMembers();
+  for (const userId in members) {
+    if (i < 3) {
+      badgeList.push(members[userId]);
+    } else {
+      break;
+    }
+    i++;
+  }
+  return badgeList;
+});
 </script>
 
 <template>
   <MainLayout>
-    <div class="flex flex-col px-5 items-center">
-      <!--The main body of the transaction overview, being 4/6 wide-->
-      <div class="flex flex-col lg:w-4/6 w-full">
-        <!--Profile image and username -->
-        <div class="flex h-40 flex-col items-center lg:flex-row mt-4">
-          <!--shows the room picture-->
-          <MxcOrPlaceholderImage
-            :mxc-url="room?.getAvatarUrl() ?? ''"
-            :placeholder-text="room?.getName() ?? '?'"
-            class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
-          />
-          <div class="flex flex-col items-center lg:items-start lg:ml-4 lg:gap-5">
-            <!--shows the room name if possible or the room id if not-->
-            <h1 class="flex text-3xl font-bold text-gray-900">
-              {{ room?.getName() ?? roomId }}
-            </h1>
-            <div class="flex flex-col lg:flex-row lg:gap-2">
-              <!--shows the display names of all members in a room if possible or the member id if not-->
-              <span
-                v-for="member in room?.getMembers()"
-                :key="member.getUserId()"
-                class="flex truncate"
-              >
-                {{ member.getDisplayname() ?? member.getUserId() }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div v-if="room" class="flex flex-col lg:mt-2">
-          <!--default message if no transactions were made-->
-          <template v-if="transactionEvents && transactionEvents.length <= 0">
-            <div
-              id="no-transaction-message"
-              class="flex flex-col text-sm text-gray-400 items-center mt-5"
-            >
-              Keine Transaktionen vorhanden
-            </div>
-          </template>
+    <!--shows a button that enables the user to add a new transaction-->
+    <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
+      <i class="fa-solid fa-plus"></i>
+    </RoundButton>
 
-          <!--the header of the table containing the transactions-->
-          <div
-            v-else
-            id="transactions"
-            class="grid justify-center-center grid-cols-1 lg:grid-cols-3"
-          >
-            <div class="col-span-3 lg:m-5 invisible lg:visible">
-              <div class="flex flex-row">
-                <div class="w-1/3 text-center font-bold text-gray-900">Zweck</div>
-                <div class="w-1/3 text-center font-bold text-gray-900">Gläubiger</div>
-                <div class="w-1/3 text-center font-bold text-gray-900">Schuldner</div>
+    <div class="flex flex-col lg:flex-row min-h-screen">
+      <!--content-->
+      <div :class="contentClasses">
+        <!--The main body of the transaction overview, being 80% wide-->
+        <div class="flex flex-col lg:max-w-[1500px] w-full">
+          <!--Room image and name -->
+          <div class="flex flex-col items-center lg:flex-row mt-4">
+            <!--shows the room picture-->
+            <MxcOrPlaceholderImage
+              :mxc-url="room?.getAvatarUrl() ?? ''"
+              :placeholder-text="room?.getName() ?? '?'"
+              class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+            />
+
+            <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
+              <!--shows the room name if possible or the room id if not-->
+              <h1 class="flex text-3xl font-bold text-gray-900 break-all">
+                {{ room?.getName() ?? roomId }}
+              </h1>
+
+              <div class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap">
+                <!--shows the display names of all members in a room if possible or the member id if not-->
+                <template v-for="member in showUserBadges" :key="member.getUserId()">
+                  <UserBadge :user="member" class="shadow-md" />
+                </template>
+                <span v-if="Object.keys(room!.getMembers()).length >= 3">...</span>
+
+                <RoundButton class="w-8 h-8 shadow-md" @click="toggleMemberList()">
+                  <i :class="iconClasses"></i>
+                </RoundButton>
               </div>
             </div>
+          </div>
 
-            <!--shows all transaction using the transacion tile partial-->
-            <div
-              v-for="transactionEvent in transactionEvents"
-              :key="transactionEvent.getEventId()"
-              class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200"
-            >
-              <TransactionTile :transaction="transactionEvent"></TransactionTile>
+          <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
+            <!--default message if no transactions were made-->
+            <template v-if="transactionEvents && transactionEvents.length <= 0">
+              <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
+                Keine Transaktionen vorhanden
+              </span>
+            </template>
+
+            <!--the header of the table containing the transactions-->
+            <div v-else id="transactions" class="flex flex-col justify-center gap-5">
+              <!--shows all transaction using the transacion tile partial-->
+              <TransactionTile
+                v-for="transactionEvent in transactionEvents"
+                :key="transactionEvent.getEventId()"
+                :transaction="transactionEvent"
+              />
             </div>
           </div>
         </div>
+      </div>
+      <!--Member list-->
+      <div
+        v-show="memberListOpen"
+        class="flex flex-col flex-grow w-full lg:w-1/4 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
+      >
+        <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
+          <i class="fa-solid fa-angles-right"></i>
+        </RoundButton>
 
-        <!--shows a button that enables the user to add a new transaction-->
-        <div class="flex flex-row justify-end">
-          <div class="static">
-            <div class="absolute bottom-5 right-5 lg:left-1/2 lg:transform">
-              <RoundButton @click="newTransaction"><i class="fa-solid fa-plus"></i></RoundButton>
-            </div>
-          </div>
+        <div class="flex flex-col gap-2 overflow-y-auto">
+          <!--shows the display names of all members in a room if possible or the member id if not-->
+          <UserTile :user="room?.getMember(loggedInUser.getUserId())!" />
+          <template v-for="member in room?.getMembers()" :key="member.getUserId()">
+            <UserTile v-if="member.getUserId() != loggedInUser.getUserId()" :user="member" />
+          </template>
         </div>
       </div>
     </div>

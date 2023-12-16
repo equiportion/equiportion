@@ -99,9 +99,9 @@ class MRoomMemberEvent extends StateEvent {
 
   /**
    * Gets the content of this event as a Json object (for matrix api)
-   * @returns {any} the content of this event
+   * @returns {{}} the content of this event
    */
-  public toEventContent(): any {
+  public toEventContent(): {} {
     return {
       avatarUrl: this.avatarUrl,
       displayname: this.displayname,

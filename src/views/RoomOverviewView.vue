@@ -16,25 +16,25 @@ const rooms = roomsStore.rooms;
 </script>
 <template>
   <MainLayout id="main-layout">
-    <div class="bg-gray-50">
-      <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-tl from-sky-900 to-teal-400">
+      <div class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8 h-full">
         <h1
           v-if="loggedInUser.getUserId() != ''"
-          class="text-2xl font-bold text-gray-900 sm:text-3xl"
+          class="text-2xl font-bold text-gray-100 sm:text-3xl"
         >
           Willkommen zurück, {{ loggedInUser.getDisplayname() ?? loggedInUser.getUserId() }}!
         </h1>
-        <div v-else class="animate-pulse bg-slate-200 h-8 w-full rounded-lg"></div>
+        <div v-else class="animate-pulse bg-gray-200 h-8 w-full rounded-lg"></div>
 
-        <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-500">
+        <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-200">
           Du hast 1.000.000 € Schulden - beginne, Geld zurückzuzahlen!
         </p>
-        <div v-else class="animate-pulse bg-slate-200 h-4 w-1/2 rounded-lg mt-2"></div>
+        <div v-else class="animate-pulse bg-gray-200 h-4 w-1/2 rounded-lg mt-2"></div>
       </div>
     </div>
 
     <!--Rooms-->
-    <div id="rooms" class="flex flex-col items-center gap-2 p-2 lg:p-5">
+    <div id="rooms" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <HeightFade>
         <span
           v-show="clientStateStore.syncing && clientStateStore.numberOfSyncs < 1"
