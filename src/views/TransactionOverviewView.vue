@@ -83,7 +83,7 @@ const showUserBadges = computed(() => {
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
 
-    <div class="flex flex-col lg:flex-row">
+    <div class="flex flex-col lg:flex-row min-h-screen">
       <!--content-->
       <div :class="contentClasses">
         <!--The main body of the transaction overview, being 80% wide-->
