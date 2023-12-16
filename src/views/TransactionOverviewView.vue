@@ -93,10 +93,7 @@ function newTransaction(): void {
               :key="transactionEvent.getEventId()"
               class="mt-2 col-span-3 bg-gray-100 border-b-8 border-r-8 rounded border-gray-200"
             >
-              <TransactionTile
-                :id="transactionEvent.getSum()"
-                :transaction="transactionEvent"
-              ></TransactionTile>
+              <TransactionTile :transaction="transactionEvent"></TransactionTile>
             </div>
           </div>
         </div>

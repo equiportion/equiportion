@@ -6,11 +6,12 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
 
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#347587').children().should('have.length', 3);
-      cy.get('#347587').should(
-        'contain.text',
-        '347587€, gezahlt von @stub:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu schuldet 347587€'
-      );
+      cy.get('#transactions>div')
+        .eq(1)
+        .should(
+          'contain.text',
+          '347587€, gezahlt von @stub:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu schuldet 347587€'
+        );
     });
   });
   it('all transaction are beeing shown', () => {
