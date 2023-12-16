@@ -5,7 +5,7 @@ describe('/', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
-      cy.get('#AovfRJyqtfNuSlegxT').click();
+      cy.get('#rooms>div').eq(0).click();
       cy.get('#347587').children().should('have.length', 3);
       cy.get('#347587').should(
         'contain.text',
@@ -17,7 +17,7 @@ describe('/', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
-      cy.get('#AovfRJyqtfNuSlegxT').click();
+      cy.get('#rooms>div').eq(0).click();
       cy.get('#transactions').children().should('have.length', 11);
       cy.get('#no-transaction-message').should('not.exist');
     });
@@ -26,7 +26,7 @@ describe('/', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
-      cy.get('#CbZGCkWHkRmssFalNr').click();
+      cy.get('#rooms>div').eq(1).click();
       cy.get('#transactions').should('not.exist');
       cy.get('#no-transaction-message').should('be.visible');
     });
