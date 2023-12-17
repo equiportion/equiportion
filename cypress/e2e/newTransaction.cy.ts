@@ -68,6 +68,7 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
       cy.get('#error-message').should('contain', 'ungültige Eingabe');
+      cy.get('#error-mesage-top').should('be.visible');
     });
   });
   it('warning is shown if the purpose is missing', () => {
@@ -78,8 +79,8 @@ describe('/', () => {
       cy.get('#memberDropdown').click();
       cy.get('#inputFieldSum').type('233.23');
       cy.get('#validateButton').click();
-      // irgendwie ist der error message nicht da
-      // cy.get('#error-message').should('contain', 'Zweck ist ein Pflichtfeld!');
+      cy.get('#error-message').should('contain', 'Gib einen Zweck an.');
+      cy.get('#error-mesage-top').should('be.visible');
     });
   });
   it('shows user itself as standard creditor', () => {

@@ -76,7 +76,8 @@ async function createTransaction() {
     creditorId.value !== '' &&
     debtors.value.length > 0 &&
     parseFloat(sum.value) !== 0 &&
-    sum.value !== ''
+    sum.value !== '' &&
+    purpose.value !== ''
   ) {
     const sumValue = parseFloat(sum.value);
     const debtorsJson = debtors.value.map((debtor) => ({
