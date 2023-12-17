@@ -136,6 +136,16 @@ describe('/', () => {
   });
   it('distributes the debts equally to debtors', () => {
     authenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/send/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut');
+
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(4).find('#newTransactionButton').click();
       cy.get('#addDebtorButton').click();
@@ -147,7 +157,18 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('333.33');
       cy.get('#inputFieldPurpose').type('Schulden Verteilen');
       cy.get('#validateButton').click();
-      //TODO
+
+      cy.wait('@transactionEventPut').then(({request}) => {
+        expect(request.body.purpose).to.eq('Schulden Verteilen');
+        expect(request.body.creditor).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.debtors[0].amount).to.eq('111.11');
+        expect(request.body.debtors[0].user).to.eq('@philipptest2:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.debtors[1].amount).to.eq('111.11');
+        expect(request.body.debtors[1].user).to.eq('@philipptest3:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.debtors[2].amount).to.eq('111.11');
+        expect(request.body.debtors[2].user).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.sum).to.eq('333.33');
+      });
     });
   });
 });
