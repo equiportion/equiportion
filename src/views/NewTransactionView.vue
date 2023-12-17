@@ -285,16 +285,20 @@ watch(
             <!-- Dropdown2 -->
             <div
               v-show="isDropdownOpen2"
-              class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+              id="memberDropdown"
+              class="bg-white absolute left-16 z-10 border-2 border-slate-200 gap-10 rounded"
             >
               <div
                 v-for="member in members"
-                id="memberDropdown"
                 :key="member.getUserId()"
-                class="flex flex-col items-center m-10"
+                class="flex flex-col items-center "
                 @click="addNewDebtor(member.getUserId())"
               >
-                <MemberDropdown :member="member" />
+                <MemberDropdown
+                  v-if="!debtors.includes(member)"
+                  id="memberDropdownTile"
+                  :member="member"
+                />
               </div>
             </div>
           </RoundButton>

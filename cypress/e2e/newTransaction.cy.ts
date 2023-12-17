@@ -1,6 +1,19 @@
 import {authenticated} from '../support/stubs';
 
 describe('/', () => {
+  it('distributes the debts equally to debtors', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(2).find('#newTransactionButton').click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown>div').eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown > div').eq(0).click();
+      cy.get('#inputFieldSum').type('42.42');
+      cy.get('#inputFieldPurpose').type('Testzwecke');
+      cy.get('#validateButton').click();
+    });
+  });
   it('renders', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
