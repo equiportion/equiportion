@@ -55,17 +55,17 @@ describe('/', () => {
       cy.get('#addDebtorButton').should('exist');
     });
   });
-  it('shows error when no debtor selected', () => {
+  it('shows error message if no debtor selected', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
       cy.get('#newTransactionButton').click();
       cy.get('#inputFieldSum').type('42.42');
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
-      cy.get('#error-mesage-top').should('exist');
+      cy.get('#error-mesage-top').should('be.visible');
     });
   });
-  it('shows error when no creditor selected', () => {
+  it('shows error message if no creditor selected', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
       cy.get('#newTransactionButton').click();
@@ -75,10 +75,10 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('42.42');
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
-      cy.get('#error-mesage-top').should('exist');
+      cy.get('#error-mesage-top').should('be.visible');
     });
   });
-  it('warning is shown if the sum is missing', () => {
+  it('shows error message if sum missing or invalid', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
       cy.get('#newTransactionButton').click();
@@ -87,10 +87,18 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
       cy.get('#inputFields>div').eq(0).children().eq(2).should('contain', 'Ungültige Summe!');
+      cy.get('#inputFieldSum').type('0.0uwu');
+      cy.get('#validateButton').click();
+      cy.get('#inputFields>div').eq(0).children().eq(2).should('contain', 'Ungültige Summe!');
+      cy.get('#inputFieldSum').clear();
+      cy.get('#inputFieldSum').type('42.424');
+      cy.get('#validateButton').click();
+      cy.get('#inputFields>div').eq(0).children().eq(2).should('contain', 'Ungültige Summe!');
+
       cy.get('#error-mesage-top').should('be.visible');
     });
   });
-  it('warning is shown if the purpose is missing', () => {
+  it('shows error message if purpose missing', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
       cy.get('#newTransactionButton').click();
@@ -98,30 +106,50 @@ describe('/', () => {
       cy.get('#memberDropdown').click();
       cy.get('#inputFieldSum').type('233.23');
       cy.get('#validateButton').click();
-      cy.get('#inputFields>div').eq(1).children().eq(2).should('contain', 'Zweck ist ein Pflichtfeld!');
+      cy.get('#inputFields>div')
+        .eq(1)
+        .children()
+        .eq(2)
+        .should('contain', 'Zweck ist ein Pflichtfeld!');
       cy.get('#error-mesage-top').should('be.visible');
     });
   });
   it('shows user itself as standard creditor', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
-      cy.get('#newTransactionButton').click();
+      cy.get('#rooms>div').eq(3).find('#newTransactionButton').click();
       cy.get('#creditorAvatar').should('exist');
+      cy.get('#creditorDisplayName').should('contain', 'Testbenutzer');
+      cy.get('#creditorUserId').should('contain', '@stub:stub.pse.dsn.kastel.kit.edu');
     });
   });
-  /*
-  it('distributes the debts equally to debtors', () => {
+  it('deletes the debtor from dropdown when already selected', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
-      cy.get('#rooms>div').eq(2).find('#newTransactionButton').click();
+      cy.get('#rooms>div').eq(4).find('#newTransactionButton').click();
       cy.get('#addDebtorButton').click();
       cy.get('#memberDropdown>div').eq(1).click();
       cy.get('#addDebtorButton').click();
-      cy.get('#memberDropdown > div').eq(0).click();
-      cy.get('#inputFieldSum').type('42.42');
-      cy.get('#inputFieldPurpose').type('Testzwecke');
-      cy.get('#validateButton').click();
+      cy.get('#memberDropdown').should('not.contain', 'philipptest3');
+      cy.get('#memberDropdown>div').eq(2).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown').should('not.contain', 'Testbenutzer');
     });
   });
-  */
+  it('distributes the debts equally to debtors', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).find('#newTransactionButton').click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown>div').eq(0).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown>div').eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown>div').eq(2).click();
+      cy.get('#inputFieldSum').type('333.33');
+      cy.get('#inputFieldPurpose').type('Schulden Verteilen');
+      cy.get('#validateButton').click();
+      //TODO
+    });
+  });
 });

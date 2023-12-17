@@ -75,8 +75,7 @@ async function createTransaction() {
   if (
     creditorId.value !== '' &&
     debtors.value.length > 0 &&
-    parseFloat(sum.value) !== 0 &&
-    sum.value !== '' &&
+    validateSum() &&
     purpose.value !== ''
   ) {
     const sumValue = parseFloat(sum.value);
@@ -171,7 +170,10 @@ function selectCreditor(id: string): void {
  */
 function validateSum(): boolean {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
-  return currencyRegex.test(sum.value);
+  if(parseFloat(sum.value) !== 0){
+    return currencyRegex.test(sum.value);
+  }
+  return false;
 }
 
 // close dropdown on click outside
@@ -221,7 +223,7 @@ watch(
               <div
                 v-for="member in members"
                 :key="member.getUserId()"
-                class="flex flex-col items-center m-10"
+                class="flex flex-col items-center"
                 @click="selectCreditor(member.getUserId())"
               >
                 <MemberDropdown :member="member" />
