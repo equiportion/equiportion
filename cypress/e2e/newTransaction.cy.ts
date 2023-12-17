@@ -16,6 +16,16 @@ describe('/', () => {
   });
   it('renders', () => {
     authenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!AovfRJyqtfNuSlegxT:stub.pse.dsn.kastel.kit.edu/send/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut');
+
       cy.visit('http://localhost:5173/');
       cy.get('#newTransactionButton').click();
       cy.get('#addDebtorButton').click();
@@ -23,6 +33,15 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('42.42');
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
+
+      cy.wait('@transactionEventPut').then(({request}) => {
+        expect(request.body.purpose).to.eq('Testzwecke');
+        expect(request.body.creditor).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.debtors[0].amount).to.eq('42.42');
+        expect(request.body.debtors[0].user).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
+        expect(request.body.sum).to.eq('42.42');
+      });
+
       //TODO philipp fragen, warum der button nicht funktionier (liegt eventuell am stubbing)
     });
   });
