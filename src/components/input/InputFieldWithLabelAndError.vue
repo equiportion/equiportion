@@ -80,6 +80,6 @@ const inputValue = computed({
       :max="max"
       :step="step"
     />
-    <small v-if="error" id="error-message" class="block text-sm text-red-500"> {{ error }} </small>
+    <small v-if="error" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
 </template>
