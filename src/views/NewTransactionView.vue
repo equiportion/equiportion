@@ -170,7 +170,7 @@ function selectCreditor(id: string): void {
  */
 function validateSum(): boolean {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
-  if(parseFloat(sum.value) !== 0){
+  if (parseFloat(sum.value) !== 0) {
     return currencyRegex.test(sum.value);
   }
   return false;
