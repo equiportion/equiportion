@@ -85,21 +85,6 @@ async function createTransaction() {
       amount: sumValue / debtors.value.length,
     }));
 
-    if (!purpose.value || purpose.value == '') {
-      errorPurpose.value = 'Zweck ist ein Pflichtfeld!';
-    } else {
-      errorPurpose.value = '';
-    }
-    if (!validateSum()) {
-      errorSum.value = 'Ungültige Summe!';
-    } else {
-      errorSum.value = '';
-    }
-    if (errorPurpose.value !== '' || errorSum.value !== '') {
-      loading.value = false;
-      return;
-    }
-
     try {
       const transactionEvent = new TransactionEvent(
         MatrixEvent.EVENT_ID_NEW,
@@ -120,6 +105,20 @@ async function createTransaction() {
     }
   } else {
     showError.value = true;
+    if (!purpose.value || purpose.value == '') {
+      errorPurpose.value = 'Zweck ist ein Pflichtfeld!';
+    } else {
+      errorPurpose.value = '';
+    }
+    if (!validateSum()) {
+      errorSum.value = 'Ungültige Summe!';
+    } else {
+      errorSum.value = '';
+    }
+    if (errorPurpose.value !== '' || errorSum.value !== '') {
+      loading.value = false;
+      return;
+    }
   }
 }
 
@@ -297,7 +296,7 @@ watch(
               <div
                 v-for="member in members"
                 :key="member.getUserId()"
-                class="flex flex-col items-center "
+                class="flex flex-col items-center"
                 @click="addNewDebtor(member.getUserId())"
               >
                 <MemberDropdown
