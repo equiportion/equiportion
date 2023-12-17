@@ -310,7 +310,7 @@ watch(
         </div>
       </div>
 
-      <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
+      <div id="inputFields" class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
         <!--entry fields sum-->
         <InputFieldWithLabelAndError
           id="inputFieldSum"
