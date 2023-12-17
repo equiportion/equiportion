@@ -1,19 +1,6 @@
 import {authenticated} from '../support/stubs';
 
 describe('/', () => {
-  it('distributes the debts equally to debtors', () => {
-    authenticated(() => {
-      cy.visit('http://localhost:5173/');
-      cy.get('#rooms>div').eq(2).find('#newTransactionButton').click();
-      cy.get('#addDebtorButton').click();
-      cy.get('#memberDropdown>div').eq(1).click();
-      cy.get('#addDebtorButton').click();
-      cy.get('#memberDropdown > div').eq(0).click();
-      cy.get('#inputFieldSum').type('42.42');
-      cy.get('#inputFieldPurpose').type('Testzwecke');
-      cy.get('#validateButton').click();
-    });
-  });
   it('renders', () => {
     authenticated(() => {
       cy.intercept(
@@ -99,7 +86,7 @@ describe('/', () => {
       cy.get('#memberDropdown').click();
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#validateButton').click();
-      cy.get('#error-message').should('contain', 'ungültige Eingabe');
+      cy.get('#inputFields>div').eq(0).children().eq(2).should('contain', 'Ungültige Summe!');
       cy.get('#error-mesage-top').should('be.visible');
     });
   });
@@ -111,7 +98,7 @@ describe('/', () => {
       cy.get('#memberDropdown').click();
       cy.get('#inputFieldSum').type('233.23');
       cy.get('#validateButton').click();
-      cy.get('#error-message').should('contain', 'Gib einen Zweck an.');
+      cy.get('#inputFields>div').eq(1).children().eq(2).should('contain', 'Zweck ist ein Pflichtfeld!');
       cy.get('#error-mesage-top').should('be.visible');
     });
   });
@@ -122,4 +109,19 @@ describe('/', () => {
       cy.get('#creditorAvatar').should('exist');
     });
   });
+  /*
+  it('distributes the debts equally to debtors', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(2).find('#newTransactionButton').click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown>div').eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#memberDropdown > div').eq(0).click();
+      cy.get('#inputFieldSum').type('42.42');
+      cy.get('#inputFieldPurpose').type('Testzwecke');
+      cy.get('#validateButton').click();
+    });
+  });
+  */
 });

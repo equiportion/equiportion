@@ -311,7 +311,7 @@ watch(
       </div>
 
       <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
-        <!--entry widgets sum-->
+        <!--entry fields sum-->
         <InputFieldWithLabelAndError
           id="inputFieldSum"
           v-model="sum"
@@ -322,7 +322,7 @@ watch(
           :step="0.01"
           label="Betrag in Euro"
         />
-        <!--entry widgets purpose-->
+        <!--entry field purpose-->
         <InputFieldWithLabelAndError
           id="inputFieldPurpose"
           v-model="purpose"
