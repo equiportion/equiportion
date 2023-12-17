@@ -28,8 +28,6 @@ describe('/', () => {
         expect(request.body.debtors[0].user).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
         expect(request.body.sum).to.eq('42.42');
       });
-
-      //TODO philipp fragen, warum der button nicht funktionier (liegt eventuell am stubbing)
     });
   });
   it('deletes the creditor by clicking on avatar', () => {

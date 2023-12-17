@@ -7,7 +7,8 @@ const testAccounts: any = any;
 describe('login and logout', () => {
   it('wrong password does not login', () => {
     login('wrong-password');
-    cy.get('#error-message').should('contain.text', 'Ungültiger Benutzername oder Passwort');
+    cy.get('#login-form>div').eq(2).should('contain.text', 'Ungültiger Benutzername oder Passwort');
+    cy.get('#login-form>div').eq(3).should('contain.text', 'Ungültiger Benutzername oder Passwort');
   });
   it('correct login data logs in', () => {
     login('no-rooms');
