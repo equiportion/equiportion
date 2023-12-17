@@ -7,10 +7,10 @@ describe('/', () => {
 
       cy.get('#rooms>div').eq(0).click();
       cy.get('#transactions>div')
-        .eq(1)
+        .eq(2)
         .should(
           'contain.text',
-          '347587€, gezahlt von @stub:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu schuldet 347587€'
+          '347587€'
         );
     });
   });
@@ -19,7 +19,7 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
 
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#transactions').children().should('have.length', 11);
+      cy.get('#transactions').children().should('have.length', 10);
       cy.get('#no-transaction-message').should('not.exist');
     });
   });

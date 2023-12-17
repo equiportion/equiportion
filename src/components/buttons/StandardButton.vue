@@ -24,7 +24,7 @@ const buttonClasses = computed(() => {
     return 'w-full disabled inline-block shrink-0 rounded-md border border-green-400 bg-green-600 px-12 py-3 text-sm font-medium text-white transition';
   }
 
-  return 'w-full inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500';
+  return 'w-full inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-white hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500';
 });
 </script>
 <template>
