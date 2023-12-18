@@ -10,8 +10,9 @@ function goToLogin() {
   <div class="min-h-screen flex flex-col items-center justify-center">
     <LogoWide class="scale-[1] custom-logo" />
     <button
-      @click="goToLogin"
+      id="login-button-on-landing-page"
       class="h-12 px-6 m-2 block bg-white p-1.5 text-gray-600 shadow-md border border-gray-100 hover:bg-gray-100 hover:scale-110 transition-all font-bold rounded-lg mt-36"
+      @click="goToLogin"
     >
       Anmelden
     </button>

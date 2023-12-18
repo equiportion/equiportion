@@ -38,7 +38,7 @@ const textClasses = computed(() => {
       <span v-show="!completed">
         <slot name="step" />
       </span>
-      <i class="fa-solid fa-check" v-if="completed"></i>
+      <i v-if="completed" class="fa-solid fa-check"></i>
     </span>
 
     <span :class="textClasses"> <slot name="description" /> </span>

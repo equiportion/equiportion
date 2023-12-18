@@ -13,6 +13,7 @@ const props = defineProps({
   id: {
     type: String,
     required: false,
+    default: undefined,
   },
   name: {
     type: String,
@@ -25,26 +26,42 @@ const props = defineProps({
     default: '',
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '',
   },
   error: {
     type: String,
     required: false,
+    default: undefined,
   },
   label: {
     type: String,
     required: false,
     default: '',
   },
+  min: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  max: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
 });
 
 const inputValue = computed({
-  get() {
+  get(): string | number {
     return props.modelValue;
   },
-  set(value: string) {
+  set(value: string | number) {
     emit('update:modelValue', value);
   },
 });
@@ -53,13 +70,16 @@ const inputValue = computed({
   <div>
     <label for="Email" class="block text-sm font-medium text-gray-700"> {{ label }} </label>
     <InputField
-      class="mt-1"
-      :type="type"
       :id="id"
+      v-model="inputValue"
+      class="mt-1 w-full"
+      :type="type"
       :name="name"
       :placeholder="placeholder"
-      v-model="inputValue"
+      :min="min"
+      :max="max"
+      :step="step"
     />
-    <small class="block text-sm text-red-500" v-if="error"> {{ error }} </small>
+    <small v-if="error" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
 </template>

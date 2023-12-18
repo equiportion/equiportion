@@ -1,128 +1,77 @@
-import MatrixError from '@/logic/controller/MatrixError';
-import type AuthenticatedMatrixClient from '@/logic/controller/clients/AuthenticatedMatrixClient';
-import PaymentInformationEvent from '../controller/events/PaymentInformationEvent';
-import PaymentInformation from './PaymentInformation';
-import IbanPaymentInformation from './IbanPaymentInformation';
-import PayPalPaymentInformation from './PayPalPaymentInformation';
-
+/**
+ * A matrix user. Can be either the current logged in user or any member of any joined room.
+ * @author Jakob Gießibl
+ * @author Philipp Stappert
+ */
 class User {
   private userId: string;
-
   private displayname?: string;
   private avatarUrl?: string;
-  private paymentInformations?: PaymentInformation[];
 
-  constructor(userId: string, authenticatedMatrixClient: AuthenticatedMatrixClient) {
+  /**
+   * Creates a new user using the given parameters.
+   * @param {string} userId the user's userId, required
+   * @param {string} [displayname] the user's displayname (optional)
+   * @param {string} [avatarUrl] the user's avatar url (optional)
+   */
+  constructor(userId: string, displayname?: string, avatarUrl?: string) {
     this.userId = userId;
-    this.update(authenticatedMatrixClient);
+    this.displayname = displayname;
+    this.avatarUrl = avatarUrl;
   }
 
-  public async update(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    try {
-      const response = await authenticatedMatrixClient.getRequest(
-        `/_matrix/client/v3/profile/${this.userId}`
-      );
-
-      this.displayname = response?.data.displayname;
-      this.avatarUrl = response?.data.avatar_url;
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        error.log();
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  public async retrievePaymentInformations(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    const oldestRoom = authenticatedMatrixClient.getOldestRoom().value;
-    if (!oldestRoom) {
-      return;
-    }
-
-    try {
-      const response = await authenticatedMatrixClient.getRequest(
-        PaymentInformationEvent.getGetUrl(oldestRoom.getRoomId(), this.userId)
-      );
-
-      const paymentInformations: PaymentInformation[] = [];
-      for (const index in response?.data) {
-        const paymentInformation = User.createPaymentInformation(response.data[index]);
-        if (paymentInformation) {
-          paymentInformations.push(paymentInformation);
-        }
-      }
-
-      this.paymentInformations = paymentInformations;
-    } catch (error) {
-      if (error instanceof MatrixError) {
-        if (error.getErrcode() === 'M_NOT_FOUND') {
-          //No payment information provided
-        } else {
-          //Something unexpected happened
-          error.log();
-        }
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  private static createPaymentInformation(data: any) {
-    switch (data.type) {
-      case IbanPaymentInformation.type:
-        return IbanPaymentInformation.fromJson(data.information);
-      case PayPalPaymentInformation.type:
-        return PayPalPaymentInformation.fromJson(data.information);
-      default:
-        console.error('Error: Unknown Payment Information Type');
-        return undefined;
-    }
-  }
-
-  private async publishPaymentInformations(authenticatedMatrixClient: AuthenticatedMatrixClient) {
-    if (!this.paymentInformations) {
-      return;
-    }
-
-    const rooms = authenticatedMatrixClient.getRooms().value;
-
-    try {
-      for (const roomId in rooms) {
-        const paymentInformationEvent = new PaymentInformationEvent(
-          roomId,
-          this.userId,
-          this.paymentInformations
-        );
-        await authenticatedMatrixClient.publishEvent(paymentInformationEvent);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  public getDisplayname() {
-    return this.displayname;
-  }
-
-  public getUserId() {
+  /**
+   * Gets this user's userId.
+   * @returns {string} the userId
+   */
+  public getUserId(): string {
     return this.userId;
   }
 
-  public getAvatarUrl() {
+  /**
+   * Sets this user's userId.
+   * @param {string} userId the new userId
+   * @returns {boolean} true if the userId was set, else false
+   */
+  public setUserId(userId: string): boolean {
+    if (this.userId != '' || userId == '') {
+      return false;
+    }
+
+    this.userId = userId;
+    return true;
+  }
+
+  /**
+   * Gets this user's displayname.
+   * @returns {string|undefined} the displayname if set, else undefined
+   */
+  public getDisplayname(): string | undefined {
+    return this.displayname;
+  }
+
+  /**
+   * Sets this user's displayname.
+   * @param {string} [displayname] the new displayname (optional)
+   */
+  public setDisplayname(displayname?: string): void {
+    this.displayname = displayname;
+  }
+
+  /**
+   * Gets this user's avatarUrl.
+   * @returns {string|undefined} the avatarUrl if set, else undefined
+   */
+  public getAvatarUrl(): string | undefined {
     return this.avatarUrl;
   }
 
-  public getPaymentInformations() {
-    return this.paymentInformations;
-  }
-
-  public async setPaymentInformations(
-    paymentInformations: PaymentInformation[],
-    authenticatedMatrixClient: AuthenticatedMatrixClient
-  ) {
-    this.paymentInformations = paymentInformations;
-    await this.publishPaymentInformations(authenticatedMatrixClient);
+  /**
+   * Sets this user's avatarUrl.
+   * @param {string} [avatarUrl] the new avatarUrl (optional)
+   */
+  public setAvatarUrl(avatarUrl?: string): void {
+    this.avatarUrl = avatarUrl;
   }
 }
 

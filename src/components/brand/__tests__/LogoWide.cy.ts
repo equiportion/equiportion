@@ -1,7 +1,7 @@
-import LogoWide from '@/components/brand/LogoWide.vue'
+import LogoWide from '@/components/brand/LogoWide.vue';
 
 describe('<LogoWide />', () => {
   it('renders', () => {
-    cy.mount(LogoWide)
-  })
-})
+    cy.mount(LogoWide);
+  });
+});

@@ -11,6 +11,7 @@ const props = defineProps({
   id: {
     type: String,
     required: false,
+    default: undefined,
   },
   name: {
     type: String,
@@ -23,28 +24,46 @@ const props = defineProps({
     default: '',
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '',
+  },
+  min: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  max: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  step: {
+    type: Number,
+    required: false,
+    default: undefined,
   },
 });
 
 const inputValue = computed({
-  get() {
+  get(): string | number {
     return props.modelValue;
   },
-  set(value: string) {
+  set(value: string | number) {
     emit('update:modelValue', value);
   },
 });
 </script>
 <template>
   <input
-    :type="type"
     :id="id"
+    v-model="inputValue"
+    :type="type"
     :name="name"
     class="w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
     :placeholder="placeholder"
-    v-model="inputValue"
+    :min="min"
+    :max="max"
+    :step="step"
   />
 </template>
