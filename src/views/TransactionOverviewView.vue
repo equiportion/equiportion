@@ -13,17 +13,31 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref} from 'vue';
+import {computed, ref, watch, type Ref} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
+import type Room from '@/logic/models/Room';
+import waitForInitialSync from '@/logic/utils/waitForSync';
 
-const roomId = useRoute().params.roomId.toString();
+const roomId = ref(useRoute().params.roomId.toString());
 
 const roomsStore = useRoomsStore();
-const room = roomsStore.getRoom(roomId);
+const room: Ref<Room | undefined> = ref(undefined);
 
-const transactionEvents = room?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+// load room
+waitForInitialSync().then(() => {
+  room.value = roomsStore.getRoom(roomId.value);
+  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+});
+
+// update if room changes
+watch(roomId, () => {
+  room.value = roomsStore.getRoom(roomId.value);
+  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+});
+
+const transactionEvents: Ref<TransactionEvent[]> = ref([]);
 
 const loggedInUser = useLoggedInUserStore().user;
 
@@ -34,7 +48,7 @@ const loggedInUser = useLoggedInUserStore().user;
 function newTransaction(): void {
   router.push({
     name: 'new-transaction',
-    params: {roomId: roomId},
+    params: {roomId: roomId.value},
   });
 }
 
@@ -63,7 +77,7 @@ const contentClasses = computed(() => {
 const showUserBadges = computed(() => {
   let i = 0;
   let badgeList: User[] = [];
-  const members = room?.getMembers();
+  const members = room.value?.getMembers();
   for (const userId in members) {
     if (i < 3) {
       badgeList.push(members[userId]);
@@ -111,7 +125,7 @@ const showUserBadges = computed(() => {
                 <template v-for="member in showUserBadges" :key="member.getUserId()">
                   <UserBadge :user="member" class="shadow-md" />
                 </template>
-                <span v-if="Object.keys(room!.getMembers()).length > 3">...</span>
+                <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
 
                 <RoundButton
                   id="toggleMemberListButton"
