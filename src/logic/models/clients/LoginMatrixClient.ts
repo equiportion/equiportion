@@ -8,7 +8,6 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
  * A client that makes login requests to a matrix homeserver.
  */
 class LoginMatrixClient extends MatrixClient {
-
   /**
    * Sends a login request to the matrix API using password login.
    * @param {string} userId the userId of the user trying to log in or the localpart of the userId
