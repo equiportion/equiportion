@@ -10,12 +10,13 @@ const loggedInUser = useLoggedInUserStore().user;
 const props = defineProps({
   user: {
     type: User,
-    required: true,
+    required: false,
+    default: undefined,
   },
 });
 
 const isLoggedInUser = computed(() => {
-  return props.user.getUserId() == loggedInUser.getUserId();
+  return props.user?.getUserId() == loggedInUser.getUserId();
 });
 
 const displayNameClasses = computed(() => {
@@ -30,18 +31,18 @@ const displayNameClasses = computed(() => {
   <div class="flex flex-row items-center gap-2">
     <MxcOrPlaceholderImage
       class="rounded-full w-12 h-12"
-      :mxc-url="user.getAvatarUrl()"
-      :placeholder-text="user.getDisplayname() ?? user.getUserId()"
+      :mxc-url="user?.getAvatarUrl()"
+      :placeholder-text="user?.getDisplayname() ?? user?.getUserId()"
     />
     <div class="flex flex-col overflow-hidden flex-shrink">
       <div class="flex flex-row text-gray-900">
         <span :class="displayNameClasses">
-          {{ user.getDisplayname() ?? user.getUserId() ?? 'unbekannter Benutzer' }}
+          {{ user?.getDisplayname() ?? user?.getUserId() ?? 'unbekannter Benutzer' }}
         </span>
         <span v-if="isLoggedInUser"> (Ich) </span>
       </div>
       <span
-        v-if="user.getDisplayname()"
+        v-if="user?.getDisplayname()"
         class="text-ellipsis overflow-hidden text-sm text-gray-500"
       >
         {{ user.getUserId() }}
