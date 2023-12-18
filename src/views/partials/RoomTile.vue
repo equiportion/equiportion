@@ -3,6 +3,9 @@ import RoundButton from '@/components/buttons/RoundButton.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import Room from '@/logic/models/Room';
 import router from '@/router';
+import UserBadge from '@/components/user/UserBadge.vue';
+import {computed} from 'vue';
+import type User from '@/logic/models/User';
 
 const props = defineProps({
   room: {
@@ -18,6 +21,21 @@ function openTransactions() {
 function newTransaction() {
   router.push({name: 'new-transaction', params: {roomId: props.room.getRoomId()}});
 }
+
+const showUserBadges = computed(() => {
+  let i = 0;
+  let badgeList: User[] = [];
+  const members = props.room?.getMembers();
+  for (const userId in members) {
+    if (i < 3) {
+      badgeList.push(members[userId]);
+    } else {
+      break;
+    }
+    i++;
+  }
+  return badgeList;
+});
 </script>
 <template>
   <div
@@ -32,9 +50,11 @@ function newTransaction() {
       />
 
       <div class="lg:ml-5 flex flex-col gap-2">
-        <div>
-          <h2 class="text-2xl font-bold w-full text-center lg:text-start">{{ room.getName() }}</h2>
-          <span class="text-sm text-gray-500 w-full text-center lg:text-start">
+        <div class="flex flex-col">
+          <h2 class="text-2xl font-bold w-full text-center lg:text-start break-all">
+            {{ room.getName() }}
+          </h2>
+          <span class="text-sm text-gray-500 w-full text-center lg:text-start break-all">
             {{ room.getTopic() }}
           </span>
         </div>
@@ -42,9 +62,17 @@ function newTransaction() {
         <div
           class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"
         >
-          <div>
-            <span class="font-bold"><i class="fa-solid fa-users"></i> 5 Mitglieder</span>
-            Name 1, Name 2, ...
+          <div class="flex flex-row flex-wrap justify-center gap-2">
+            <span class="font-bold flex flex-row items-center">
+              <i class="fa-solid fa-users mr-1"></i>
+              {{ Object.keys(room.getMembers()).length }} Mitglied
+              <span v-if="Object.keys(room.getMembers()).length > 1">er</span>
+            </span>
+
+            <template v-for="member in showUserBadges" :key="member.getUserId()">
+              <UserBadge :user="member" class="shadow-md" size="sm" />
+            </template>
+            <span v-if="Object.keys(room!.getMembers()).length > 3">...</span>
           </div>
           <div>
             <span class="font-bold"><i class="fa-solid fa-coins"></i> Schulden</span>
