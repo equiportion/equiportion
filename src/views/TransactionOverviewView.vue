@@ -111,7 +111,7 @@ const showUserBadges = computed(() => {
                 <template v-for="member in showUserBadges" :key="member.getUserId()">
                   <UserBadge :user="member" class="shadow-md" />
                 </template>
-                <span v-if="Object.keys(room!.getMembers()).length >= 3">...</span>
+                <span v-if="Object.keys(room!.getMembers()).length > 3">...</span>
 
                 <RoundButton
                   id="toggleMemberListButton"
