@@ -16,10 +16,12 @@ defineProps({
 });
 </script>
 <template>
-  <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
-  <div class="flex flex-col items-center">
-    <span class="text-md text-gray-700 font-bold mt-3">
-      {{ member.getDisplayname() }}
-    </span>
+  <div class="m-10 flex flex-col items-center">
+    <UserAvatar :user="member" class="w-10 h-10 rounded-full" />
+    <div class="flex flex-col items-center">
+      <span class="text-md text-gray-700 font-bold mt-3">
+        {{ member.getDisplayname() }}
+      </span>
+    </div>
   </div>
 </template>

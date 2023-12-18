@@ -75,29 +75,14 @@ async function createTransaction() {
   if (
     creditorId.value !== '' &&
     debtors.value.length > 0 &&
-    parseFloat(sum.value) !== 0 &&
-    sum.value !== ''
+    validateSum() &&
+    purpose.value !== ''
   ) {
     const sumValue = parseFloat(sum.value);
     const debtorsJson = debtors.value.map((debtor) => ({
       userId: debtor.getUserId(),
       amount: sumValue / debtors.value.length,
     }));
-
-    if (!purpose.value || purpose.value == '') {
-      errorPurpose.value = 'Zweck ist ein Pflichtfeld!';
-    } else {
-      errorPurpose.value = '';
-    }
-    if (!validateSum()) {
-      errorSum.value = 'Ungültige Summe!';
-    } else {
-      errorSum.value = '';
-    }
-    if (errorPurpose.value !== '' || errorSum.value !== '') {
-      loading.value = false;
-      return;
-    }
 
     try {
       const transactionEvent = new TransactionEvent(
@@ -119,6 +104,20 @@ async function createTransaction() {
     }
   } else {
     showError.value = true;
+    if (!purpose.value || purpose.value == '') {
+      errorPurpose.value = 'Zweck ist ein Pflichtfeld!';
+    } else {
+      errorPurpose.value = '';
+    }
+    if (!validateSum()) {
+      errorSum.value = 'Ungültige Summe!';
+    } else {
+      errorSum.value = '';
+    }
+    if (errorPurpose.value !== '' || errorSum.value !== '') {
+      loading.value = false;
+      return;
+    }
   }
 }
 
@@ -171,7 +170,10 @@ function selectCreditor(id: string): void {
  */
 function validateSum(): boolean {
   const currencyRegex = /^\d+(\.\d{0,2})?$/;
-  return currencyRegex.test(sum.value);
+  if (parseFloat(sum.value) !== 0) {
+    return currencyRegex.test(sum.value);
+  }
+  return false;
 }
 
 // close dropdown on click outside
@@ -190,7 +192,12 @@ watch(
   <MainLayout>
     <div class="px-2 lg:px-10">
       <!--error message-->
-      <SystemAlert v-if="showError" severity="danger" class="mt-5 flex flex-row items-center gap-2">
+      <SystemAlert
+        v-if="showError"
+        id="error-message-top"
+        severity="danger"
+        class="mt-5 flex flex-row items-center gap-2"
+      >
         <i class="fa-solid fa-circle-exclamation"></i>
         <p>Bitte vervollständigen Sie die Angaben</p>
       </SystemAlert>
@@ -202,6 +209,7 @@ watch(
           <!--Add button-->
           <RoundButton
             v-if="!isCreditorSelected"
+            id="addCreditorButton"
             title="Mitgliederliste anzeigen"
             class="relative"
             @click="toggleDropdown1"
@@ -215,7 +223,7 @@ watch(
               <div
                 v-for="member in members"
                 :key="member.getUserId()"
-                class="flex flex-col items-center m-10"
+                class="flex flex-col items-center"
                 @click="selectCreditor(member.getUserId())"
               >
                 <MemberDropdown :member="member" />
@@ -227,7 +235,7 @@ watch(
             v-if="members && isCreditorSelected"
             class="flex flex-col lg:flex-row items-center lg:items-start"
           >
-            <div class="relative group transition duration-200 hover:scale-110">
+            <div id="creditorAvatar" class="relative group transition duration-200 hover:scale-110">
               <!--'x'-->
               <div
                 class="absolute inset-0 flex items-center bg-gray-800 rounded-full transition-all-300 justify-center opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer"
@@ -242,10 +250,10 @@ watch(
             </div>
 
             <div class="flex-col ml-8">
-              <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+              <h1 id="creditorDisplayName" class="text-2xl font-bold text-gray-900 sm:text-3xl">
                 {{ members[creditorId].getDisplayname() }}
               </h1>
-              <span class="text-md text-gray-500">
+              <span id="creditorUserId" class="text-md text-gray-500">
                 {{ members[creditorId].getUserId() }}
               </span>
             </div>
@@ -262,6 +270,7 @@ watch(
       >
         <div
           v-for="debtor in debtors"
+          id="debtorTiles"
           :key="debtor.getUserId()"
           class="flex flex-col items-center m-10"
         >
@@ -273,29 +282,43 @@ watch(
           class="flex flex-col items-center m-16 relative"
         >
           <!--Add button-->
-          <RoundButton title="Mitgliederliste anzeigen" class="relative" @click="toggleDropdown2">
+          <RoundButton
+            id="addDebtorButton"
+            title="Mitgliederliste anzeigen"
+            class="relative"
+            @click="toggleDropdown2"
+          >
             <i class="fa-solid fa-plus"></i>
             <!-- Dropdown2 -->
             <div
               v-show="isDropdownOpen2"
-              class="bg-white absolute left-16 z-10 border-2 border-slate-200 rounded"
+              id="memberDropdown"
+              class="bg-white absolute left-16 z-10 border-2 border-slate-200 gap-10 rounded"
             >
               <div
                 v-for="member in members"
                 :key="member.getUserId()"
-                class="flex flex-col items-center m-10"
+                class="flex flex-col items-center"
                 @click="addNewDebtor(member.getUserId())"
               >
-                <MemberDropdown :member="member" />
+                <MemberDropdown
+                  v-if="!debtors.includes(member)"
+                  id="memberDropdownTile"
+                  :member="member"
+                />
               </div>
             </div>
           </RoundButton>
         </div>
       </div>
 
-      <div class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24">
-        <!--entry widgets sum-->
+      <div
+        id="inputFields"
+        class="flex flex-col items-center justify-center gap-5 lg:flex-row mt-24"
+      >
+        <!--entry fields sum-->
         <InputFieldWithLabelAndError
+          id="inputFieldSum"
           v-model="sum"
           :error="errorSum"
           class="w-full lg:w-1/4"
@@ -304,8 +327,9 @@ watch(
           :step="0.01"
           label="Betrag in Euro"
         />
-        <!--entry widgets purpose-->
+        <!--entry field purpose-->
         <InputFieldWithLabelAndError
+          id="inputFieldPurpose"
           v-model="purpose"
           :error="errorPurpose"
           class="w-full"
@@ -319,7 +343,12 @@ watch(
           <i class="fa-solid fa-check"></i>
         </RoundButton>
       </div>
-      <StandardButton class="block lg:hidden mt-5" title="Bestätigen" @click="createTransaction">
+      <StandardButton
+        id="validateButton"
+        class="block lg:hidden mt-5"
+        title="Bestätigen"
+        @click="createTransaction"
+      >
         <i class="fa-solid fa-check"></i>
       </StandardButton>
     </div>
