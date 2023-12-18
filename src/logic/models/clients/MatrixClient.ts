@@ -15,7 +15,7 @@ class MatrixClient {
    * Creates a new client.
    * @param [homeserverUrl] the url of the matrix homeserver (optional, default: the homeserver url stored in cookies)
    */
-  constructor(homeserverUrl?: string) {
+  public constructor(homeserverUrl?: string) {
     if (homeserverUrl != undefined) {
       this.homeserverUrl = homeserverUrl;
     } else {
