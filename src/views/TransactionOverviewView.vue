@@ -28,14 +28,16 @@ const room: Ref<Room | undefined> = ref(undefined);
 // load room
 waitForInitialSync().then(() => {
   room.value = roomsStore.getRoom(roomId.value);
+  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
 });
 
 // update if room changes
 watch(roomId, () => {
   room.value = roomsStore.getRoom(roomId.value);
+  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
 });
 
-const transactionEvents = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+const transactionEvents: Ref<TransactionEvent[]> = ref([]);
 
 const loggedInUser = useLoggedInUserStore().user;
 
