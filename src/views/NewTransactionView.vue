@@ -194,7 +194,7 @@ watch(
       <!--error message-->
       <SystemAlert
         v-if="showError"
-        id="error-mesage-top"
+        id="error-message-top"
         severity="danger"
         class="mt-5 flex flex-row items-center gap-2"
       >
