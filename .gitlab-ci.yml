@@ -176,4 +176,4 @@ include:
 
 gemnasium-dependency_scanning:
   tags:
-    - infra-2
+    - docker
