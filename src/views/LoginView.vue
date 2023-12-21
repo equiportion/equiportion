@@ -9,7 +9,6 @@ import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient.js';
 import router from '@/router';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 
 const loading = ref(false);
 
