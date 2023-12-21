@@ -20,6 +20,7 @@ const rooms = roomsStore.rooms;
       <div class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8 h-full">
         <h1
           v-if="loggedInUser.getUserId() != ''"
+          id="welcome-message-user"
           class="text-2xl font-bold text-gray-100 sm:text-3xl"
         >
           Willkommen zurück, {{ loggedInUser.getDisplayname() ?? loggedInUser.getUserId() }}!
