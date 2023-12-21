@@ -62,7 +62,7 @@ const showUserBadges = computed(() => {
         <div
           class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"
         >
-          <div class="flex flex-row flex-wrap justify-center gap-2">
+          <div class="flex flex-row flex-wrap justify-center lg:justify-start gap-2">
             <span class="font-bold flex flex-row items-center">
               <i class="fa-solid fa-users mr-1"></i>
               {{ Object.keys(room.getMembers()).length }} Mitglied
