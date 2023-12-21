@@ -81,7 +81,7 @@ async function createTransaction() {
     const sumValue = parseFloat(sum.value);
     const debtorsJson = debtors.value.map((debtor) => ({
       userId: debtor.getUserId(),
-      amount: sumValue / debtors.value.length,
+      amount: Math.floor((sumValue / debtors.value.length) * 100),
     }));
 
     try {
@@ -89,7 +89,7 @@ async function createTransaction() {
         MatrixEvent.EVENT_ID_NEW,
         roomId,
         purpose.value,
-        sumValue,
+        Math.floor(sumValue * 100),
         creditorId.value,
         debtorsJson
       );
