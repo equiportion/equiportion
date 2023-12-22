@@ -39,24 +39,6 @@ class TransactionEvent extends MessageEvent {
     this.sum = sum;
     this.creditor = creditor;
     this.debtors = debtors;
-
-    this.cleanFloats();
-  }
-
-  /**
-   * Cleans the floats of this event (rounds them to 2 digits after the comma)
-   * @returns {void}
-   */
-  private async cleanFloats(): Promise<void> {
-    if (typeof this.sum == 'number') {
-      this.sum = parseFloat(this.sum.toFixed(2));
-    }
-
-    if (typeof this.debtors == 'object') {
-      for (const debtor of this.debtors) {
-        debtor.amount = parseFloat(debtor.amount.toFixed(2));
-      }
-    }
   }
 
   /**
@@ -73,17 +55,39 @@ class TransactionEvent extends MessageEvent {
 
     const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of event.content.debtors) {
-      debtors.push({userId: debtor.user, amount: parseFloat(parseFloat(debtor.amount).toFixed(2))});
+      debtors.push({userId: debtor.user, amount: this.parseMoney(debtor.amount)});
     }
 
     return new TransactionEvent(
       event.event_id,
       roomId ?? event.room_id,
       event.content.purpose,
-      event.content.sum,
+      this.parseMoney(event.content.sum),
       event.content.creditor,
       debtors
     );
+  }
+
+  /**
+   * Function to allow both the old format (float as string) and the new format (amount in cents as number) for the sum and the debtors.
+   * @param {string|number} amount the amount to parse
+   * @returns {number} the parsed amount (in cents)
+   */
+  private static parseMoney(amount: string | number): number {
+    if (typeof amount === 'string') {
+      return this.floatToCents(parseFloat(amount));
+    } else {
+      return amount;
+    }
+  }
+
+  /**
+   * Converts a float (e.g. 12,34€) to cents.
+   * @param {number} float the float to convert
+   * @returns {number} the converted float
+   */
+  private static floatToCents(float: number): number {
+    return Math.round(float * 100);
   }
 
   /**
@@ -103,13 +107,13 @@ class TransactionEvent extends MessageEvent {
     for (const debtor of this.debtors) {
       debtors.push({
         user: debtor.userId,
-        amount: debtor.amount.toFixed(2).toString(),
+        amount: debtor.amount,
       });
     }
 
     return {
       purpose: this.purpose,
-      sum: this.sum.toFixed(2).toString(),
+      sum: this.sum,
       creditor: this.creditor,
       debtors: debtors,
     };

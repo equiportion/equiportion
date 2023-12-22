@@ -24,9 +24,9 @@ describe('/', () => {
       cy.wait('@transactionEventPut').then(({request}) => {
         expect(request.body.purpose).to.eq('Testzwecke');
         expect(request.body.creditor).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.debtors[0].amount).to.eq('42.42');
+        expect(request.body.debtors[0].amount).to.eq(4242);
         expect(request.body.debtors[0].user).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.sum).to.eq('42.42');
+        expect(request.body.sum).to.eq(4242);
       });
     });
   });
@@ -161,13 +161,13 @@ describe('/', () => {
       cy.wait('@transactionEventPut').then(({request}) => {
         expect(request.body.purpose).to.eq('Schulden Verteilen');
         expect(request.body.creditor).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.debtors[0].amount).to.eq('111.11');
+        expect(request.body.debtors[0].amount).to.eq(11111);
         expect(request.body.debtors[0].user).to.eq('@philipptest2:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.debtors[1].amount).to.eq('111.11');
+        expect(request.body.debtors[1].amount).to.eq(11111);
         expect(request.body.debtors[1].user).to.eq('@philipptest3:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.debtors[2].amount).to.eq('111.11');
+        expect(request.body.debtors[2].amount).to.eq(11111);
         expect(request.body.debtors[2].user).to.eq('@stub:stub.pse.dsn.kastel.kit.edu');
-        expect(request.body.sum).to.eq('333.33');
+        expect(request.body.sum).to.eq(33333);
       });
     });
   });
