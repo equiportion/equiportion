@@ -17,12 +17,20 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['click']);
 
 const buttonClasses = computed(() => {
   if (props.loading) {
+    return 'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition';
+  }
+  if (props.disabled) {
     return 'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition';
   }
   if (props.success) {
@@ -33,7 +41,12 @@ const buttonClasses = computed(() => {
 });
 </script>
 <template>
-  <button :class="buttonClasses" :disabled="loading" :title="title" @click.stop="emit('click')">
+  <button
+    :class="buttonClasses"
+    :disabled="loading || disabled"
+    :title="title"
+    @click.stop="emit('click')"
+  >
     <span v-show="!loading && !success">
       <slot />
     </span>
