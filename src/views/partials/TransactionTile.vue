@@ -43,7 +43,9 @@ function centsPart(num: number): string {
 
     <div class="flex flex-col lg:flex-row w-full">
       <!--Gläubiger-->
-      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full lg:w-1/3">
+      <div
+        class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full lg:w-1/3"
+      >
         <UserBadge class="shadow-md" :user="creditor!" />
         <span>
           hat
@@ -64,7 +66,6 @@ function centsPart(num: number): string {
           <!-- > -->
           <div class="hidden lg:flex items-center justify-center lg:w-1/2">
             <i class="fa-solid fa-chevron-right"></i>
-            
           </div>
           <UserBadge :user="room!.getMember(debtor.userId)" />
           <span>
