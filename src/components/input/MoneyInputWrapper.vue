@@ -11,7 +11,7 @@
  * @slotProp {string} inputValue - The value to be displayed in the input.
  * @slotProp {function} updateValue - A function to update the value. Should be called by the input with @input="updateValue($event.target.value)".
  */
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const props = defineProps({
   modelValue: {
@@ -22,9 +22,15 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+// counter to force recomputation of computed value
+const changeCounter = ref(0);
+
 // computes displayed and cents value
 const moneyInputValue = computed({
   get: () => {
+    // force recomputation
+    changeCounter.value;
+
     const centsIn = props.modelValue.toString();
     let all = centsIn;
 
@@ -60,6 +66,9 @@ function setValue(value: string) {
   const cents = parseInt(value);
 
   emit('update:modelValue', cents);
+
+  // force recomputation
+  changeCounter.value++;
 }
 </script>
 <template>
