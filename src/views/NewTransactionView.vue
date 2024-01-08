@@ -50,7 +50,7 @@ watch(moneyVal, (newVal) => {
       </div>
 
       <!-- Purpose -->
-      <HugeFreeInput label="Zweck" placeholder="Pizzabacken" v-model="reasonVal" />
+      <HugeFreeInput label="Zweck" v-model="reasonVal" placeholder="Pizzabacken" />
     </div>
   </MainLayout>
 </template>

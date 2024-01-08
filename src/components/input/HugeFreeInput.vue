@@ -3,9 +3,9 @@
  * @component {HugeFreeInput} - A huge input field with a label and a placeholder.
  * @description This component is displaying a heading-like input field with a label and a placeholder. It is used for the purpose input in the NewTransactionView.
  * @author Philipp Stappert
- * 
+ *
  * @emits {string|number} update:modelValue - Emitted when the value changes.
- * 
+ *
  * @prop {string} [placeholder=''] - The placeholder text.
  * @prop {string|number} [modelValue=''] - The value of the input.
  * @prop {string} [label=''] - The label text.
