@@ -6,12 +6,7 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
 
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#transactions>div')
-        .eq(2)
-        .should(
-          'contain.text',
-          '347587€'
-        );
+      cy.get('#transactions>div').eq(2).should('contain.text', '347587,00€');
     });
   });
   it('all transactions are beeing shown', () => {

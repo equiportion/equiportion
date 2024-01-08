@@ -22,6 +22,14 @@ const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(props.transaction.getRoomId());
 
 const creditor: User | undefined = room?.getMember(props.transaction.getCreditorId());
+
+function eurosPart(num: number): string {
+  return Math.floor(num / 100).toString();
+}
+
+function centsPart(num: number): string {
+  return ('00' + (num % 100)).slice(-2);
+}
 </script>
 
 <template>
@@ -38,7 +46,9 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
       <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
         <UserBadge class="shadow-md" :user="creditor!" />
         <span>
-          hat <b>{{ transaction.getSum() }}€</b> ausgelegt
+          hat
+          <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
+          ausgelegt
         </span>
       </div>
 
@@ -53,7 +63,7 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
         >
           <UserBadge :user="room!.getMember(debtor.userId)" />
           <span>
-            hat <b>{{ debtor.amount }}€</b> geliehen
+            hat <b>{{ eurosPart(debtor.amount) }},{{ centsPart(debtor.amount) }}€</b> geliehen
           </span>
         </div>
       </div>
