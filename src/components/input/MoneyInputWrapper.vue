@@ -56,7 +56,7 @@ function setValue(value: string) {
     value = '0,00';
   }
 
-  value = value.replace(',', '');
+  value = value.replace(/\D/g, '');
   const cents = parseInt(value);
 
   emit('update:modelValue', cents);
