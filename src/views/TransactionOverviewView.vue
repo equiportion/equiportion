@@ -13,12 +13,13 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref} from 'vue';
+import {computed, ref, watch, type Ref, onMounted} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import type Room from '@/logic/models/Room';
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import {onIntersect} from '@/composables/useIntersectionObserver';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -88,6 +89,11 @@ const showUserBadges = computed(() => {
   }
   return badgeList;
 });
+
+const observeRef: Ref<HTMLElement | null> = ref(null);
+onIntersect(observeRef.value, () => {
+  console.log('Hallo');
+});
 </script>
 
 <template>
@@ -154,6 +160,7 @@ const showUserBadges = computed(() => {
                 :key="transactionEvent.getEventId()"
                 :transaction="transactionEvent"
               />
+              <div ref="observeRef"><i class="fa-solid fa-eye"></i></div>
             </div>
           </div>
         </div>
