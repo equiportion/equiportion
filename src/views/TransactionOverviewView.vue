@@ -94,8 +94,10 @@ const observeRef: Ref<HTMLElement | null> = ref(null);
 
 onMounted(() => {
   console.log(observeRef.value);
-  onIntersect(observeRef.value!, () => {
-    console.log('intersect');
+  onIntersect(
+    observeRef.value!,
+    () => {
+      console.log('intersect');
   });
 });
 </script>
