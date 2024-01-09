@@ -7,7 +7,7 @@
  * @return {type} observer
  */
 const onIntersect = (
-  elementToWatch: HTMLElement | null,
+  elementToWatch: HTMLElement,
   callback: Function,
   outCallback: Function = () => {},
   once: boolean = true,
