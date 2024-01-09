@@ -91,8 +91,12 @@ const showUserBadges = computed(() => {
 });
 
 const observeRef: Ref<HTMLElement | null> = ref(null);
-onIntersect(observeRef.value, () => {
-  console.log('Hallo');
+
+onMounted(() => {
+  console.log(observeRef.value);
+  onIntersect(observeRef.value!, () => {
+    console.log('intersect');
+  });
 });
 </script>
 
@@ -144,16 +148,20 @@ onIntersect(observeRef.value, () => {
             </div>
           </div>
 
-          <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
+          <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
-            <template v-if="transactionEvents && transactionEvents.length <= 0">
+            <div v-show="transactionEvents && transactionEvents.length <= 0">
               <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
                 Keine Transaktionen vorhanden
               </span>
-            </template>
+            </div>
 
             <!--the header of the table containing the transactions-->
-            <div v-else id="transactions" class="flex flex-col justify-center gap-5">
+            <div
+              v-show="!(transactionEvents && transactionEvents.length <= 0)"
+              id="transactions"
+              class="flex flex-col justify-center gap-5"
+            >
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
                 v-for="transactionEvent in transactionEvents"

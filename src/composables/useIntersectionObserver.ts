@@ -7,7 +7,7 @@
  * @return {type} observer
  */
 const onIntersect = (
-  elementToWatch: HTMLElement | null,
+  elementToWatch: HTMLElement,
   callback: Function,
   outCallback: Function = () => {},
   once: boolean = true,
@@ -32,18 +32,7 @@ const onIntersect = (
     }
   }, options);
 
-  const interval = setInterval(() => {
-    if (elementToWatch) {
-      observer.observe(elementToWatch);
-
-      // Clear the interval once the element is ready
-      clearInterval(interval);
-
-      console.log('elementToWatch is ready');
-    } else {
-      console.log('elementToWatch is not ready');
-    }
-  }, 200);
+  observer.observe(elementToWatch);
 
   // Returns the observer so it can be further used in the component
   return observer;
