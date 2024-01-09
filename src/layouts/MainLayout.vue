@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, computed} from 'vue';
+import {ref} from 'vue';
 import {RouterLink} from 'vue-router';
 import SearchField from '@/layouts/partials/SearchField.vue';
 import MenuProfilePicture from '@/layouts/partials/MenuProfilePicture.vue';
@@ -14,21 +14,6 @@ import cookieNames from '@/logic/constants/cookieNames';
 import {setCookie} from '@/logic/utils/cookies';
 import router from '@/router';
 const {emitGlobal} = useGlobalEventBus();
-
-const props = defineProps({
-  noScroll: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const classesMainDiv = computed(() => {
-  if (props.noScroll) {
-    return 'max-h-screen overflow-hidden';
-  } else {
-    return '';
-  }
-});
 
 // TODO Suche implementieren
 const searchInputValue = ref('');
@@ -46,7 +31,7 @@ function logout() {
 </script>
 
 <template>
-  <div :class="classesMainDiv" @click="emitClick($event)">
+  <div @click="emitClick($event)">
     <header class="fixed top-0 bg-gray-100 w-full z-50 shadow-md">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex items-center justify-end lg:justify-between">
