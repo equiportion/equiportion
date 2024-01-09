@@ -14,8 +14,8 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
 
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#transactions').children().should('have.length', 10);
-      cy.get('#no-transaction-message').should('not.exist');
+      cy.get('#transactions').children().should('have.length', 12);
+      cy.get('#no-transaction-message').should('not.be.visible');
     });
   });
   it('message is shown if no transactions exist in the room', () => {
@@ -23,7 +23,7 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
 
       cy.get('#rooms>div').eq(1).click();
-      cy.get('#transactions').should('not.exist');
+      cy.get('#transactions').should('not.be.visible');
       cy.get('#no-transaction-message').should('be.visible');
     });
   });

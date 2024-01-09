@@ -13,28 +13,35 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref} from 'vue';
+import {computed, ref, watch, type Ref, onMounted} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import type Room from '@/logic/models/Room';
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import {onIntersect} from '@/composables/useIntersectionObserver';
+import HeightFade from '@/components/transitions/HeightFade.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
-// load room
-waitForInitialSync().then(() => {
+// load rooms
+function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
   transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  transactionEvents.value.reverse();
+}
+
+// load room
+waitForInitialSync().then(() => {
+  loadRooms();
 });
 
 // update if room changes
 watch(roomId, () => {
-  room.value = roomsStore.getRoom(roomId.value);
-  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  loadRooms();
 });
 
 const transactionEvents: Ref<TransactionEvent[]> = ref([]);
@@ -88,6 +95,45 @@ const showUserBadges = computed(() => {
   }
   return badgeList;
 });
+
+onMounted(() => {
+  // start the intersection observer
+  intersectPageEnd();
+});
+
+const observeRef: Ref<HTMLElement | null> = ref(null);
+const showTransactionsLoader = ref(false);
+
+/**
+ * Checks whether the user sees the "observeRef" element.
+ * If so, the function "loadMoreTransactions" is called.
+ */
+function intersectPageEnd() {
+  onIntersect(observeRef.value!, () => {
+    loadMoreTransactions();
+  });
+}
+
+/**
+ * Loads more transactions.
+ */
+async function loadMoreTransactions() {
+  showTransactionsLoader.value = true;
+
+  // TODO: implement
+  console.log('load more transactions');
+
+  // TODO: remove this timeout (just for testing the loader)
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  showTransactionsLoader.value = false;
+
+  // restart the intersection observer
+  // TODO: run only if there are more transactions to load
+  onIntersect(observeRef.value!, () => {
+    loadMoreTransactions();
+  });
+}
 </script>
 
 <template>
@@ -138,22 +184,35 @@ const showUserBadges = computed(() => {
             </div>
           </div>
 
-          <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
+          <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
-            <template v-if="transactionEvents && transactionEvents.length <= 0">
+            <div v-show="transactionEvents && transactionEvents.length <= 0">
               <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
                 Keine Transaktionen vorhanden
               </span>
-            </template>
+            </div>
 
             <!--the header of the table containing the transactions-->
-            <div v-else id="transactions" class="flex flex-col justify-center gap-5">
+            <div
+              v-show="!(transactionEvents && transactionEvents.length <= 0)"
+              id="transactions"
+              class="flex flex-col justify-center gap-5"
+            >
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
                 v-for="transactionEvent in transactionEvents"
                 :key="transactionEvent.getEventId()"
                 :transaction="transactionEvent"
               />
+              <div ref="observeRef"></div>
+              <HeightFade>
+                <div
+                  v-show="showTransactionsLoader"
+                  class="flex flex-col items-center text-3xl text-gray-300"
+                >
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                </div>
+              </HeightFade>
             </div>
           </div>
         </div>
