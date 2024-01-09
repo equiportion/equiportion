@@ -43,15 +43,18 @@ function centsPart(num: number): string {
 
     <div class="flex flex-col lg:flex-row w-full">
       <!--Gläubiger-->
-      <div
-        class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full lg:w-1/3"
-      >
+      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
         <UserBadge class="shadow-md" :user="creditor!" />
         <span>
           hat
           <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
           ausgegeben
         </span>
+      </div>
+
+      <!-- > -->
+      <div class="hidden lg:flex flex-row items-center justify-center">
+        <i class="fa-solid fa-chevron-right w-5"></i>
       </div>
 
       <!--Schuldner-->
@@ -63,10 +66,6 @@ function centsPart(num: number): string {
           :key="debtor.userId"
           class="flex flex-col lg:flex-row flex-wrap gap-1 items-center"
         >
-          <!-- > -->
-          <div class="hidden lg:flex items-center justify-center lg:w-1/2">
-            <i class="fa-solid fa-chevron-right"></i>
-          </div>
           <UserBadge :user="room!.getMember(debtor.userId)" />
           <span>
             <b>{{ eurosPart(debtor.amount) }},{{ centsPart(debtor.amount) }}€</b>
