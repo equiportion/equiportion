@@ -26,16 +26,21 @@ const roomId = ref(useRoute().params.roomId.toString());
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
-// load room
-waitForInitialSync().then(() => {
+// load rooms
+function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
   transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  transactionEvents.value.reverse();
+}
+
+// load room
+waitForInitialSync().then(() => {
+  loadRooms();
 });
 
 // update if room changes
 watch(roomId, () => {
-  room.value = roomsStore.getRoom(roomId.value);
-  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  loadRooms();
 });
 
 const transactionEvents: Ref<TransactionEvent[]> = ref([]);
@@ -108,7 +113,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout>
+  <MainLayout :no-scroll="true">
     <!--shows a button that enables the user to add a new transaction-->
     <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
       <i class="fa-solid fa-plus"></i>
@@ -167,7 +172,7 @@ onMounted(() => {
             <div
               v-show="!(transactionEvents && transactionEvents.length <= 0)"
               id="transactions"
-              class="flex flex-col justify-center gap-5"
+              class="flex flex-col justify-center gap-5 overflow-y-scroll"
             >
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
@@ -175,7 +180,7 @@ onMounted(() => {
                 :key="transactionEvent.getEventId()"
                 :transaction="transactionEvent"
               />
-              <div ref="observeRef"><i class="fa-solid fa-eye"></i></div>
+              <div ref="observeRef"></div>
             </div>
           </div>
         </div>
