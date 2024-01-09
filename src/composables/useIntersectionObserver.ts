@@ -32,8 +32,13 @@ const onIntersect = (
     }
   }, options);
 
-  // Observe the element
-  observer.observe(elementToWatch);
+  const interval = setInterval(() => {
+    if (elementToWatch) {
+      observer.observe(elementToWatch);
+
+      clearInterval(interval);
+    }
+  }, 200);
 
   // Returns the observer so it can be further used in the component
   return observer;
