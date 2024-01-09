@@ -20,6 +20,7 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import type Room from '@/logic/models/Room';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import {onIntersect} from '@/composables/useIntersectionObserver';
+import HeightFade from '@/components/transitions/HeightFade.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -95,25 +96,48 @@ const showUserBadges = computed(() => {
   return badgeList;
 });
 
-const observeRef: Ref<HTMLElement | null> = ref(null);
-
 onMounted(() => {
-  console.log(observeRef.value);
-  onIntersect(
-    observeRef.value!,
-    () => {
-      console.log('intersect');
-    },
-    () => {
-      console.log('Suiiii');
-    },
-    false
-  );
+  // start the intersection observer
+  intersectPageEnd();
 });
+
+const observeRef: Ref<HTMLElement | null> = ref(null);
+const showTransactionsLoader = ref(false);
+
+/**
+ * Checks whether the user sees the "observeRef" element.
+ * If so, the function "loadMoreTransactions" is called.
+ */
+function intersectPageEnd() {
+  onIntersect(observeRef.value!, () => {
+    loadMoreTransactions();
+  });
+}
+
+/**
+ * Loads more transactions.
+ */
+async function loadMoreTransactions() {
+  showTransactionsLoader.value = true;
+
+  // TODO: implement
+  console.log('load more transactions');
+
+  // TODO: remove this timeout (just for testing the loader)
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  showTransactionsLoader.value = false;
+
+  // restart the intersection observer
+  // TODO: run only if there are more transactions to load
+  onIntersect(observeRef.value!, () => {
+    loadMoreTransactions();
+  });
+}
 </script>
 
 <template>
-  <MainLayout :no-scroll="true">
+  <MainLayout>
     <!--shows a button that enables the user to add a new transaction-->
     <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
       <i class="fa-solid fa-plus"></i>
@@ -172,7 +196,7 @@ onMounted(() => {
             <div
               v-show="!(transactionEvents && transactionEvents.length <= 0)"
               id="transactions"
-              class="flex flex-col justify-center gap-5 overflow-y-scroll"
+              class="flex flex-col justify-center gap-5"
             >
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
@@ -181,6 +205,14 @@ onMounted(() => {
                 :transaction="transactionEvent"
               />
               <div ref="observeRef"></div>
+              <HeightFade>
+                <div
+                  v-show="showTransactionsLoader"
+                  class="flex flex-col items-center text-3xl text-gray-300"
+                >
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                </div>
+              </HeightFade>
             </div>
           </div>
         </div>
