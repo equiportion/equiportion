@@ -37,6 +37,8 @@ const onIntersect = (
       observer.observe(elementToWatch);
 
       clearInterval(interval);
+    } else {
+      console.log('elementToWatch is not ready');
     }
   }, 200);
 
