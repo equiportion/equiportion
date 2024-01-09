@@ -36,7 +36,10 @@ const onIntersect = (
     if (elementToWatch) {
       observer.observe(elementToWatch);
 
+      // Clear the interval once the element is ready
       clearInterval(interval);
+
+      console.log('elementToWatch is ready');
     } else {
       console.log('elementToWatch is not ready');
     }
