@@ -98,7 +98,12 @@ onMounted(() => {
     observeRef.value!,
     () => {
       console.log('intersect');
-  });
+    },
+    () => {
+      console.log('Suiiii');
+    },
+    false
+  );
 });
 </script>
 
