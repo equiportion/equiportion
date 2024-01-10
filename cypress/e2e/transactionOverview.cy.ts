@@ -27,4 +27,20 @@ describe('/', () => {
       cy.get('#no-transaction-message').should('be.visible');
     });
   });
+  it('shows chevron on large screen', () => {
+    authenticated(() => {
+      cy.viewport(1280, 720);
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(0).click();
+      cy.get('#transactions').children().children().children().eq(1).should('be.visible');
+    });
+  });
+  it('does not show chevron on small screen', () => {
+    authenticated(() => {
+      cy.viewport(480, 800);
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(0).click();
+      cy.get('#transactions').children().children().children().eq(1).should('not.be.visible');
+    });
+  });
 });
