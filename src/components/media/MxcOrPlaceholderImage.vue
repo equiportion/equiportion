@@ -54,12 +54,16 @@ const props = defineProps({
 const placeholderUrl = computed(() => {
   return (
     'https://ui-avatars.com/api/?name=' +
-    props.placeholderText +
+    encodePlaceholder(props.placeholderText) +
     '&size=' +
     props.width +
     '&background=random'
   );
 });
+
+function encodePlaceholder(placeholder: string) {
+  return placeholder.replace(/[^(\p{L}| |0-9)]/gu, '');
+}
 </script>
 <template>
   <MxcThumbnail
