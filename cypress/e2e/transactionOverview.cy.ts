@@ -32,7 +32,7 @@ describe('/', () => {
       cy.viewport(1280, 720);
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#transactions').children().children().children().eq(1).should('be.visible');
+      cy.get('#transactions .fa-solid.fa-chevron-right.w-5').should('be.visible');
     });
   });
   it('does not show chevron on small screen', () => {
@@ -40,7 +40,7 @@ describe('/', () => {
       cy.viewport(480, 800);
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#transactions').children().children().children().eq(1).should('not.be.visible');
+      cy.get('#transactions .fa-solid.fa-chevron-right.w-5').should('not.be.visible');
     });
   });
 });
