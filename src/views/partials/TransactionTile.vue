@@ -48,8 +48,13 @@ function centsPart(num: number): string {
         <span>
           hat
           <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
-          ausgelegt
+          ausgegeben
         </span>
+      </div>
+
+      <!-- > -->
+      <div class="hidden lg:flex flex-row items-center justify-center">
+        <i class="fa-solid fa-chevron-right w-5"></i>
       </div>
 
       <!--Schuldner-->
@@ -63,7 +68,7 @@ function centsPart(num: number): string {
         >
           <UserBadge :user="room!.getMember(debtor.userId)" />
           <span>
-            hat <b>{{ eurosPart(debtor.amount) }},{{ centsPart(debtor.amount) }}€</b> geliehen
+            <b>{{ eurosPart(debtor.amount) }},{{ centsPart(debtor.amount) }}€</b>
           </span>
         </div>
       </div>
