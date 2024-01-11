@@ -55,6 +55,11 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const changeCounter = ref(0);
@@ -86,6 +91,7 @@ const inputValue = computed({
       :min="min"
       :max="max"
       :step="step"
+      :disabled="disabled"
     />
     <small v-if="error" class="block text-sm text-red-500"> {{ error }} </small>
   </div>
