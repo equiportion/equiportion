@@ -41,7 +41,7 @@ const displayNameClasses = computed(() => {
         <span :class="displayNameClasses">
           {{ user?.getDisplayname() ?? user?.getUserId() ?? 'unbekannter Benutzer' }}
         </span>
-        <span v-if="isLoggedInUser"> (Ich) </span>
+        <span v-if="isLoggedInUser">&nbsp;(Ich) </span>
       </div>
       <span
         v-if="user?.getDisplayname()"
