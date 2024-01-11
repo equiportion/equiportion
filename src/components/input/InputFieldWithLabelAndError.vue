@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 import InputField from '@/components/input/InputField.vue';
 
@@ -57,12 +57,19 @@ const props = defineProps({
   },
 });
 
+const changeCounter = ref(0);
+
 const inputValue = computed({
   get(): string | number {
+    changeCounter.value;
+
     return props.modelValue;
   },
   set(value: string | number) {
     emit('update:modelValue', value);
+
+    // force recomputation of inputValue
+    changeCounter.value++;
   },
 });
 </script>

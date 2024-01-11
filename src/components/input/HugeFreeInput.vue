@@ -11,7 +11,7 @@
  * @prop {string} [label=''] - The label text.
  */
 
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const props = defineProps({
   placeholder: {
@@ -33,12 +33,19 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+const changeCounter = ref(0);
+
 const inputValue = computed({
   get(): string | number {
+    changeCounter.value;
+
     return props.modelValue;
   },
   set(value: string | number) {
     emit('update:modelValue', value);
+
+    // force recomputation of inputValue
+    changeCounter.value++;
   },
 });
 
@@ -53,7 +60,6 @@ const inputClasses = computed(() => {
   } else {
     inputLength = props.modelValue.toString().length;
   }
-  console.log(inputLength);
 
   if (inputLength > 20) {
     return classes + ' text-4xl';
