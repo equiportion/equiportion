@@ -24,7 +24,7 @@ watch(
 <template>
   <div class="relative no-close">
     <div class="cursor-pointer" @click="toggle()">
-      <slot name="trigger" />
+      <slot name="trigger" :toggle="toggle" />
     </div>
     <div
       v-show="open"
