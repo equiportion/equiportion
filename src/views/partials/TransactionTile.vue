@@ -2,6 +2,7 @@
 /**
  * @component {TransactionTile} - Partial that shows transactions as a tile
  * @author Leandro El Omari
+ * @author Philipp Stappert
  *
  * @prop {TransactionEvent} transaction - A transaction event of a transaction (sent into a room).
  */
@@ -10,6 +11,9 @@ import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
+
+import {computed} from 'vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 const props = defineProps({
   transaction: {
@@ -30,12 +34,20 @@ function eurosPart(num: number): string {
 function centsPart(num: number): string {
   return ('00' + (num % 100)).slice(-2);
 }
+
+const mainClasses = computed(() => {
+  const classes = 'flex flex-col w-full rounded-lg shadow-lg transition p-5 gap-2';
+
+  if (props.transaction.isValid() == false) {
+    return classes + ' bg-red-200 lg:hover:bg-red-300';
+  } else {
+    return classes + ' bg-gray-100 lg:hover:bg-gray-200';
+  }
+});
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full rounded-lg bg-gray-100 shadow-lg lg:hover:bg-gray-200 transition p-5 gap-2"
-  >
+  <div :class="mainClasses">
     <!--Zweck-->
     <h2 class="text-2xl font-bold w-full text-center lg:text-left break-all">
       {{ transaction.getPurpose() }}
@@ -73,5 +85,18 @@ function centsPart(num: number): string {
         </div>
       </div>
     </div>
+
+    <SystemAlert v-if="transaction.isValid() == false" class="text-black mt-2" severity="danger">
+      <span class="text-lg font-bold"> <i class="fa-solid fa-code-merge"></i>&nbsp;Konflikt </span>
+      <br />
+      Es gibt ein Problem beim Zusammenführen dieser Transaktion mit dem aktuellen Stand, den du von
+      diesem Gerät aus gesendet hast. Das kann passieren, wenn du die App per Task-Manager beendet
+      hast oder den Cache deines Browsers gelöscht hast.<br />
+      <strong>Was bedeutet das? </strong>Diese Transaktion wird
+      <span class="underline">nicht in den aktuellen Schuldenstand eingerechnet</span>.<br />
+      <strong>Was kann ich tun? </strong>Du kannst diese Transaktion erneut senden, um sie in den
+      aktuellen Schuldenstand einzuberechnen.<br />
+      <i>In zukünfigten Versionen ist eine automatische Auflösung des Konflikts geplant.</i>
+    </SystemAlert>
   </div>
 </template>
