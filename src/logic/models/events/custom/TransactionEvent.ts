@@ -32,6 +32,7 @@ class TransactionEvent extends StateEvent {
    * @param {string} creditor the userId of the creditor
    * @param {{userId: string; amount: number}[]} debtors the debtors as an array, each debtor containing their userId and the amount they owe
    * @param {[userIds: string]: number} balances the balances as a map of two concatenated userIds and an integer representing the balance (see documentation)
+   * @param {string} stateKey the state key of this event
    * @param {string} [latestEventId] the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances (optional, only to be set if this event didn't start with balances of 0)
    */
   constructor(
@@ -43,17 +44,9 @@ class TransactionEvent extends StateEvent {
     creditor: string,
     debtors: {userId: string; amount: number}[],
     balances: {[userIds: string]: number},
+    stateKey: string,
     latestEventId?: string
   ) {
-    // get device id
-    const deviceId = useClientStateStore().deviceId;
-
-    // get user id
-    const userId = useLoggedInUserStore().user.getUserId();
-
-    // create state key
-    const stateKey = `${deviceId}${userId}`;
-
     super(eventId, roomId, stateKey);
 
     this.purpose = purpose;
@@ -94,9 +87,7 @@ class TransactionEvent extends StateEvent {
 
     // get clients newest transaction event
     const clientsNewestTransactionEvents: TransactionEvent[] = events.filter(
-      (event: TransactionEvent) => {
-        return event.stateKey == stateKey;
-      }
+      (event: TransactionEvent) => event.stateKey == stateKey
     );
     const clientsNewestTransactionEvent: TransactionEvent | undefined =
       clientsNewestTransactionEvents[clientsNewestTransactionEvents.length - 1] ?? undefined;
@@ -125,6 +116,7 @@ class TransactionEvent extends StateEvent {
       creditor,
       debtors,
       newBalances,
+      stateKey,
       clientsNewestTransactionEvent?.getEventId()
     );
 
@@ -156,6 +148,7 @@ class TransactionEvent extends StateEvent {
       event.content.creditor,
       debtors,
       event.content.balances,
+      event.state_key!,
       event.content['m.relates_to']?.event_id ?? undefined
     );
   }
