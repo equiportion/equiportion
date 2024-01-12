@@ -17,6 +17,7 @@ class TransactionEvent extends StateEvent {
   private sum: number;
   private creditor: string;
   private debtors: {userId: string; amount: number}[];
+  private balances: {[userIds: string]: number};
 
   /**
    * Creates a new TransactionEvent
@@ -26,6 +27,7 @@ class TransactionEvent extends StateEvent {
    * @param {number} sum the total amount spent
    * @param {string} creditor the userId of the creditor
    * @param {{userId: string; amount: number}[]} debtors the debtors as an array, each debtor containing their userId and the amount they owe
+   * @param {[userIds: string]: number} balances the balances as a map of two concatenated userIds and an integer representing the balance (see documentation)
    */
   constructor(
     eventId: string,
@@ -34,7 +36,8 @@ class TransactionEvent extends StateEvent {
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {userId: string; amount: number}[]
+    debtors: {userId: string; amount: number}[],
+    balances: {[userIds: string]: number}
   ) {
     // get device id
     const deviceId = useClientStateStore().deviceId;
@@ -51,6 +54,7 @@ class TransactionEvent extends StateEvent {
     this.sum = sum;
     this.creditor = creditor;
     this.debtors = debtors;
+    this.balances = balances;
   }
 
   /**
@@ -76,7 +80,8 @@ class TransactionEvent extends StateEvent {
       event.content.purpose,
       this.parseMoney(event.content.sum),
       event.content.creditor,
-      debtors
+      debtors,
+      event.content.balances
     );
   }
 
@@ -128,6 +133,7 @@ class TransactionEvent extends StateEvent {
       sum: this.sum,
       creditor: this.creditor,
       debtors: debtors,
+      balances: this.balances,
     };
   }
 
@@ -169,6 +175,14 @@ class TransactionEvent extends StateEvent {
    */
   public getDebtorIds(): {userId: string; amount: number}[] {
     return this.debtors;
+  }
+
+  /**
+   * returns the balance between users after this transaction
+   * @returns {{[userIds: string]: number}} an map of two cancantenated userids in alphabetical order to an integer represention the balance between the two users
+   */
+  public getBalances(): {[userIds: string]: number} {
+    return this.balances;
   }
 }
 
