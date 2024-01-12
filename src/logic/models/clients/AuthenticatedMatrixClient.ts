@@ -82,6 +82,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
       //TODO: Error
     } else {
       loggedInUser.setUserId(userId as string);
+      useClientStateStore().deviceId = response?.data.device_id;
     }
 
     useClientStateStore().numberOfSyncs = 0;
