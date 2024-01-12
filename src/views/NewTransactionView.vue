@@ -138,6 +138,14 @@ const fixedAmountError = computed(() => {
   return undefined;
 });
 
+const sumError = computed(() => {
+  if (moneyVal.value >= 999999999999999) {
+    return 'Der Gesamtbetrag darf nicht größer als 999.999.999.999.999 € sein';
+  }
+
+  return undefined;
+});
+
 // when all fields are valid, the submit button is enabled
 const submitDisabled = computed(() => {
   if (
@@ -224,10 +232,13 @@ function centsPart(num: number): string {
             />
           </template>
         </MoneyInputWrapper>
+        <span v-if="sumError" class="text-sm text-red-500">
+          {{ sumError }}
+        </span>
       </div>
 
       <!-- Purpose -->
-      <HugeFreeInput v-model="reasonVal" label="Zweck" placeholder="Pizzabacken" />
+      <HugeFreeInput v-model="reasonVal" label="Zweck" placeholder="z.B. Einkauf" />
 
       <div class="flex flex-col mt-5 w-full items-center gap-5">
         <!-- Uneven splitting -->
