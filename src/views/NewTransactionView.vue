@@ -12,6 +12,7 @@ import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelA
 // models
 import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 
 // stores
 import {useRoomsStore} from '@/stores/rooms';
@@ -161,6 +162,28 @@ const submitDisabled = computed(() => {
 });
 
 /**
+ * Submission
+ */
+const debtorList = computed(() => {
+  let returnValue: {userId: string; amount: number}[] = [];
+  Object.keys(sumSingle.value).forEach((userId) => {
+    returnValue.push({userId, amount: sumSingle.value[userId]});
+  });
+  return returnValue;
+});
+
+function submit() {
+  const newTransaction = TransactionEvent.newTransaction(
+    room.value!,
+    reasonVal.value,
+    moneyVal.value,
+    creditorVal.value!.getUserId(),
+    debtorList.value
+  );
+  console.log(newTransaction.toEventContent());
+}
+
+/**
  * Generic Functions
  */
 function eurosPart(num: number): string {
@@ -175,7 +198,11 @@ function centsPart(num: number): string {
 <template>
   <MainLayout>
     <!-- Submit Button (bottom right) -->
-    <RoundButton class="fixed bottom-5 right-5 shadow-lg" :disabled="submitDisabled">
+    <RoundButton
+      class="fixed bottom-5 right-5 shadow-lg"
+      :disabled="submitDisabled"
+      @click="submit"
+    >
       <i class="fa-solid fa-check"></i>
     </RoundButton>
 

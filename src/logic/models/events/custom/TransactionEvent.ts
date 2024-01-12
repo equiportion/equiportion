@@ -3,6 +3,7 @@ import MatrixEvent from '../MatrixEvent';
 import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
+import Room from '@/logic/models/Room';
 
 /**
  * A transaction event modelled after this project's documentation.
@@ -55,6 +56,68 @@ class TransactionEvent extends StateEvent {
     this.creditor = creditor;
     this.debtors = debtors;
     this.balances = balances;
+  }
+
+  /**
+   *
+   * @param room
+   * @param purpose
+   * @param sum
+   * @param creditor the userId of the creditor
+   * @param debtors
+   */
+  public static newTransaction(
+    room: Room,
+    purpose: string,
+    sum: number,
+    creditor: string,
+    debtors: {userId: string; amount: number}[]
+  ): TransactionEvent {
+    const events: TransactionEvent[] = room.getEvents(this.TYPE) as TransactionEvent[];
+
+    // get device id
+    const deviceId = useClientStateStore().deviceId;
+
+    // get user id
+    const userId = useLoggedInUserStore().user.getUserId();
+
+    // create state key
+    const stateKey = `${deviceId}${userId}`;
+
+    // get clients newest transaction event
+    const clientsNewestTransactionEvents: TransactionEvent[] = events.filter(
+      (event: TransactionEvent) => {
+        return event.stateKey == stateKey;
+      }
+    );
+    const clientsNewestTransactionEvent: TransactionEvent | undefined =
+      clientsNewestTransactionEvents[clientsNewestTransactionEvents.length - 1] ?? undefined;
+
+    // clone the old balance values into a local variable
+    const newBalances: {[userIds: string]: number} = JSON.parse(
+      JSON.stringify(clientsNewestTransactionEvent.getBalances())
+    );
+
+    // edit old balances to include data from latest transaction event
+    debtors.forEach((debtor) => {
+      const userIdList: string[] = [debtor.userId, creditor].sort();
+      const orderChangeIndicator: boolean = userIdList[0] == creditor;
+      const balanceKey: string = userIdList.join('');
+      const balanceValue: number = newBalances[balanceKey] ?? 0;
+      newBalances[balanceKey] = balanceValue + debtor.amount * (-1 ^ Number(orderChangeIndicator));
+    });
+
+    const newTransactionevent: TransactionEvent = new TransactionEvent(
+      '',
+      room.getRoomId(),
+      purpose,
+      sum,
+      creditor,
+      debtors,
+      newBalances
+    );
+
+    return newTransactionevent;
   }
 
   /**
