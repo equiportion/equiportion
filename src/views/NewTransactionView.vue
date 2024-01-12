@@ -8,6 +8,7 @@ import HugeFreeInput from '@/components/input/HugeFreeInput.vue';
 import UserDropdown from '@/components/user/UserDropdown.vue';
 import UserTile from '@/components/user/UserTile.vue';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 // models
 import Room from '@/logic/models/Room';
@@ -24,6 +25,7 @@ import waitForInitialSync from '@/logic/utils/waitForSync';
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
+import router from '@/router';
 
 /** Data */
 const moneyVal = ref(0);
@@ -164,6 +166,9 @@ const submitDisabled = computed(() => {
 /**
  * Submission
  */
+const submitLoading = ref(false);
+const submitError = ref('');
+
 const debtorList = computed(() => {
   let returnValue: {userId: string; amount: number}[] = [];
   Object.keys(sumSingle.value).forEach((userId) => {
@@ -172,7 +177,8 @@ const debtorList = computed(() => {
   return returnValue;
 });
 
-function submit() {
+// function to submit the transaction
+async function submit() {
   const newTransaction = TransactionEvent.newTransaction(
     room.value!,
     reasonVal.value,
@@ -180,8 +186,19 @@ function submit() {
     creditorVal.value!.getUserId(),
     debtorList.value
   );
-  newTransaction.publish();
-  console.log(newTransaction.toEventContent());
+  submitLoading.value = true;
+
+  try {
+    await newTransaction.publish();
+  } catch (e) {
+    console.error(e);
+    submitError.value = 'Fehler beim Erstellen der Transaktion: ' + e;
+    submitLoading.value = false;
+    return;
+  }
+
+  submitLoading.value = false;
+  router.push({name: 'transactions', params: {roomId: roomId.value}});
 }
 
 /**
@@ -202,6 +219,7 @@ function centsPart(num: number): string {
     <RoundButton
       class="fixed bottom-5 right-5 shadow-lg"
       :disabled="submitDisabled"
+      :loading="submitLoading"
       @click="submit"
     >
       <i class="fa-solid fa-check"></i>
@@ -209,6 +227,8 @@ function centsPart(num: number): string {
 
     <!-- Form -->
     <div class="p-2 lg:p-5 flex flex-col gap-5">
+      <SystemAlert v-if="submitError" severity="danger">{{ submitError }}</SystemAlert>
+
       <!-- Creditor -->
       <div class="flex flex-col items-center">
         <div
