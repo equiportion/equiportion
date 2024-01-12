@@ -140,7 +140,13 @@ const fixedAmountError = computed(() => {
 
 // when all fields are valid, the submit button is enabled
 const submitDisabled = computed(() => {
-  if (fixedAmountError.value || debtors.value.length === 0 || !creditorVal.value) {
+  if (
+    fixedAmountError.value ||
+    debtors.value.length === 0 ||
+    !creditorVal.value ||
+    !moneyVal.value ||
+    !reasonVal.value
+  ) {
     return true;
   }
   return false;
