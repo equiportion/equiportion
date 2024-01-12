@@ -22,6 +22,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  outlined: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['click']);
@@ -35,6 +40,9 @@ const buttonClasses = computed(() => {
   }
   if (props.success) {
     return 'h-12 w-12 inline-block rounded-full border border-green-600 bg-green-600 text-white hover:bg-white hover:text-green-600 focus:outline-none focus:ring active:text-green-500 transition';
+  }
+  if (props.outlined) {
+    return 'h-12 w-12 inline-block rounded-full border border-blue-600 bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring active:text-blue-500 transition';
   }
 
   return 'h-12 w-12 inline-block rounded-full border border-blue-600 bg-blue-600 text-white hover:bg-white hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 transition';
