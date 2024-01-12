@@ -21,6 +21,7 @@ class TransactionEvent extends StateEvent {
   private debtors: {userId: string; amount: number}[];
   private balances: {[userIds: string]: number};
   private latestEventId: string | undefined;
+  private transactionValid: boolean | undefined = undefined;
 
   /**
    * Creates a new TransactionEvent
@@ -266,6 +267,31 @@ class TransactionEvent extends StateEvent {
    */
   public getBalances(): {[userIds: string]: number} {
     return this.balances;
+  }
+
+  /**
+   * Gets the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances.
+   * @returns {string|undefined} the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances
+   */
+  public getLatestEventId(): string | undefined {
+    return this.latestEventId;
+  }
+
+  /**
+   * Gets whether this transaction is valid.
+   * @returns {boolean|undefined} true if this transaction is valid, false otherwise
+   */
+  public isValid(): boolean | undefined {
+    return this.transactionValid;
+  }
+
+  /**
+   * Sets whether this transaction is valid.
+   * @param {boolean} valid true if this transaction is valid, false otherwise
+   * @returns {void}
+   */
+  public setValid(valid: boolean): void {
+    this.transactionValid = valid;
   }
 }
 

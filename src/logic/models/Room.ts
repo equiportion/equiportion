@@ -1,11 +1,14 @@
-import EventParser from './events/EventParser';
-import type MatrixEvent from './events/MatrixEvent';
-import User from './User';
+import EventParser from '@/logic/models/events/EventParser';
+import type MatrixEvent from '@/logic/models/events/MatrixEvent';
+import User from '@/logic/models/User';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
+import validateTransactions from '@/logic/utils/validateTransactions';
 
 /**
  * A matrix room the logged in user has joined.
  * @author Jakob Gießibl
  * @author Philipp Stappert
+ * @author Jörn Mihatsch
  */
 class Room {
   private roomId: string;
@@ -172,7 +175,7 @@ class Room {
    */
   public getEventsWithStateEvents(type?: string): MatrixEvent[] {
     const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
-    const stateEvents = this.stateEventIds.map((eventId) => this.getEvent(eventId)!);
+    const stateEvents = this.stateEventIds.map((eventId) => this.getStateEvent(eventId)!);
 
     const allEvents = events.concat(stateEvents);
 
@@ -180,7 +183,7 @@ class Room {
       return allEvents;
     }
 
-    return allEvents.filter((event) => event.getType() == type);
+    return allEvents.filter((event: MatrixEvent) => event.getType() == type);
   }
 
   /**
@@ -219,6 +222,10 @@ class Room {
     }
 
     this.events[eventId] = event;
+
+    if (event.getType() == TransactionEvent.TYPE) {
+      validateTransactions(this);
+    }
   }
 
   /**
