@@ -105,7 +105,7 @@ class TransactionEvent extends StateEvent {
       const orderChangeIndicator: boolean = userIdList[0] == creditor;
       const balanceKey: string = userIdList.join('');
       const balanceValue: number = newBalances[balanceKey] ?? 0;
-      newBalances[balanceKey] = balanceValue + debtor.amount * (-1 ^ Number(orderChangeIndicator));
+      newBalances[balanceKey] = balanceValue + debtor.amount * (-1) ** Number(orderChangeIndicator);
     });
 
     const newTransactionevent: TransactionEvent = new TransactionEvent(
