@@ -177,7 +177,7 @@ class Room {
     const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
     const stateEvents = this.stateEventIds.map((eventId) => this.getStateEvent(eventId)!);
 
-    const allEvents = events.concat(stateEvents);
+    const allEvents = stateEvents.concat(events);
 
     if (!type) {
       return allEvents;
@@ -240,6 +240,38 @@ class Room {
     }
 
     this.stateEvents[eventId] = event;
+  }
+
+  /**
+   * Returns all balances between users in this room.
+   * @returns {{[userIds: string]: number}} the balances between users in this room (userIds are sorted alphabetically and concatenated directly without a seperator)
+   */
+  public getBalances(): {[userIds: string]: number} {
+    const balances: {[userIds: string]: number} = {};
+
+    // get all latest balances
+    const latestTransactionEvents: {[stateKey: string]: TransactionEvent} = {};
+
+    (this.getEventsWithStateEvents(TransactionEvent.TYPE) as TransactionEvent[]).forEach(
+      (event: TransactionEvent) => {
+        const stateKey = event.getStateKey();
+
+        latestTransactionEvents[stateKey] = event;
+      }
+    );
+
+    // calculate balances
+    Object.values(latestTransactionEvents).forEach((event: TransactionEvent) => {
+      Object.keys(event.getBalances()).forEach((userIds: string) => {
+        if (!balances[userIds]) {
+          balances[userIds] = 0;
+        }
+
+        balances[userIds] += event.getBalances()[userIds];
+      });
+    });
+
+    return balances;
   }
 }
 
