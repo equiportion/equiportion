@@ -78,7 +78,9 @@ class TransactionEvent extends StateEvent {
     creditor: string,
     debtors: {userId: string; amount: number}[]
   ): TransactionEvent {
-    const events: TransactionEvent[] = room.getEvents(this.TYPE) as TransactionEvent[];
+    const events: TransactionEvent[] = room.getEventsWithStateEvents(
+      this.TYPE
+    ) as TransactionEvent[];
 
     // get device id
     const deviceId = useClientStateStore().deviceId;
