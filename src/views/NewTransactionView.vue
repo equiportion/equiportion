@@ -180,6 +180,7 @@ function submit() {
     creditorVal.value!.getUserId(),
     debtorList.value
   );
+  newTransaction.publish();
   console.log(newTransaction.toEventContent());
 }
 

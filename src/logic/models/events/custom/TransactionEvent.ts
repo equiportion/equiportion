@@ -59,12 +59,12 @@ class TransactionEvent extends StateEvent {
   }
 
   /**
-   *
-   * @param room
-   * @param purpose
-   * @param sum
-   * @param creditor the userId of the creditor
-   * @param debtors
+   * creates a new transaction that considers the previous transaction balance when calculating the new balances
+   * @param {Room} room the Room to send the transaction in
+   * @param {string} purpose the purpose of the transaction
+   * @param {number} sum the total sum of the transaction
+   * @param {string} creditor the userId of the creditor
+   * @param {{userId: string; amount: number}[]} debtors all debtors with their amount
    */
   public static newTransaction(
     room: Room,
@@ -100,6 +100,8 @@ class TransactionEvent extends StateEvent {
 
     // edit old balances to include data from latest transaction event
     debtors.forEach((debtor) => {
+      if (debtor.userId == creditor) return;
+
       const userIdList: string[] = [debtor.userId, creditor].sort();
       const orderChangeIndicator: boolean = userIdList[0] == creditor;
       const balanceKey: string = userIdList.join('');
