@@ -15,6 +15,7 @@ import User from '@/logic/models/User';
 
 // stores
 import {useRoomsStore} from '@/stores/rooms';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
@@ -35,12 +36,17 @@ const roomId = ref(useRoute().params.roomId.toString());
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
+// logged in user
+const loggedInUser = useLoggedInUserStore().user;
+
 // load room
 function loadRoom() {
   room.value = roomsStore.getRoom(roomId.value);
 }
 waitForInitialSync().then(() => {
   loadRoom();
+
+  creditorVal.value = room.value?.getMembers()[loggedInUser.getUserId()];
 });
 
 // update if room changes
@@ -134,7 +140,7 @@ const fixedAmountError = computed(() => {
 
 // when all fields are valid, the submit button is enabled
 const submitDisabled = computed(() => {
-  if (fixedAmountError.value || debtors.value.length === 0) {
+  if (fixedAmountError.value || debtors.value.length === 0 || !creditorVal.value) {
     return true;
   }
   return false;
