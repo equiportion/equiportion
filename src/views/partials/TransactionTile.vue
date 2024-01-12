@@ -11,9 +11,9 @@ import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 import {computed} from 'vue';
-import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 const props = defineProps({
   transaction: {
