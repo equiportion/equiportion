@@ -62,7 +62,7 @@ const placeholderUrl = computed(() => {
 });
 
 function encodePlaceholder(placeholder: string) {
-  return placeholder.replace(/[^(\p{L}| |0-9)]/gu, '');
+  return placeholder.replace(/[^(\p{L}| |0-9|?)]/gu, '');
 }
 </script>
 <template>

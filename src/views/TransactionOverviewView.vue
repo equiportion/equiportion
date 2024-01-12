@@ -1,9 +1,4 @@
 <script setup lang="ts">
-/**
- * @component {TransactionOverview} - Shows all transactions in a group.
- * @author Leandro El Omari
- */
-
 import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
