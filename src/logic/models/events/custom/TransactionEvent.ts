@@ -13,12 +13,14 @@ import Room from '@/logic/models/Room';
  */
 class TransactionEvent extends StateEvent {
   public static TYPE = 'edu.kit.kastel.dsn.pse.transaction';
+  public static REL_TYPE = 'edu.kit.kastel.dsn.pse.latest_transaction';
 
   private purpose: string;
   private sum: number;
   private creditor: string;
   private debtors: {userId: string; amount: number}[];
   private balances: {[userIds: string]: number};
+  private latestEventId: string | undefined;
 
   /**
    * Creates a new TransactionEvent
@@ -29,6 +31,7 @@ class TransactionEvent extends StateEvent {
    * @param {string} creditor the userId of the creditor
    * @param {{userId: string; amount: number}[]} debtors the debtors as an array, each debtor containing their userId and the amount they owe
    * @param {[userIds: string]: number} balances the balances as a map of two concatenated userIds and an integer representing the balance (see documentation)
+   * @param {string} [latestEventId] the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances (optional, only to be set if this event didn't start with balances of 0)
    */
   constructor(
     eventId: string,
@@ -38,7 +41,8 @@ class TransactionEvent extends StateEvent {
     sum: number,
     creditor: string,
     debtors: {userId: string; amount: number}[],
-    balances: {[userIds: string]: number}
+    balances: {[userIds: string]: number},
+    latestEventId?: string
   ) {
     // get device id
     const deviceId = useClientStateStore().deviceId;
@@ -56,6 +60,7 @@ class TransactionEvent extends StateEvent {
     this.creditor = creditor;
     this.debtors = debtors;
     this.balances = balances;
+    this.latestEventId = latestEventId;
   }
 
   /**
@@ -95,7 +100,7 @@ class TransactionEvent extends StateEvent {
 
     // clone the old balance values into a local variable
     const newBalances: {[userIds: string]: number} = JSON.parse(
-      JSON.stringify(clientsNewestTransactionEvent.getBalances())
+      JSON.stringify(clientsNewestTransactionEvent?.getBalances() ?? {})
     );
 
     // edit old balances to include data from latest transaction event
@@ -116,7 +121,8 @@ class TransactionEvent extends StateEvent {
       sum,
       creditor,
       debtors,
-      newBalances
+      newBalances,
+      clientsNewestTransactionEvent?.getEventId()
     );
 
     return newTransactionevent;
@@ -146,7 +152,8 @@ class TransactionEvent extends StateEvent {
       this.parseMoney(event.content.sum),
       event.content.creditor,
       debtors,
-      event.content.balances
+      event.content.balances,
+      event.content['m.relates_to']?.event_id ?? undefined
     );
   }
 
@@ -193,13 +200,22 @@ class TransactionEvent extends StateEvent {
       });
     }
 
-    return {
+    const eventContent: any = {
       purpose: this.purpose,
       sum: this.sum,
       creditor: this.creditor,
       debtors: debtors,
       balances: this.balances,
     };
+
+    if (this.latestEventId) {
+      eventContent['m.relates_to'] = {
+        rel_type: TransactionEvent.REL_TYPE,
+        event_id: this.latestEventId,
+      };
+    }
+
+    return eventContent;
   }
 
   /**
