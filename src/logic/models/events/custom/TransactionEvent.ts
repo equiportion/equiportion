@@ -1,13 +1,16 @@
-import MessageEvent from '../MessageEvent';
+import StateEvent from '../StateEvent';
 import MatrixEvent from '../MatrixEvent';
 import type {RawMatrixEvent} from '../RawMatrixEvent';
+import {useClientStateStore} from '@/stores/clientState';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 /**
  * A transaction event modelled after this project's documentation.
  * @author Jakob Gießibl
  * @author Philipp Stappert
+ * @author Jörn Mihatsch
  */
-class TransactionEvent extends MessageEvent {
+class TransactionEvent extends StateEvent {
   public static TYPE = 'edu.kit.kastel.dsn.pse.transaction';
 
   private purpose: string;
@@ -33,7 +36,16 @@ class TransactionEvent extends MessageEvent {
     creditor: string,
     debtors: {userId: string; amount: number}[]
   ) {
-    super(eventId, roomId);
+    // get device id
+    const deviceId = useClientStateStore().deviceId;
+
+    // get user id
+    const userId = useLoggedInUserStore().user.getUserId();
+
+    // create state key
+    const stateKey = `${deviceId}${userId}`;
+
+    super(eventId, roomId, stateKey);
 
     this.purpose = purpose;
     this.sum = sum;
