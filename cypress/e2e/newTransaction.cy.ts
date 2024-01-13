@@ -230,6 +230,16 @@ describe('/', () => {
       cy.get('#addDebtorButton').should('have.class', 'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition');
     });
   });
+  it('does not show add creditor button if creditor already selected', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#removeCreditor').click();
+      cy.get('#addCreditorButton').click();
+      cy.get('#creditorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addCreditorButton').should('not.exist');
+    });
+  });
   it('shows error message if fixed amount greater as sum', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');

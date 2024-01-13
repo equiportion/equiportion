@@ -192,6 +192,7 @@ function centsPart(num: number): string {
           class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
         >
           <UserDropdown
+            id="creditorUserDropdown"
             heading="Gläubiger*in hinzufügen"
             :users="selectableCreditorsList"
             @user-click="(user) => addCreditor(user)"
@@ -199,6 +200,7 @@ function centsPart(num: number): string {
             <template #trigger="{toggle}">
               <div class="flex flex-row items-center gap-2">
                 <RoundButton
+                  id="addCreditorButton"
                   class="shadow-lg"
                   title="Gläubiger*in hinzufügen"
                   :disabled="selectableCreditorsList.length == 0"
