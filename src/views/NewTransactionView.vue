@@ -175,7 +175,11 @@ function centsPart(num: number): string {
 <template>
   <MainLayout>
     <!-- Submit Button (bottom right) -->
-    <RoundButton class="fixed bottom-5 right-5 shadow-lg" :disabled="submitDisabled">
+    <RoundButton
+      id="submitButton"
+      class="fixed bottom-5 right-5 shadow-lg"
+      :disabled="submitDisabled"
+    >
       <i class="fa-solid fa-check"></i>
     </RoundButton>
 
@@ -210,6 +214,7 @@ function centsPart(num: number): string {
         <div v-else class="flex flex-col bg-gray-100 p-4 rounded-lg shadow-lg items-center gap-2">
           <div class="flex flex-row items-center gap-2">
             <i
+              id="removeCreditor"
               class="fa-solid fa-times text-xl text-gray-500 cursor-pointer"
               @click="removeCreditor()"
             >
@@ -225,6 +230,7 @@ function centsPart(num: number): string {
         <MoneyInputWrapper v-model="moneyVal">
           <template #input="{inputValue, updateValue}">
             <HugeFreeInput
+              id="inputFieldSum"
               label="Gesamtbetrag (Euro)"
               placeholder="0,00"
               :model-value="inputValue"
@@ -238,12 +244,18 @@ function centsPart(num: number): string {
       </div>
 
       <!-- Purpose -->
-      <HugeFreeInput v-model="reasonVal" label="Zweck" placeholder="z.B. Einkauf" />
+      <HugeFreeInput
+        id="inputFieldPurpose"
+        v-model="reasonVal"
+        label="Zweck"
+        placeholder="z.B. Einkauf"
+      />
 
       <div class="flex flex-col mt-5 w-full items-center gap-5">
         <!-- Uneven splitting -->
         <div
           v-for="debtor in debtors"
+          id="unevenSplitting"
           :key="debtor.user.getUserId()"
           class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"
         >
@@ -294,12 +306,13 @@ function centsPart(num: number): string {
             </template>
           </MoneyInputWrapper>
         </div>
-        <span v-if="debtors.length == 0" class="text-sm text-gray-400">
+        <span v-if="debtors.length == 0" id="noDebtorMessage" class="text-sm text-gray-400">
           Keine Schuldner*innen ausgewählt
         </span>
 
         <!-- Add Person for uneven splitting -->
         <UserDropdown
+          id="debtorUserDropdown"
           heading="Schuldner*in hinzufügen"
           :users="selectableUsersList"
           @user-click="(user) => addDebtor(user)"
@@ -307,6 +320,7 @@ function centsPart(num: number): string {
           <template #trigger="{toggle}">
             <div class="flex flex-col items-center gap-1">
               <RoundButton
+                id="addDebtorButton"
                 class="shadow-lg"
                 title="Schuldner*in hinzufügen"
                 :disabled="selectableUsersList.length == 0"
@@ -319,7 +333,10 @@ function centsPart(num: number): string {
         </UserDropdown>
 
         <!-- Rest-->
-        <div class="flex flex-col bg-gray-100 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg">
+        <div
+          id="rest"
+          class="flex flex-col bg-gray-100 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg"
+        >
           <span class="text-xl">
             Rest: <strong>{{ eurosPart(restSum) }},{{ centsPart(restSum) }} €</strong>
           </span>
