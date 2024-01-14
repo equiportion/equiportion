@@ -122,6 +122,7 @@ async function loadMoreTransactions() {
   showTransactionsLoader.value = true;
 
   const reloadAgain = await room.value?.loadPreviousEvents();
+  loadRooms();
 
   showTransactionsLoader.value = false;
 
