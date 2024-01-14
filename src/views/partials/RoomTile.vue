@@ -43,11 +43,13 @@ const showUserBadges = computed(() => {
     @click="openTransactions()"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
-      <MxcOrPlaceholderImage
-        :mxc-url="room.getAvatarUrl() ?? ''"
-        class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
-        :placeholder-text="room.getName() ?? '?'"
-      />
+      <div class="flex-shrink-0">
+        <MxcOrPlaceholderImage
+          :mxc-url="room.getAvatarUrl() ?? ''"
+          class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
+          :placeholder-text="room.getName() ?? '?'"
+        />
+      </div>
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div class="flex flex-col">

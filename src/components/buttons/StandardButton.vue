@@ -12,12 +12,20 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['click']);
 
 const buttonClasses = computed(() => {
   if (props.loading) {
+    return 'w-full disabled inline-block shrink-0 rounded-md border border-gray-200 bg-gray-400 px-12 py-3 text-sm font-medium text-white transition';
+  }
+  if (props.disabled) {
     return 'w-full disabled inline-block shrink-0 rounded-md border border-gray-200 bg-gray-400 px-12 py-3 text-sm font-medium text-white transition';
   }
   if (props.success) {
@@ -28,7 +36,7 @@ const buttonClasses = computed(() => {
 });
 </script>
 <template>
-  <button :class="buttonClasses" :disabled="loading" @click.stop="emit('click')">
+  <button :class="buttonClasses" :disabled="loading || disabled" @click.stop="emit('click')">
     <span v-show="!loading && !success">
       <slot />
     </span>

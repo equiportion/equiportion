@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -43,15 +43,39 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
+
+const changeCounter = ref(0);
 
 const inputValue = computed({
   get(): string | number {
+    changeCounter.value;
+
     return props.modelValue;
   },
   set(value: string | number) {
     emit('update:modelValue', value);
+
+    // force recomputation of inputValue
+    changeCounter.value++;
   },
+});
+
+const classes = computed(() => {
+  let classes = 'w-full rounded-md border-gray-200 text-sm text-gray-700 shadow-sm';
+
+  if (props.disabled) {
+    classes += ' bg-gray-50';
+  } else {
+    classes += ' bg-white';
+  }
+
+  return classes;
 });
 </script>
 <template>
@@ -60,10 +84,11 @@ const inputValue = computed({
     v-model="inputValue"
     :type="type"
     :name="name"
-    class="w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+    :class="classes"
     :placeholder="placeholder"
     :min="min"
     :max="max"
     :step="step"
+    :disabled="disabled"
   />
 </template>
