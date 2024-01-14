@@ -36,9 +36,7 @@ abstract class StateEvent extends MatrixEvent {
 
     const client = AuthenticatedMatrixClient.getClient();
 
-    const uuid = self.crypto.randomUUID();
-
-    const url = apiEndpoints.putMessageEvent(this.getRoomId(), this.getType(), uuid);
+    const url = apiEndpoints.putStateEvent(this.getRoomId(), this.getType(), this.getStateKey());
     const data = this.toEventContent();
 
     const response = await client.putRequest(url, data);
