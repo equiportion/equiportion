@@ -8,10 +8,12 @@ import HugeFreeInput from '@/components/input/HugeFreeInput.vue';
 import UserDropdown from '@/components/user/UserDropdown.vue';
 import UserTile from '@/components/user/UserTile.vue';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 // models
 import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 
 // stores
 import {useRoomsStore} from '@/stores/rooms';
@@ -23,6 +25,7 @@ import waitForInitialSync from '@/logic/utils/waitForSync';
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
+import router from '@/router';
 
 /** Data */
 const moneyVal = ref(0);
@@ -161,6 +164,44 @@ const submitDisabled = computed(() => {
 });
 
 /**
+ * Submission
+ */
+const submitLoading = ref(false);
+const submitError = ref('');
+
+const debtorList = computed(() => {
+  let returnValue: {userId: string; amount: number}[] = [];
+  Object.keys(sumSingle.value).forEach((userId) => {
+    returnValue.push({userId, amount: sumSingle.value[userId]});
+  });
+  return returnValue;
+});
+
+// function to submit the transaction
+async function submit() {
+  const newTransaction = TransactionEvent.newTransaction(
+    room.value!,
+    reasonVal.value,
+    moneyVal.value,
+    creditorVal.value!.getUserId(),
+    debtorList.value
+  );
+  submitLoading.value = true;
+
+  try {
+    await newTransaction.publish();
+  } catch (e) {
+    console.error(e);
+    submitError.value = 'Fehler beim Erstellen der Transaktion: ' + e;
+    submitLoading.value = false;
+    return;
+  }
+
+  submitLoading.value = false;
+  router.push({name: 'transactions', params: {roomId: roomId.value}});
+}
+
+/**
  * Generic Functions
  */
 function eurosPart(num: number): string {
@@ -179,12 +220,16 @@ function centsPart(num: number): string {
       id="submitButton"
       class="fixed bottom-5 right-5 shadow-lg"
       :disabled="submitDisabled"
+      :loading="submitLoading"
+      @click="submit"
     >
       <i class="fa-solid fa-check"></i>
     </RoundButton>
 
     <!-- Form -->
     <div class="p-2 lg:p-5 flex flex-col gap-5">
+      <SystemAlert v-if="submitError" severity="danger">{{ submitError }}</SystemAlert>
+
       <!-- Creditor -->
       <div class="flex flex-col items-center">
         <div
