@@ -3,6 +3,8 @@ import type MatrixEvent from '@/logic/models/events/MatrixEvent';
 import User from '@/logic/models/User';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import validateTransactions from '@/logic/utils/validateTransactions';
+import AuthenticatedMatrixClient from './clients/AuthenticatedMatrixClient';
+import apiEndpoints from '../constants/apiEndpoints';
 
 /**
  * A matrix room the logged in user has joined.
@@ -25,7 +27,7 @@ class Room {
   private stateEventIds: string[] = [];
   private stateEvents: {[eventId: string]: MatrixEvent} = {};
 
-  private nextBatch: string = '';
+  private previousBatch?: string | null = '';
 
   /**
    * Creates a new Room using data from the sync-API.
@@ -43,6 +45,11 @@ class Room {
   public sync(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
+    const prevBatch = data.timeline.prev_batch;
+
+    if (prevBatch == '') {
+      this.previousBatch = prevBatch;
+    }
 
     for (const stateEvent of stateEvents) {
       const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
@@ -60,6 +67,47 @@ class Room {
       }
       this.addEvent(event);
       event.execute();
+    }
+  }
+
+  /**
+   * Loads the next events of this room.
+   *
+   * @async
+   * @return {Promise<boolean>} true if there are more events to load, false otherwise
+   */
+  public async loadPreviousEvents() {
+    if (this.previousBatch == null) {
+      return false;
+    }
+
+    const client = AuthenticatedMatrixClient.getClient();
+
+    const response = await client.getRequest(
+      apiEndpoints.roomMessagesGet(this.getRoomId(), this.previousBatch, 'b')
+    );
+
+    if (!response) {
+      throw new Error('No response from homeserver');
+    } else if (response.status !== 200) {
+      throw new Error('Error while loading previous events');
+    }
+
+    response.data.chunk.forEach((eventData: any) => {
+      const event = EventParser.jsonToEvent(eventData, this.getRoomId());
+      if (!event) {
+        return;
+      }
+
+      this.addEvent(event, true);
+    });
+
+    if (!response.data.end) {
+      this.previousBatch = null;
+      return false;
+    } else {
+      this.previousBatch = response.data.end;
+      return true;
     }
   }
 
@@ -207,8 +255,9 @@ class Room {
   /**
    * Adds a specific timeline event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
    * @param event the event to add
+   * @param before if true, the event gets added to the beginning of the timeline, otherwise to the end
    */
-  public addEvent(event: MatrixEvent) {
+  public addEvent(event: MatrixEvent, before: boolean = false) {
     // remove from state events if it is one
     const stateEventIndex = this.stateEventIds.indexOf(event.getEventId());
     if (stateEventIndex > -1) {
@@ -218,13 +267,17 @@ class Room {
     const eventId = event.getEventId();
 
     if (!this.events[eventId]) {
-      this.eventIds.push(eventId);
+      if (before) {
+        this.eventIds.unshift(eventId);
+      } else {
+        this.eventIds.push(eventId);
+      }
     }
 
     this.events[eventId] = event;
 
     if (event.getType() == TransactionEvent.TYPE) {
-      validateTransactions(this);
+      validateTransactions(this, before);
     }
   }
 
