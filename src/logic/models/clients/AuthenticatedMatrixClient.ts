@@ -117,9 +117,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the rooms have been updated
    */
   private async updateJoinedRooms(): Promise<void> {
-    const data = {
-      since: this.nextBatch ?? '',
-    };
+    let data: undefined | {since: string} = undefined;
+    if (this.nextBatch) {
+      data = {
+        since: this.nextBatch,
+      };
+    }
 
     // Send a request to the homeserver to get the latest events (and do error handling)
     const response = await this.getRequest(apiEndpoints.sync, data);

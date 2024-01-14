@@ -75,7 +75,17 @@ class MatrixClient {
    * @param url the endpoint to send the request to
    * @returns {Promise<AxiosResponse | undefined>} a promise that resolves to the HTTP response or undefined if the request failed
    */
-  public async getRequest(url: string): Promise<AxiosResponse | undefined> {
+  public async getRequest(
+    url: string,
+    data?: {[key: string]: string | number}
+  ): Promise<AxiosResponse | undefined> {
+    if (data) {
+      url += '?';
+      for (const key of Object.keys(data)) {
+        url += `${key}=${data[key]}&`;
+      }
+    }
+
     try {
       const response = await this.axiosInstance.get(url);
       return response;
