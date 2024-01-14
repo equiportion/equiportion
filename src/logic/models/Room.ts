@@ -1,11 +1,14 @@
-import EventParser from './events/EventParser';
-import type MatrixEvent from './events/MatrixEvent';
-import User from './User';
+import EventParser from '@/logic/models/events/EventParser';
+import type MatrixEvent from '@/logic/models/events/MatrixEvent';
+import User from '@/logic/models/User';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
+import validateTransactions from '@/logic/utils/validateTransactions';
 
 /**
  * A matrix room the logged in user has joined.
  * @author Jakob Gießibl
  * @author Philipp Stappert
+ * @author Jörn Mihatsch
  */
 class Room {
   private roomId: string;
@@ -18,6 +21,9 @@ class Room {
 
   private eventIds: string[] = [];
   private events: {[eventId: string]: MatrixEvent} = {};
+
+  private stateEventIds: string[] = [];
+  private stateEvents: {[eventId: string]: MatrixEvent} = {};
 
   private nextBatch: string = '';
 
@@ -40,8 +46,11 @@ class Room {
 
     for (const stateEvent of stateEvents) {
       const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
-
-      event?.execute();
+      if (!event) {
+        continue;
+      }
+      this.addStateEvent(event);
+      event.execute();
     }
 
     for (const timelineEvent of timelineEvents) {
@@ -145,7 +154,7 @@ class Room {
   }
 
   /**
-   * Gets the all events of a certain type this room has loaded.
+   * Gets the all events (in the timeline) of a certain type this room has loaded.
    * @param [type] the type of event to get
    * @returns {MatrixEvent[]} the events
    */
@@ -160,7 +169,25 @@ class Room {
   }
 
   /**
-   * Gets a specific event this room has loaded.
+   * All events (in the state event) of a certain type this room has loaded.
+   * @param [type] the type of event to get
+   * @returns {MatrixEvent[]} the events found
+   */
+  public getEventsWithStateEvents(type?: string): MatrixEvent[] {
+    const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
+    const stateEvents = this.stateEventIds.map((eventId) => this.getStateEvent(eventId)!);
+
+    const allEvents = stateEvents.concat(events);
+
+    if (!type) {
+      return allEvents;
+    }
+
+    return allEvents.filter((event: MatrixEvent) => event.getType() == type);
+  }
+
+  /**
+   * Gets a specific timeline event this room has loaded.
    * @param eventId the eventId of the event to get
    * @returns {MatrixEvent | undefined} the event if it exists and was loaded, undefinded otherwise
    */
@@ -169,10 +196,25 @@ class Room {
   }
 
   /**
-   * Adds a specific event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
+   * Gets the eventIds of all state events of a certain type this room has loaded.
+   * @param {string} eventId the eventId of the event to get
+   * @returns {MatrixEvent|undefined} the event if it exists and was loaded, undefinded otherwise
+   */
+  public getStateEvent(eventId: string): MatrixEvent | undefined {
+    return this.stateEvents[eventId];
+  }
+
+  /**
+   * Adds a specific timeline event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
    * @param event the event to add
    */
   public addEvent(event: MatrixEvent) {
+    // remove from state events if it is one
+    const stateEventIndex = this.stateEventIds.indexOf(event.getEventId());
+    if (stateEventIndex > -1) {
+      this.stateEventIds.splice(stateEventIndex, 1);
+    }
+
     const eventId = event.getEventId();
 
     if (!this.events[eventId]) {
@@ -180,6 +222,56 @@ class Room {
     }
 
     this.events[eventId] = event;
+
+    if (event.getType() == TransactionEvent.TYPE) {
+      validateTransactions(this);
+    }
+  }
+
+  /**
+   * Adds a specific state event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
+   * @param event the event to add
+   */
+  public addStateEvent(event: MatrixEvent) {
+    const eventId = event.getEventId();
+
+    if (!this.stateEvents[eventId]) {
+      this.stateEventIds.push(eventId);
+    }
+
+    this.stateEvents[eventId] = event;
+  }
+
+  /**
+   * Returns all balances between users in this room.
+   * @returns {{[userIds: string]: number}} the balances between users in this room (userIds are sorted alphabetically and concatenated directly without a seperator)
+   */
+  public getBalances(): {[userIds: string]: number} {
+    const balances: {[userIds: string]: number} = {};
+
+    // get all latest balances
+    const latestTransactionEvents: {[stateKey: string]: TransactionEvent} = {};
+
+    (this.getEventsWithStateEvents(TransactionEvent.TYPE) as TransactionEvent[]).forEach(
+      (event: TransactionEvent) => {
+        const stateKey = event.getStateKey();
+
+        latestTransactionEvents[stateKey] = event;
+      }
+    );
+
+    // calculate balances
+    Object.values(latestTransactionEvents).forEach((event: TransactionEvent) => {
+      Object.keys(event.getBalances()).forEach((userIds: string) => {
+        if (!balances[userIds]) {
+          balances[userIds] = 0;
+        }
+
+        balances[userIds] += event.getBalances()[userIds];
+      });
+    });
+
+    return balances;
   }
 }
 
