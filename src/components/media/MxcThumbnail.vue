@@ -90,8 +90,12 @@ async function loadThumbnail(): Promise<void> {
     }
   );
   if (response!.status == 200) {
-    const base64data = await blobToData(response!.data);
-    imageUrl.value = base64data as string;
+    try {
+      const base64data = await blobToData(response!.data);
+      imageUrl.value = base64data as string;
+    } catch (e) {
+      // just ignore and skip thumbnail
+    }
   }
 
   loading.value = false;
