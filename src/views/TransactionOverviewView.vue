@@ -121,19 +121,16 @@ function intersectPageEnd() {
 async function loadMoreTransactions() {
   showTransactionsLoader.value = true;
 
-  // TODO: implement
-  console.log('load more transactions');
-
-  // TODO: remove this timeout (just for testing the loader)
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const reloadAgain = await room.value?.loadPreviousEvents();
 
   showTransactionsLoader.value = false;
 
   // restart the intersection observer
-  // TODO: run only if there are more transactions to load
-  onIntersect(observeRef.value!, () => {
-    loadMoreTransactions();
-  });
+  if (reloadAgain == true) {
+    onIntersect(observeRef.value!, () => {
+      loadMoreTransactions();
+    });
+  }
 }
 
 /**
