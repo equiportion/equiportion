@@ -1,4 +1,4 @@
-//import {authenticated} from '../support/stubs';
+import {authenticated} from '../support/stubs';
 
 describe('/', () => {
   // it('renders', () => {
@@ -166,4 +166,145 @@ describe('/', () => {
   //     });
   //   });
   // });
+  it('submit button disabled when creditor missing', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('2000');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#removeCreditor').click();
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+    });
+  });
+  it('submit button disabled when sum invalid', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+      cy.get('#inputFieldSum').type('abc');
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+      cy.get('#inputFieldSum').type('{selectall}');
+      cy.get('#inputFieldSum').type('abc');
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+    });
+  });
+  it('submit button disabled when purpose missing', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('2000');
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+    });
+  });
+  it('submit button disabled when no debtor selected', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#inputFieldSum').type('2000');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#noDebtorMessage').should('be.visible');
+      cy.get('#submitButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+    });
+  });
+  it('add debtor button disabled when all room member selected', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').should(
+        'have.class',
+        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+      );
+    });
+  });
+  it('does not show add creditor button if creditor already selected', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#removeCreditor').click();
+      cy.get('#addCreditorButton').click();
+      cy.get('#creditorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addCreditorButton').should('not.exist');
+    });
+  });
+  it('shows error message if fixed amount greater as sum', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('2000');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#unevenSplitting>div').eq(1).children().eq(1).type('3000');
+      cy.get('#unevenSplitting>div')
+        .eq(1)
+        .children()
+        .eq(2)
+        .should(
+          'contain',
+          'Die Summe der festen Beträge darf nicht größer als der Gesamtbetrag sein'
+        );
+      cy.get('#unevenSplitting>div')
+        .eq(5)
+        .children()
+        .eq(2)
+        .should(
+          'contain',
+          'Die Summe der festen Beträge darf nicht größer als der Gesamtbetrag sein'
+        );
+      cy.get('#rest').should(
+        'contain',
+        'Die Summe der festen Beträge darf nicht größer als der Gesamtbetrag sein'
+      );
+    });
+  });
+  it('shows fixed amount', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
+      cy.get('#inputFieldSum').type('2000');
+      cy.get('#unevenSplitting>div').eq(1).children().eq(1).type('350');
+      cy.get('#unevenSplitting>div').eq(3).children().eq(1).should('have.value', '11,75');
+    });
+  });
 });
