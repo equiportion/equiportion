@@ -85,17 +85,15 @@ async function loadThumbnail(): Promise<void> {
 
   const response = await AuthenticatedMatrixClient.getClient().getRequest(
     apiEndpoints.thumbnailGet(serverName, mediaId, props.width, props.height, props.method),
+    undefined,
     {
       responseType: 'blob',
     }
   );
+
   if (response!.status == 200) {
-    try {
-      const base64data = await blobToData(response!.data);
-      imageUrl.value = base64data as string;
-    } catch (e) {
-      // just ignore and skip thumbnail
-    }
+    const base64data = await blobToData(response!.data);
+    imageUrl.value = base64data as string;
   }
 
   loading.value = false;
