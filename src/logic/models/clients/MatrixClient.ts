@@ -3,6 +3,7 @@ import MatrixError from '@/logic/models/clients/MatrixError';
 import {getCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
+import {type AxiosRequestConfig} from 'axios';
 
 /**
  * A client that can make requests to a matrix homeserver.
@@ -77,7 +78,8 @@ class MatrixClient {
    */
   public async getRequest(
     url: string,
-    data?: {[key: string]: string | number}
+    data?: {[key: string]: string | number},
+    axiosRequestConfig?: AxiosRequestConfig
   ): Promise<AxiosResponse | undefined> {
     if (data) {
       url += '?';
@@ -87,7 +89,7 @@ class MatrixClient {
     }
 
     try {
-      const response = await this.axiosInstance.get(url);
+      const response = await this.axiosInstance.get(url, axiosRequestConfig);
       return response;
     } catch (error) {
       this.handleRequestError(error);
