@@ -166,7 +166,7 @@ describe('/', () => {
   //     });
   //   });
   // });
-  Cypress.on('uncaught:exception', (err, runnable) => {
+  Cypress.on('uncaught:exception', () => {
     return false;
   });
   it('equal balance', () => {
