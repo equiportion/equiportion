@@ -89,9 +89,9 @@ const mainClasses = computed(() => {
     <SystemAlert v-if="transaction.isValid() == false" class="text-black mt-2" severity="danger">
       <span class="text-lg font-bold"> <i class="fa-solid fa-code-merge"></i>&nbsp;Konflikt </span>
       <br />
-      Es gibt ein Problem beim Zusammenführen dieser Transaktion mit dem aktuellen Stand, den von
+      Es gibt ein Problem beim Zusammenführen dieser Transaktion mit dem aktuellen Stand, der von
       dem selben Gerät aus gesendet wurde. Das kann passieren, wenn die App per Task-Manager beendet
-      wurde oder den Cache des Browsers gelöscht wurde.<br />
+      wurde oder der Cache des Browsers gelöscht wurde.<br />
       <strong>Was bedeutet das? </strong>Diese Transaktion wird
       <span class="underline">nicht in den aktuellen Schuldenstand eingerechnet</span>.<br />
       <strong>Was kann ich tun? </strong>Du kannst diese Transaktion erneut senden, um sie in den
