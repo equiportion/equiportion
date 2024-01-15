@@ -7,6 +7,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import {watch, ref} from 'vue';
+import waitForInitialSync from '@/logic/utils/waitForSync';
 
 const clientStateStore = useClientStateStore();
 
@@ -17,24 +18,23 @@ const roomsStore = useRoomsStore();
 const rooms = roomsStore.rooms;
 
 const balance = ref(0);
-watch(
-  () => rooms,
-  () => {
-    let sum = 0;
-    for (const room of Object.values(rooms)) {
-      const compensationCalculation = new NonOptimizedCompensation();
-      const compensation = compensationCalculation.calculateCompensation(room);
-      for (const comp of Object.values(compensation)) {
-        sum += comp;
-      }
+function calculateBalance() {
+  let sum = 0;
+  for (const room of Object.values(rooms)) {
+    const compensationCalculation = new NonOptimizedCompensation();
+    const compensation = compensationCalculation.calculateCompensation(room);
+    for (const comp of Object.values(compensation)) {
+      sum += comp;
     }
-    balance.value = sum;
-  },
-  {
-    immediate: true,
-    deep: true,
   }
-);
+  balance.value = sum;
+}
+waitForInitialSync().then(() => {
+  calculateBalance();
+});
+watch(rooms, () => {
+  calculateBalance();
+});
 
 const greeting = ref('');
 
