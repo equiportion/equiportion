@@ -218,6 +218,7 @@ function centsPart(num: number): string {
               <HeightFade>
                 <div
                   v-show="showTransactionsLoader"
+                  id="spinner"
                   class="flex flex-col items-center text-3xl text-gray-300"
                 >
                   <i class="fa-solid fa-spinner animate-spin"></i>
@@ -231,7 +232,7 @@ function centsPart(num: number): string {
       <div
         v-show="memberListOpen"
         id="memberList"
-        class="flex flex-col flex-grow w-full lg:w-1/4 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
+        class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
         <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
           <i class="fa-solid fa-angles-right"></i>

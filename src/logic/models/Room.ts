@@ -315,6 +315,10 @@ class Room {
 
     // calculate balances
     Object.values(latestTransactionEvents).forEach((event: TransactionEvent) => {
+      if (!event.getBalances()) {
+        return;
+      }
+
       Object.keys(event.getBalances()).forEach((userIds: string) => {
         if (!balances[userIds]) {
           balances[userIds] = 0;
