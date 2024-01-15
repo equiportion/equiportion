@@ -149,7 +149,11 @@ function centsPart(num: number): string {
 <template>
   <MainLayout>
     <!--shows a button that enables the user to add a new transaction-->
-    <RoundButton id="newTransactionButton" class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
+    <RoundButton
+      id="newTransactionButton"
+      class="fixed bottom-5 right-5 shadow-lg"
+      @click="newTransaction"
+    >
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
 
