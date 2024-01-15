@@ -187,15 +187,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('1523');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.intercept(
-        {
-          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
-          method: 'PUT',
-        },
-        {
-          fixture: 'transaction_event_put',
-        }
-      ).as('transactionEventPut2');
+      cy.wait('@transactionEventPut');
       cy.get('#newTransactionButton').click();
       cy.get('#removeCreditor').click();
       cy.get('#addCreditorButton').click();
@@ -205,7 +197,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('1523');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.wait('@transactionEventPut2').then(({request}) => {
+      cy.wait('@transactionEventPut').then(({request}) => {
         expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(0);
       });
     });
@@ -228,15 +220,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('5020');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.intercept(
-        {
-          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
-          method: 'PUT',
-        },
-        {
-          fixture: 'transaction_event_put',
-        }
-      ).as('transactionEventPut2');
+      cy.wait('@transactionEventPut');
       cy.get('#newTransactionButton').click();
       cy.get('#removeCreditor').click();
       cy.get('#addCreditorButton').click();
@@ -246,7 +230,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('6900');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.wait('@transactionEventPut2').then(({request}) => {
+      cy.wait('@transactionEventPut').then(({request}) => {
         expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(-1880);
       });
     });
@@ -269,15 +253,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('1500');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.intercept(
-        {
-          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
-          method: 'PUT',
-        },
-        {
-          fixture: 'transaction_event_put',
-        }
-      ).as('transactionEventPut2');
+      cy.wait('@transactionEventPut');
       cy.get('#newTransactionButton').click();
       cy.get('#removeCreditor').click();
       cy.get('#addCreditorButton').click();
@@ -287,7 +263,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('1000');
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
-      cy.wait('@transactionEventPut2').then(({request}) => {
+      cy.wait('@transactionEventPut').then(({request}) => {
         expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(500);
       });
     });
