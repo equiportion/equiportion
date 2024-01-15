@@ -166,6 +166,132 @@ describe('/', () => {
   //     });
   //   });
   // });
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    return false;
+  });
+  it('equal balance', () => {
+    authenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut');
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('1523');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut2');
+      cy.get('#newTransactionButton').click();
+      cy.get('#removeCreditor').click();
+      cy.get('#addCreditorButton').click();
+      cy.get('#creditorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(3).click();
+      cy.get('#inputFieldSum').type('1523');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.wait('@transactionEventPut2').then(({request}) => {
+        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(0);
+      });
+    });
+  });
+  it('negative balance', () => {
+    authenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut');
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('5020');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut2');
+      cy.get('#newTransactionButton').click();
+      cy.get('#removeCreditor').click();
+      cy.get('#addCreditorButton').click();
+      cy.get('#creditorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(3).click();
+      cy.get('#inputFieldSum').type('6900');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.wait('@transactionEventPut2').then(({request}) => {
+        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(-1880);
+      });
+    });
+  });
+  it('positive balance', () => {
+    authenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut');
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(4).children().eq(1).children().eq(1).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#inputFieldSum').type('1500');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/state/edu.kit.kastel.dsn.pse.transaction/*',
+          method: 'PUT',
+        },
+        {
+          fixture: 'transaction_event_put',
+        }
+      ).as('transactionEventPut2');
+      cy.get('#newTransactionButton').click();
+      cy.get('#removeCreditor').click();
+      cy.get('#addCreditorButton').click();
+      cy.get('#creditorUserDropdown>div').eq(1).children().eq(2).click();
+      cy.get('#addDebtorButton').click();
+      cy.get('#debtorUserDropdown>div').eq(1).children().eq(3).click();
+      cy.get('#inputFieldSum').type('1000');
+      cy.get('#inputFieldPurpose').type('testzwecke');
+      cy.get('#submitButton').click();
+      cy.wait('@transactionEventPut2').then(({request}) => {
+        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(500);
+      });
+    });
+  });
   it('submit button disabled when creditor missing', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');

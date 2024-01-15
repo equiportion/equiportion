@@ -43,4 +43,16 @@ describe('/', () => {
   //     cy.get('#transactions .fa-solid.fa-chevron-right.w-5').should('not.be.visible');
   //   });
   // });
+  it('does not show transaction balance to myself', () => {
+    authenticated(() => {
+      cy.visit('http://localhost:5173/');
+      cy.get('#rooms>div').eq(2).click();
+      cy.get('#toggleMemberListButton').click();
+      cy.get('#userTiles>div')
+        .eq(0)
+        .should('not.contain', 'Du schuldest')
+        .and('not.contain', 'Schuldet dir')
+        .and('not.contain', 'Ausgeglichen');
+    });
+  });
 });
