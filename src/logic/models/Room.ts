@@ -277,7 +277,7 @@ class Room {
     this.events[eventId] = event;
 
     if (event.getType() == TransactionEvent.TYPE) {
-      validateTransactions(this, before);
+      validateTransactions(this, true);
     }
   }
 
