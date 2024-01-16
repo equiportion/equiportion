@@ -33,3 +33,6 @@ cypress-report.xml
 
 # passwords
 cypress/fixtures/test-accounts.json
+
+# webmanifest tests
+dev-dist/*
