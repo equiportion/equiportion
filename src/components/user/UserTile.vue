@@ -29,17 +29,19 @@ const displayNameClasses = computed(() => {
 </script>
 <template>
   <div class="flex flex-row items-center gap-2">
-    <MxcOrPlaceholderImage
-      class="rounded-full w-12 h-12"
-      :mxc-url="user?.getAvatarUrl()"
-      :placeholder-text="user?.getDisplayname() ?? user?.getUserId()"
-    />
+    <div class="flex-shrink-0">
+      <MxcOrPlaceholderImage
+        class="rounded-full w-12 h-12"
+        :mxc-url="user?.getAvatarUrl()"
+        :placeholder-text="user?.getDisplayname() ?? user?.getUserId()"
+      />
+    </div>
     <div class="flex flex-col overflow-hidden flex-shrink">
       <div class="flex flex-row text-gray-900">
         <span :class="displayNameClasses">
           {{ user?.getDisplayname() ?? user?.getUserId() ?? 'unbekannter Benutzer' }}
         </span>
-        <span v-if="isLoggedInUser"> (Ich) </span>
+        <span v-if="isLoggedInUser">&nbsp;(Ich) </span>
       </div>
       <span
         v-if="user?.getDisplayname()"

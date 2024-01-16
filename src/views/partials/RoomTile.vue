@@ -4,8 +4,9 @@ import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue'
 import Room from '@/logic/models/Room';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed} from 'vue';
+import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
+import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 
 const props = defineProps({
   room: {
@@ -36,6 +37,40 @@ const showUserBadges = computed(() => {
   }
   return badgeList;
 });
+
+const sum: Ref<number | undefined> = ref(undefined);
+
+watch(
+  () => props.room,
+  () => {
+    const compensationCalculation = new NonOptimizedCompensation();
+    const compensation = compensationCalculation.calculateCompensation(props.room);
+    let sumCalc = 0;
+    for (const userId in compensation) {
+      sumCalc += compensation[userId];
+    }
+    sum.value = sumCalc;
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
+
+/**
+ * Generic Functions
+ */
+function eurosPart(num: number): string {
+  if (num < 0) {
+    // remove minus string
+    num = Math.abs(num);
+  }
+  return Math.floor(num / 100).toString();
+}
+
+function centsPart(num: number): string {
+  return ('00' + (num % 100)).slice(-2);
+}
 </script>
 <template>
   <div
@@ -43,11 +78,13 @@ const showUserBadges = computed(() => {
     @click="openTransactions()"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
-      <MxcOrPlaceholderImage
-        :mxc-url="room.getAvatarUrl() ?? ''"
-        class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
-        :placeholder-text="room.getName() ?? '?'"
-      />
+      <div class="flex-shrink-0">
+        <MxcOrPlaceholderImage
+          :mxc-url="room.getAvatarUrl() ?? ''"
+          class="rounded-full w-16 h-16 lg:w-32 lg:h-32"
+          :placeholder-text="room.getName() ?? '?'"
+        />
+      </div>
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div class="flex flex-col">
@@ -62,9 +99,9 @@ const showUserBadges = computed(() => {
         <div
           class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"
         >
-          <div class="flex flex-row flex-wrap justify-center gap-2">
+          <div class="flex flex-row flex-wrap justify-center lg:justify-start gap-2">
             <span class="font-bold flex flex-row items-center">
-              <i class="fa-solid fa-users mr-1"></i>
+              <i class="fa-solid fa-users fa-fw mr-1"></i>
               {{ Object.keys(room.getMembers()).length }} Mitglied
               <span v-if="Object.keys(room.getMembers()).length > 1">er</span>
             </span>
@@ -74,9 +111,16 @@ const showUserBadges = computed(() => {
             </template>
             <span v-if="Object.keys(room!.getMembers()).length > 3">...</span>
           </div>
-          <div>
-            <span class="font-bold"><i class="fa-solid fa-coins"></i> Schulden</span>
-            5 €
+          <div v-if="sum! > 0" class="flex flex-row gap-1 text-red-600">
+            <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du schuldest</span>
+            <span>{{ eurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+          </div>
+          <div v-else-if="sum! < 0" class="flex flex-row gap-1 text-green-600">
+            <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du erhältst</span>
+            <span>{{ eurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+          </div>
+          <div v-else class="flex flex-row gap-1 text-blue-600">
+            <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Ausgeglichen</span>
           </div>
         </div>
       </div>

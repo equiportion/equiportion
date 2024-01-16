@@ -20,6 +20,9 @@ const apiEndpoints = {
   ) => {
     return `/_matrix/media/v3/thumbnail/${serverName}/${mediaId}?width=${width}&height=${height}&method=${method}`;
   },
+  roomMessagesGet(roomId: string, from: string, dir: string) {
+    return `/_matrix/client/v3/rooms/${roomId}/messages?from=${from}&dir=${dir}`;
+  },
 };
 
 export default apiEndpoints;

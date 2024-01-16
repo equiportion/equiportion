@@ -13,6 +13,7 @@ describe('login and logout', () => {
   it('correct login data logs in', () => {
     login('no-rooms');
     cy.get('#rooms').should('exist');
+    cy.get('#welcome-message-user', {timeout: 7000}).should('exist');
   });
   it('logout works', () => {
     login('no-rooms');

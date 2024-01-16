@@ -18,7 +18,7 @@ install-npm-dependencies:
   script:
     - npm install
   tags:
-    - build-2
+    - build
   artifacts:
     paths:
       - node_modules/
@@ -36,7 +36,7 @@ build-review:
     - npm install
     - npm run build
   tags:
-    - build-2
+    - build
   artifacts:
     paths:
       - dist/
@@ -51,7 +51,7 @@ build-production:
     - npm install
     - npm run build
   tags:
-    - build-2
+    - build
   artifacts:
     paths:
       - dist/
@@ -71,7 +71,7 @@ eslint:
   script:
     - npx eslint --format gitlab .
   tags:
-    - build-2
+    - build
   artifacts:
     reports:
       codequality: gl-codequality.json
@@ -85,7 +85,7 @@ prettier:
   script:
     - npx prettier-formatter-gitlab 'prettier -l src/'
   tags:
-    - build-2
+    - build
   artifacts:
     reports:
       codequality: gl-codequality.json
@@ -102,7 +102,7 @@ cypress:
     - npx cypress install
     - npm run dev & npx cypress run
   tags:
-    - build-2
+    - build
   artifacts:
     reports:
       junit: cypress-report.xml
@@ -131,7 +131,7 @@ deploy-review:
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; mirror -p -X .* -X .*/ --reverse --verbose dist/ $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
   tags:
-    - build-2
+    - build
 
 stop-review:
   environment:
@@ -146,7 +146,7 @@ stop-review:
   script:
     - lftp -c "set sftp:auto-confirm yes ; open sftp://$FTP_HOST:$FTP_PORT; user $FTP_USERNAME $FTP_PASSWORD; rm -r $FTP_PATH/$CI_COMMIT_REF_SLUG; bye"
   tags:
-    - build-2
+    - build
 
 deploy-production:
   stage: deploy
@@ -168,13 +168,12 @@ deploy-production:
   only:
     - main
   tags:
-    - build-2
-
+    - build
 
 # dependency scanning
 include:
-- template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 gemnasium-dependency_scanning:
   tags:
-    - infra-2
+    - docker

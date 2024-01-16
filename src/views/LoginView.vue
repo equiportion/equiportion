@@ -32,7 +32,9 @@ async function login() {
   const successful = await loginMatrixClient.passwordLogin(userId.value, password.value);
   if (successful) {
     error.value = undefined;
-    router.push({name: 'home'});
+    router.push({name: 'home'}).then(() => {
+      router.go(0);
+    });
   } else {
     error.value = 'Ungültiger Benutzername oder Passwort';
   }

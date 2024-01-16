@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 import InputField from '@/components/input/InputField.vue';
 
@@ -55,14 +55,26 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
+
+const changeCounter = ref(0);
 
 const inputValue = computed({
   get(): string | number {
+    changeCounter.value;
+
     return props.modelValue;
   },
   set(value: string | number) {
     emit('update:modelValue', value);
+
+    // force recomputation of inputValue
+    changeCounter.value++;
   },
 });
 </script>
@@ -79,6 +91,7 @@ const inputValue = computed({
       :min="min"
       :max="max"
       :step="step"
+      :disabled="disabled"
     />
     <small v-if="error" class="block text-sm text-red-500"> {{ error }} </small>
   </div>

@@ -3,6 +3,7 @@ import MatrixError from '@/logic/models/clients/MatrixError';
 import {getCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
+import {type AxiosRequestConfig} from 'axios';
 
 /**
  * A client that can make requests to a matrix homeserver.
@@ -73,12 +74,22 @@ class MatrixClient {
   /**
    * Sends a get request to the matrix homeserver.
    * @param url the endpoint to send the request to
-   * @param data the data to send with the request
    * @returns {Promise<AxiosResponse | undefined>} a promise that resolves to the HTTP response or undefined if the request failed
    */
-  public async getRequest(url: string, data?: any): Promise<AxiosResponse | undefined> {
+  public async getRequest(
+    url: string,
+    data?: {[key: string]: string | number},
+    axiosRequestConfig?: AxiosRequestConfig
+  ): Promise<AxiosResponse | undefined> {
+    if (data) {
+      url += '?';
+      for (const key of Object.keys(data)) {
+        url += `${key}=${data[key]}&`;
+      }
+    }
+
     try {
-      const response = await this.axiosInstance.get(url, data);
+      const response = await this.axiosInstance.get(url, axiosRequestConfig);
       return response;
     } catch (error) {
       this.handleRequestError(error);

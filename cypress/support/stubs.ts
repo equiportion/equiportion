@@ -70,12 +70,22 @@ function authenticated(tests: Function, authenticatedOptions: authenticatedOptio
   cy.intercept(
     {
       method: 'GET',
-      url: '/_matrix/client/v3/sync',
+      url: '/_matrix/client/v3/sync*',
     },
     {
       fixture: 'matrix_client_v3_sync-' + (authenticatedOptions.syncOption ?? 'default') + '.json',
     }
   ).as('sync');
+
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/messages*',
+    },
+    {
+      fixture: 'matrix_client_v3_rooms_messages.json',
+    }
+  ).as('loadMoreMessages');
 
   tests();
 

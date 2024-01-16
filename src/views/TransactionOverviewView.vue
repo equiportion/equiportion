@@ -1,9 +1,4 @@
 <script setup lang="ts">
-/**
- * @component {TransactionOverview} - Shows all transactions in a group.
- * @author Leandro El Omari
- */
-
 import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
@@ -13,28 +8,41 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref} from 'vue';
+import {computed, ref, watch, type Ref, onMounted} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import type Room from '@/logic/models/Room';
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import {onIntersect} from '@/composables/useIntersectionObserver';
+import HeightFade from '@/components/transitions/HeightFade.vue';
+import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
-// load room
-waitForInitialSync().then(() => {
+const compensation: Ref<{[userId: string]: number}> = ref({});
+
+// load rooms
+function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
   transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  transactionEvents.value.reverse();
+
+  const compensationCalculation = new NonOptimizedCompensation();
+  compensation.value = compensationCalculation.calculateCompensation(room.value!);
+}
+
+// load room
+waitForInitialSync().then(() => {
+  loadRooms();
 });
 
 // update if room changes
 watch(roomId, () => {
-  room.value = roomsStore.getRoom(roomId.value);
-  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
+  loadRooms();
 });
 
 const transactionEvents: Ref<TransactionEvent[]> = ref([]);
@@ -88,12 +96,64 @@ const showUserBadges = computed(() => {
   }
   return badgeList;
 });
+
+onMounted(() => {
+  // start the intersection observer
+  intersectPageEnd();
+});
+
+const observeRef: Ref<HTMLElement | null> = ref(null);
+const showTransactionsLoader = ref(false);
+
+/**
+ * Checks whether the user sees the "observeRef" element.
+ * If so, the function "loadMoreTransactions" is called.
+ */
+function intersectPageEnd() {
+  onIntersect(observeRef.value!, () => {
+    loadMoreTransactions();
+  });
+}
+
+/**
+ * Loads more transactions.
+ */
+async function loadMoreTransactions() {
+  showTransactionsLoader.value = true;
+
+  const reloadAgain = await room.value?.loadPreviousEvents();
+  loadRooms();
+
+  showTransactionsLoader.value = false;
+
+  // restart the intersection observer
+  if (reloadAgain == true) {
+    onIntersect(observeRef.value!, () => {
+      loadMoreTransactions();
+    });
+  }
+}
+
+/**
+ * Generic Functions
+ */
+function eurosPart(num: number): string {
+  return Math.floor(num / 100).toString();
+}
+
+function centsPart(num: number): string {
+  return ('00' + (num % 100)).slice(-2);
+}
 </script>
 
 <template>
   <MainLayout>
     <!--shows a button that enables the user to add a new transaction-->
-    <RoundButton class="fixed bottom-5 right-5 shadow-lg" @click="newTransaction">
+    <RoundButton
+      id="newTransactionButton"
+      class="fixed bottom-5 right-5 shadow-lg"
+      @click="newTransaction"
+    >
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
 
@@ -138,22 +198,36 @@ const showUserBadges = computed(() => {
             </div>
           </div>
 
-          <div v-if="room" class="flex flex-col mt-10 lg:mt-5">
+          <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
-            <template v-if="transactionEvents && transactionEvents.length <= 0">
+            <div v-show="transactionEvents && transactionEvents.length <= 0">
               <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
                 Keine Transaktionen vorhanden
               </span>
-            </template>
+            </div>
 
             <!--the header of the table containing the transactions-->
-            <div v-else id="transactions" class="flex flex-col justify-center gap-5">
+            <div
+              v-show="!(transactionEvents && transactionEvents.length <= 0)"
+              id="transactions"
+              class="flex flex-col justify-center gap-5"
+            >
               <!--shows all transaction using the transacion tile partial-->
               <TransactionTile
                 v-for="transactionEvent in transactionEvents"
                 :key="transactionEvent.getEventId()"
                 :transaction="transactionEvent"
               />
+              <div ref="observeRef"></div>
+              <HeightFade>
+                <div
+                  v-show="showTransactionsLoader"
+                  id="spinner"
+                  class="flex flex-col items-center text-3xl text-gray-300"
+                >
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                </div>
+              </HeightFade>
             </div>
           </div>
         </div>
@@ -162,7 +236,7 @@ const showUserBadges = computed(() => {
       <div
         v-show="memberListOpen"
         id="memberList"
-        class="flex flex-col flex-grow w-full lg:w-1/4 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
+        class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
         <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
           <i class="fa-solid fa-angles-right"></i>
@@ -170,9 +244,45 @@ const showUserBadges = computed(() => {
 
         <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
-          <UserTile :user="room?.getMember(loggedInUser.getUserId())!" />
+          <UserTile
+            :user="room?.getMember(loggedInUser.getUserId())!"
+            class="bg-gray-300 p-2 rounded-lg"
+          />
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
-            <UserTile v-if="member.getUserId() != loggedInUser.getUserId()" :user="member" />
+            <div
+              v-if="member.getUserId() != loggedInUser.getUserId()"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+            >
+              <UserTile :user="member" class="w-full" />
+              <span
+                v-if="compensation[member.getUserId()] && compensation[member.getUserId()] > 0"
+                class="text-sm text-red-600 font-bold"
+              >
+                <i class="fa-solid fa-coins"></i>
+                Du schuldest
+                {{ eurosPart(compensation[member.getUserId()]) }},{{
+                  centsPart(compensation[member.getUserId()])
+                }}
+                €
+              </span>
+              <span
+                v-else-if="compensation[member.getUserId()] && compensation[member.getUserId()] < 0"
+                class="text-sm text-green-600 font-bold"
+              >
+                <i class="fa-solid fa-coins"></i>
+                Schuldet dir
+                {{
+                  eurosPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
+                }},{{
+                  centsPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
+                }}
+                €
+              </span>
+              <span v-else class="text-sm text-blue-600 font-bold">
+                <i class="fa-solid fa-coins"></i>
+                Ausgeglichen
+              </span>
+            </div>
           </template>
         </div>
       </div>
