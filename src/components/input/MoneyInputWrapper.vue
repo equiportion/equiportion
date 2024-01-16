@@ -58,11 +58,16 @@ const moneyInputValue = computed({
 
 // converts displayed value to cents and emits update
 function setValue(value: string) {
-  if (value == undefined || value == '') {
+  if (value == undefined) {
     value = '0,00';
   }
 
   value = value.replace(/\D/g, '');
+
+  if (value == '') {
+    value = '0,00';
+  }
+
   const cents = parseInt(value);
 
   emit('update:modelValue', cents);
