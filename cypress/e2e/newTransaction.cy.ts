@@ -166,9 +166,6 @@ describe('/', () => {
   //     });
   //   });
   // });
-  Cypress.on('uncaught:exception', () => {
-    return false;
-  });
   it('equal balance', () => {
     authenticated(() => {
       cy.intercept(
@@ -198,7 +195,11 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
       cy.wait('@transactionEventPut').then(({request}) => {
-        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(0);
+        expect(
+          request.body.balances[
+            '@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu'
+          ]
+        ).to.eq(0);
       });
     });
   });
@@ -231,7 +232,11 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
       cy.wait('@transactionEventPut').then(({request}) => {
-        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(-1880);
+        expect(
+          request.body.balances[
+            '@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu'
+          ]
+        ).to.eq(-1880);
       });
     });
   });
@@ -264,7 +269,11 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').click();
       cy.wait('@transactionEventPut').then(({request}) => {
-        expect(request.body.balances['@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu']).to.eq(500);
+        expect(
+          request.body.balances[
+            '@philipptest3:stub.pse.dsn.kastel.kit.edu@stub:stub.pse.dsn.kastel.kit.edu'
+          ]
+        ).to.eq(500);
       });
     });
   });
