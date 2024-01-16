@@ -1,0 +1,30 @@
+{
+  "chunk": [
+    {
+      "type": "edu.kit.kastel.dsn.pse.transaction",
+      "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+      "content": {
+        "purpose": "Ich wurde nachgeladen",
+        "sum": "456",
+        "creditor": "@stub:stub.pse.dsn.kastel.kit.edu",
+        "debtors": [
+          {
+            "user": "@philipptest2:stub.pse.dsn.kastel.kit.edu",
+            "amount": "228"
+          },
+          {
+            "user": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+            "amount": "228"
+          }
+        ]
+      },
+      "origin_server_ts": 1702553839385,
+      "unsigned": {
+        "age": 94780534,
+        "transaction_id": "e2455b8b-2bc2-4bfc-86a1-4a8e592115d4"
+      },
+      "event_id": "$wtf_liest_eh_niemand"
+    }
+  ],
+  "start": "t34-575_6740_0_79_133_1_27_2892_0_2"
+}
