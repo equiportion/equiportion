@@ -11,7 +11,7 @@
  * @prop {string} [label=''] - The label text.
  */
 
-import {computed, ref} from 'vue';
+import {computed, ref, watch} from 'vue';
 
 const props = defineProps({
   placeholder: {
@@ -33,21 +33,23 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const changeCounter = ref(0);
+const inputValue = ref('');
 
-const inputValue = computed({
-  get(): string | number {
-    changeCounter.value;
-
-    return props.modelValue;
+watch(
+  () => props.modelValue,
+  () => {
+    inputValue.value = props.modelValue.toString();
   },
-  set(value: string | number) {
-    emit('update:modelValue', value);
+  {immediate: true}
+);
 
-    // force recomputation of inputValue
-    changeCounter.value++;
-  },
-});
+watch(
+  () => inputValue.value,
+  () => {
+    emit('update:modelValue', inputValue.value);
+    inputValue.value = props.modelValue.toString();
+  }
+);
 
 const inputClasses = computed(() => {
   const classes =
