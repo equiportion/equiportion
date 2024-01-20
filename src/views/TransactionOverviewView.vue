@@ -18,7 +18,6 @@ import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
-import type StateEvent from '@/logic/models/events/StateEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -26,7 +25,7 @@ const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
-const events: Ref<StateEvent[]> = ref([]);
+const events: Ref<(TransactionEvent | MRoomMemberEvent)[]> = ref([]);
 
 // load rooms
 function loadRooms() {
@@ -38,7 +37,7 @@ function loadRooms() {
     if (event instanceof TransactionEvent) {
       return true;
     } else if (event instanceof MRoomMemberEvent) {
-      return isJoinEvent(event) || isLeaveEvent(event);
+      return isJoinEvent(event) || isLeaveEvent(event) || isInviteEvent(event);
     }
     return false;
   }) as (TransactionEvent | MRoomMemberEvent)[];
@@ -59,6 +58,12 @@ function isJoinEvent(event: MRoomMemberEvent): boolean {
 function isLeaveEvent(event: MRoomMemberEvent): boolean {
   const content = event.toEventContent() as {membership?: string};
   return content.membership === 'leave';
+}
+
+//check if event is invite
+function isInviteEvent(event: MRoomMemberEvent): boolean {
+  const content = event.toEventContent() as {membership?: string};
+  return content.membership === 'invite';
 }
 
 //get displayname from MRoomMemberEvent
@@ -249,10 +254,14 @@ function centsPart(num: number): string {
                 <div v-if="event instanceof TransactionEvent">
                   <TransactionTile :transaction="event as TransactionEvent" />
                 </div>
-                <div v-if="event instanceof MRoomMemberEvent" class="flex flex-row justify-center italic text-gray-600 text-sm">
+                <div
+                  v-if="event instanceof MRoomMemberEvent"
+                  class="flex flex-row justify-center italic text-gray-600 text-sm"
+                >
                   {{ getDisplayname(event) }}&nbsp;
                   <div v-if="isJoinEvent(event)">ist beigetreten</div>
                   <div v-if="isLeaveEvent(event)">hat den Raum verlassen</div>
+                  <div v-if="isInviteEvent(event)">wurde eingeladen</div>
                 </div>
               </div>
 
