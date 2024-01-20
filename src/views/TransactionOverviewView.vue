@@ -17,6 +17,8 @@ import waitForInitialSync from '@/logic/utils/waitForSync';
 import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
+import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
+import type StateEvent from '@/logic/models/events/StateEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -24,6 +26,7 @@ const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
+const events: Ref<StateEvent[]> = ref([]);
 
 // load rooms
 function loadRooms() {
@@ -31,8 +34,37 @@ function loadRooms() {
   transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
   transactionEvents.value.reverse();
 
+  events.value = room.value?.getEvents().filter((event) => {
+    if (event instanceof TransactionEvent) {
+      return true;
+    } else if (event instanceof MRoomMemberEvent) {
+      return isJoinEvent(event) || isLeaveEvent(event);
+    }
+    return false;
+  }) as (TransactionEvent | MRoomMemberEvent)[];
+  events.value.reverse();
+  console.log(events.value);
+
   const compensationCalculation = new NonOptimizedCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
+}
+
+//check if event is join
+function isJoinEvent(event: MRoomMemberEvent): boolean {
+  const content = event.toEventContent() as {membership?: string};
+  return content.membership === 'join';
+}
+
+//check if event is leave
+function isLeaveEvent(event: MRoomMemberEvent): boolean {
+  const content = event.toEventContent() as {membership?: string};
+  return content.membership === 'leave';
+}
+
+//get displayname from MRoomMemberEvent
+function getDisplayname(event: MRoomMemberEvent): string {
+  const members = room.value?.getMembers() as {[userId: string]: User};
+  return members[event.getStateKey()].getDisplayname() ?? members[event.getStateKey()].getUserId();
 }
 
 // load room
@@ -213,11 +245,17 @@ function centsPart(num: number): string {
               class="flex flex-col justify-center gap-5"
             >
               <!--shows all transaction using the transacion tile partial-->
-              <TransactionTile
-                v-for="transactionEvent in transactionEvents"
-                :key="transactionEvent.getEventId()"
-                :transaction="transactionEvent"
-              />
+              <div v-for="event in events" :key="event.getEventId()">
+                <div v-if="event instanceof TransactionEvent">
+                  <TransactionTile :transaction="event as TransactionEvent" />
+                </div>
+                <div v-if="event instanceof MRoomMemberEvent" class="flex flex-row justify-center italic text-gray-600 text-sm">
+                  {{ getDisplayname(event) }}&nbsp;
+                  <div v-if="isJoinEvent(event)">ist beigetreten</div>
+                  <div v-if="isLeaveEvent(event)">hat den Raum verlassen</div>
+                </div>
+              </div>
+
               <div ref="observeRef"></div>
               <HeightFade>
                 <div
