@@ -12,6 +12,8 @@ import router from '@/router';
 import cookieNames from '@/logic/constants/cookieNames';
 import MatrixClient from '@/logic/models/clients/MatrixClient';
 import {setCookie} from '@/logic/utils/cookies';
+import axios from 'axios';
+import {url} from 'inspector';
 
 const loading = ref(false);
 
@@ -20,7 +22,7 @@ const password = ref('');
 
 const error = ref();
 
-const loginMatrixClient = new LoginMatrixClient();
+var loginMatrixClient: LoginMatrixClient;
 validateHomeserverUrl();
 
 async function validateHomeserverUrl() {
@@ -33,10 +35,22 @@ async function login() {
   // check if in the name the homeserver is given
   if (userId.value.includes(':')) {
     const homeserverName: string = userId.value.split(':')[1];
-    userId.value = userId.value.split(':')[0];
-    const homeserverUrl: string = homeserverName; //TODO get homeserver URL from wellknown at homeserverName
+    const axiosInstance = axios.create({
+      baseURL: homeserverName,
+    });
+    var homeserverUrl: string;
 
-    // copy from EnterHomeserverView.vue //TODO refactor
+    userId.value = userId.value.split(':')[0];
+    const response = await axiosInstance.get('.well-known/matrix/client');
+
+    if (!response.data.homeserver.base_url) {
+      error.value = 'Ungültiger Homeserver-Name';
+      return;
+    } else {
+      homeserverUrl = response.data.homeserver.base_url;
+    }
+
+    // copy from file "EnterHomeserverView.vue" //TODO refactor
     const matrixClient = new MatrixClient(homeserverUrl);
 
     if (await matrixClient.isHomeserverUrlValid()) {
@@ -48,7 +62,9 @@ async function login() {
       error.value = 'Ungültiger Homeserver-Name';
     }
 
-    //TODO keine Ahnung ob der neue Homeserver bereits bei loginMatrixClient angekommen ist
+    loginMatrixClient = new LoginMatrixClient(homeserverUrl);
+  } else {
+    loginMatrixClient = new LoginMatrixClient();
   }
 
   loading.value = true;
