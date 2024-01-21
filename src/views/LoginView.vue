@@ -21,7 +21,7 @@ const password = ref('');
 
 const error = ref();
 
-var loginMatrixClient: LoginMatrixClient;
+var loginMatrixClient: LoginMatrixClient = new LoginMatrixClient();
 validateHomeserverUrl();
 
 async function validateHomeserverUrl() {
@@ -62,8 +62,6 @@ async function login() {
     }
 
     loginMatrixClient = new LoginMatrixClient(homeserverUrl);
-  } else {
-    loginMatrixClient = new LoginMatrixClient();
   }
 
   loading.value = true;
