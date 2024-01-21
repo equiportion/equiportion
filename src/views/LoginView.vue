@@ -13,7 +13,6 @@ import cookieNames from '@/logic/constants/cookieNames';
 import MatrixClient from '@/logic/models/clients/MatrixClient';
 import {setCookie} from '@/logic/utils/cookies';
 import axios from 'axios';
-import {url} from 'inspector';
 
 const loading = ref(false);
 
