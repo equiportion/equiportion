@@ -18,6 +18,15 @@ const error = ref();
 async function continueToLogin() {
   loading.value = true;
 
+  //just to make testing the wellknown thing easier //TODO remove afterwards
+  if (homeserverUrl.value == '') {
+    loading.value = false;
+    setCookie(cookieNames.homeserverUrl, '');
+    router.push({name: 'login'});
+    return;
+  }
+  //the testing thing ends hier
+
   const matrixClient = new MatrixClient(homeserverUrl.value);
 
   if (await matrixClient.isHomeserverUrlValid()) {

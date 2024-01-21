@@ -22,7 +22,7 @@ const password = ref('');
 const error = ref();
 
 var loginMatrixClient: LoginMatrixClient = new LoginMatrixClient();
-validateHomeserverUrl();
+//validateHomeserverUrl(); //TODO uncomment when finished testing the wellknown thing
 
 async function validateHomeserverUrl() {
   if (!(await loginMatrixClient.isHomeserverUrlValid())) {
