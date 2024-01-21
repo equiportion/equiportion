@@ -9,6 +9,9 @@ import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
 import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient.js';
 import router from '@/router';
+import cookieNames from '@/logic/constants/cookieNames';
+import MatrixClient from '@/logic/models/clients/MatrixClient';
+import {setCookie} from '@/logic/utils/cookies';
 
 const loading = ref(false);
 
@@ -27,6 +30,27 @@ async function validateHomeserverUrl() {
 }
 
 async function login() {
+  // check if in the name the homeserver is given
+  if (userId.value.includes(':')) {
+    const homeserverName: string = userId.value.split(':')[1];
+    userId.value = userId.value.split(':')[0];
+    const homeserverUrl: string = homeserverName; //TODO get homeserver URL from wellknown at homeserverName
+
+    // copy from EnterHomeserverView.vue //TODO refactor
+    const matrixClient = new MatrixClient(homeserverUrl);
+
+    if (await matrixClient.isHomeserverUrlValid()) {
+      error.value = undefined;
+
+      setCookie(cookieNames.homeserverUrl, homeserverUrl);
+      router.push({name: 'login'});
+    } else {
+      error.value = 'Ungültiger Homeserver-Name';
+    }
+
+    //TODO keine Ahnung ob der neue Homeserver bereits bei loginMatrixClient angekommen ist
+  }
+
   loading.value = true;
 
   const successful = await loginMatrixClient.passwordLogin(userId.value, password.value);
