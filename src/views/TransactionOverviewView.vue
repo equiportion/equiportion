@@ -37,7 +37,7 @@ function loadRooms() {
     if (event instanceof TransactionEvent) {
       return true;
     } else if (event instanceof MRoomMemberEvent) {
-      return isJoinEvent(event) || isLeaveEvent(event) || isInviteEvent(event);
+      return isMembershipEvent(event);
     }
     return false;
   }) as (TransactionEvent | MRoomMemberEvent)[];
@@ -49,21 +49,15 @@ function loadRooms() {
 }
 
 //check if event is join
-function isJoinEvent(event: MRoomMemberEvent): boolean {
+function isMembershipEvent(event: MRoomMemberEvent): string | undefined {
   const content = event.toEventContent() as {membership?: string};
-  return content.membership === 'join';
-}
-
-//check if event is leave
-function isLeaveEvent(event: MRoomMemberEvent): boolean {
-  const content = event.toEventContent() as {membership?: string};
-  return content.membership === 'leave';
-}
-
-//check if event is invite
-function isInviteEvent(event: MRoomMemberEvent): boolean {
-  const content = event.toEventContent() as {membership?: string};
-  return content.membership === 'invite';
+  if (
+    content.membership === 'join' ||
+    content.membership === 'leave' ||
+    content.membership === 'invite'
+  ) {
+    return content.membership;
+  }
 }
 
 //get displayname from MRoomMemberEvent
@@ -259,9 +253,9 @@ function centsPart(num: number): string {
                   class="flex flex-row justify-center italic text-gray-600 text-sm"
                 >
                   {{ getDisplayname(event) }}&nbsp;
-                  <div v-if="isJoinEvent(event)">ist beigetreten</div>
-                  <div v-if="isLeaveEvent(event)">hat den Raum verlassen</div>
-                  <div v-if="isInviteEvent(event)">wurde eingeladen</div>
+                  <div v-if="isMembershipEvent(event) == 'join'">ist beigetreten</div>
+                  <div v-if="isMembershipEvent(event) == 'leave'">hat den Raum verlassen</div>
+                  <div v-if="isMembershipEvent(event) == 'invite'">wurde eingeladen</div>
                 </div>
               </div>
 
