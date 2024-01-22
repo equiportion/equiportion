@@ -50,7 +50,6 @@ class MatrixClient {
 
       // validate response status
       if (response?.status !== 200) {
-        console.log('nicht valid');
         return false;
       }
 
