@@ -11,7 +11,7 @@ defineProps({
 </script>
 <template>
   <StepsBar>
-    <RouterLink :to="{name: 'enter-homeserver'}">
+    <RouterLink :to="{name: 'login'}">
       <StepsBarStep :completed="active == 2" :active="active == 1">
         <template #step> 1 </template>
         <template #description> Homeserver </template>
