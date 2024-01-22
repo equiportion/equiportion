@@ -132,6 +132,30 @@ class MatrixClient {
       throw error;
     }
   }
+
+  /**
+   * Returns the homeserver-url given by the WellKnwon of the server.
+   * @param {string} homeserverName the name of the homeserver where to look for the WellKnwon
+   * @returns {Promise<string| false>} the url of the homeserver specified by the homeserverName or false if the WellKnown wasn't found
+   */
+  public static async getHomeserverUrlFromWellKnown(
+    homeserverName: string
+  ): Promise<string | false> {
+    const axiosInstance = axios.create({
+      baseURL: 'https://' + homeserverName,
+    });
+    let response;
+    try {
+      response = await axiosInstance.get('.well-known/matrix/client');
+    } catch (error) {
+      return false;
+    }
+    if (!response.data.homeserver.baseURL) {
+      return false;
+    }
+    console.log(response);
+    return response.data.homeserver.baseURL;
+  }
 }
 
 export default MatrixClient;

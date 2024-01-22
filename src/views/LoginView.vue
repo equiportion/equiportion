@@ -34,20 +34,16 @@ async function login() {
   // check if in the name the homeserver is given
   if (userId.value.includes(':')) {
     const homeserverName: string = userId.value.split(':')[1];
-    const axiosInstance = axios.create({
-      baseURL: homeserverName,
-    });
-    var homeserverUrl: string;
+    const homeserverUrl: string | false =
+      await MatrixClient.getHomeserverUrlFromWellKnown(homeserverName);
 
-    userId.value = userId.value.split(':')[0];
-    const response = await axiosInstance.get('.well-known/matrix/client');
+    //TODO test if the homeserver-name is a valid homeserver url
 
-    if (!response.data.homeserver.base_url) {
-      error.value = 'Ungültiger Homeserver-Name';
+    if (!homeserverUrl) {
+      error.value = 'Fehler beim Erkennen des Matrix-Servers';
       return;
-    } else {
-      homeserverUrl = response.data.homeserver.base_url;
     }
+    userId.value = userId.value.split(':')[0];
 
     // copy from file "EnterHomeserverView.vue" //TODO refactor
     const matrixClient = new MatrixClient(homeserverUrl);
