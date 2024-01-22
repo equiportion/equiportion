@@ -6,6 +6,10 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixClient from '@/logic/models/clients/MatrixClient';
 import Room from '@/logic/models/Room';
 
+/** Events */
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
+import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
+
 /** Errors */
 import InvalidHomeserverUrlError from './InvalidHomeserverUrlError';
 import MatrixError from './MatrixError';
@@ -166,6 +170,45 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     loggedInUser.setDisplayname(displayname);
     loggedInUser.setAvatarUrl(avatarUrl);
+  }
+
+  /**
+   * Creates a new room with the given name.
+   * Always creates the room as EquiPortion room (sends the specific state event to view the room as EquiPortion room).
+   * Also, the PowerLevels for the EquiPortion specific events are set.
+   *
+   * @param {string} name the name of the room to create
+   *
+   * @returns {Promise<boolean>} a promise that resolves when the room has been created, resolves to true if the room has been created, false if not
+   */
+  public async createRoom(name: string): Promise<boolean> {
+    const powerLevelContentOverride: {[key: string]: any} = {
+      events: {},
+      invite: 20,
+      users_defalt: 10,
+    };
+    powerLevelContentOverride.events[TransactionEvent.TYPE] = 10;
+    powerLevelContentOverride.events[EquiPortionSettingsEvent.TYPE] = 80;
+
+    const settingsEvent = new EquiPortionSettingsEvent('', '', true);
+
+    const data = {
+      creation_content: {},
+      initial_state: [
+        {
+          type: settingsEvent.getType(),
+          state_key: settingsEvent.getStateKey(),
+          content: settingsEvent.toEventContent(),
+        },
+      ],
+      name: name,
+      power_level_content_override: powerLevelContentOverride,
+      preset: 'private_chat',
+    };
+
+    const response = await this.postRequest(apiEndpoints.roomCreate, data);
+
+    return response?.status === 200;
   }
 }
 
