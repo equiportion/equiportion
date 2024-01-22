@@ -91,10 +91,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     useClientStateStore().numberOfSyncs = 0;
     this.sync();
-
-    setInterval(() => {
-      this.sync();
-    }, 20 * 1000);
   }
 
   /**
@@ -109,10 +105,13 @@ class AuthenticatedMatrixClient extends MatrixClient {
       return;
     }
 
-    clientStateStore.syncing = true;
     await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then(() => {
       clientStateStore.numberOfSyncs++;
-      clientStateStore.syncing = false;
+
+      // restart long poll, but after a second to prevent too many requests when long polling is unsupported
+      setTimeout(() => {
+        this.sync();
+      }, 1000);
     });
   }
 
@@ -121,15 +120,18 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the rooms have been updated
    */
   private async updateJoinedRooms(): Promise<void> {
-    let data: undefined | {since: string} = undefined;
+    const clientStateStore = useClientStateStore();
+
+    const data: {since?: string; timeout: number} = {timeout: 10000};
     if (this.nextBatch) {
-      data = {
-        since: this.nextBatch,
-      };
+      data.since = this.nextBatch;
     }
 
     // Send a request to the homeserver to get the latest events (and do error handling)
     const response = await this.getRequest(apiEndpoints.sync, data);
+
+    clientStateStore.syncing = true;
+
     if (!response) {
       throw new Error('No response from homeserver');
     } else if (response.status !== 200) {
@@ -153,6 +155,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
         rooms[roomId].sync(joinedRoomsData[roomId]);
       }
     }
+
+    clientStateStore.syncing = false;
   }
 
   /**
@@ -161,6 +165,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the user has been updated
    */
   private async updateLoggedInUser(): Promise<void> {
+    const clientStateStore = useClientStateStore();
+    clientStateStore.syncing = true;
+
     const loggedInUser = useLoggedInUserStore().user;
 
     const response = await this.getRequest(apiEndpoints.profile(loggedInUser.getUserId()));
@@ -170,6 +177,8 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     loggedInUser.setDisplayname(displayname);
     loggedInUser.setAvatarUrl(avatarUrl);
+
+    clientStateStore.syncing = false;
   }
 
   /**
