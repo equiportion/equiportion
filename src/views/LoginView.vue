@@ -17,52 +17,48 @@ const loading = ref(false);
 
 const userId = ref('');
 const password = ref('');
-const userName = ref('');
 
 const error = ref();
 
 var loginMatrixClient: LoginMatrixClient = new LoginMatrixClient();
 
 async function login() {
-  // check if in the name of the homeserver is given in the login field
-  if (userId.value.includes(':')) {
-    userName.value = userId.value.split(':')[0];
-    const homeserverName: string = userId.value.split(':')[1];
-    let homeserverUrl: string | false;
-    let matrixClient: MatrixClient;
+  //parse user input to homeserver and user name
+  const userName = userId.value.split(':')[0];
+  const homeserverName: string = userId.value.split(':')[1];
+  let homeserverUrl: string | false;
+  let matrixClient: MatrixClient;
 
-    //check if the homeserver name is a valid homeserver url
-    matrixClient = new MatrixClient(homeserverName);
-    if (await matrixClient.isHomeserverUrlValid()) {
-      homeserverUrl = homeserverName;
-    } else {
-      //try to get the homeserver url from the given server by the WellKnown
-      homeserverUrl = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverName);
-
-      if (!homeserverUrl) {
-        error.value = 'Fehler beim Erkennen des Matrix-Servers';
-        return;
-      }
-      matrixClient = new MatrixClient(homeserverUrl);
-
-      const isHomeserverUrlValid: Boolean = await matrixClient.isHomeserverUrlValid();
-      console.log(isHomeserverUrlValid);
-      if (!isHomeserverUrlValid) {
-        error.value = 'Ungültiger Homeserver-Name';
-        return;
-      }
-    }
-
-    console.log('ich komm drann ' + homeserverUrl);
-    //if the function did not return yet then homeserverUrl contains a valid homeserverUrl now
-    error.value = undefined;
-    setCookie(cookieNames.homeserverUrl, homeserverUrl);
-
-    loginMatrixClient = new LoginMatrixClient(homeserverUrl);
-  } else {
-    console.log('Ich bin im else');
-    userName.value = userId.value;
+  //check if the homeserver name is a valid homeserver url
+  matrixClient = new MatrixClient(homeserverName);
+  const isMatrixClientValid: Boolean = await matrixClient.isHomeserverUrlValid();
+  if (isMatrixClientValid) {
+    homeserverUrl = homeserverName;
   }
+  if (!isMatrixClientValid) {
+    //try to get the homeserver url from the given server by the WellKnown
+    homeserverUrl = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverName);
+
+    if (!homeserverUrl) {
+      error.value = 'Fehler beim Erkennen des Matrix-Servers';
+      return;
+    }
+    matrixClient = new MatrixClient(homeserverUrl);
+
+    const isHomeserverUrlValid: Boolean = await matrixClient.isHomeserverUrlValid();
+    console.log(isHomeserverUrlValid);
+    if (!isHomeserverUrlValid) {
+      error.value = 'Ungültiger Homeserver-Name';
+      return;
+    }
+  }
+
+  console.log('ich komm drann ' + homeserverUrl);
+  //if the function did not return yet then homeserverUrl contains a valid homeserverUrl now
+  error.value = undefined;
+  setCookie(cookieNames.homeserverUrl, homeserverUrl);
+
+  loginMatrixClient = new LoginMatrixClient(homeserverUrl);
 
   loading.value = true;
 
