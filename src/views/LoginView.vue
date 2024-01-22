@@ -53,7 +53,7 @@ async function login() {
       }
     }
 
-    console.log(homeserverUrl);
+    console.log('ich komm drann ' + homeserverUrl);
     //if the function did not return yet then homeserverUrl contains a valid homeserverUrl now
     error.value = undefined;
     setCookie(cookieNames.homeserverUrl, homeserverUrl);
@@ -61,6 +61,7 @@ async function login() {
 
     loginMatrixClient = new LoginMatrixClient(homeserverUrl);
   } else {
+    console.log('Ich bin im else');
     userName.value = userId.value;
   }
 
