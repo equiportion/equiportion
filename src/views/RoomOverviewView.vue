@@ -21,6 +21,10 @@ const balance = ref(0);
 function calculateBalance() {
   let sum = 0;
   for (const room of Object.values(rooms)) {
+    if (room.isVisible() === false) {
+      continue;
+    }
+
     const compensationCalculation = new NonOptimizedCompensation();
     const compensation = compensationCalculation.calculateCompensation(room);
     for (const comp of Object.values(compensation)) {
@@ -118,7 +122,7 @@ function centsPart(num: number): string {
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">
-        <RoomTile :room="room" />
+        <RoomTile v-if="room.isVisible()" :room="room" />
       </template>
     </div>
     <!--End of rooms-->

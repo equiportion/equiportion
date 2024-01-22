@@ -29,6 +29,8 @@ class Room {
 
   private previousBatch?: string | null = '';
 
+  private visible: boolean = false;
+
   /**
    * Creates a new Room using data from the sync-API.
    * @param {string} roomId the rooms id
@@ -329,6 +331,22 @@ class Room {
     });
 
     return balances;
+  }
+
+  /**
+   * Gets whether the room is visible in EquiPortion.
+   * @returns {boolean} true if the room is visible in EquiPortion, false otherwise
+   */
+  public isVisible(): boolean {
+    return this.visible;
+  }
+
+  /**
+   * Sets whether the room is visible in EquiPortion.
+   * @param {boolean} visible whether the room is visible in EquiPortion
+   */
+  public setVisible(visible: boolean) {
+    this.visible = visible;
   }
 }
 

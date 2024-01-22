@@ -7,6 +7,7 @@ import type {MatrixEventConstructor} from './MatrixEventConstructor';
 import type {RawMatrixEvent} from './RawMatrixEvent';
 import TransactionEvent from './custom/TransactionEvent';
 import EventParseError from './EventParseError';
+import EquiPortionSettingsEvent from './custom/EquiPortionSetttingsEvent';
 
 /**
  * Parses events received from the Matrix API as json objects to MatrixEvent objects.
@@ -28,6 +29,7 @@ class EventParser {
     this.addEventImplementation(MRoomNameEvent);
     this.addEventImplementation(MRoomTopicEvent);
     this.addEventImplementation(TransactionEvent);
+    this.addEventImplementation(EquiPortionSettingsEvent);
   }
 
   /**
