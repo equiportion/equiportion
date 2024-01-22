@@ -46,7 +46,20 @@ class MatrixClient {
     }
 
     try {
-      await this.getRequest('/_matrix/client/versions');
+      const response = await this.getRequest('/_matrix/client/versions');
+
+      // validate response status
+      if (response?.status !== 200) {
+        console.log('nicht valid');
+        return false;
+      }
+
+      // check that data is json and contains versions key
+      const data = response.data;
+      if (!data || !data.versions) {
+        return false;
+      }
+
       return true;
     } catch (error) {
       if (!(error instanceof InvalidHomeserverUrlError)) {
