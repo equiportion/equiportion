@@ -1,6 +1,6 @@
 import axios, {AxiosError, type AxiosInstance, type AxiosResponse} from 'axios';
 import MatrixError from '@/logic/models/clients/MatrixError';
-import {getCookie} from '@/logic/utils/cookies';
+import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
 import {type AxiosRequestConfig} from 'axios';
@@ -37,6 +37,17 @@ class MatrixClient {
   }
 
   /**
+   * Sets the homeserver url of this client.
+   * @param {string} homeserverUrl the url to set
+   */
+  public setHomeserverUrl(homeserverUrl: string) {
+    setCookie(cookieNames.homeserverUrl, homeserverUrl);
+
+    this.homeserverUrl = homeserverUrl;
+    this.axiosInstance.defaults.baseURL = homeserverUrl;
+  }
+
+  /**
    * Checks if the homeserver url of this client corresponds to a valid matrix homeserver.
    * @returns {Promise<boolean>} a promise that resolves to true if the url is valid, false otherwise
    */
@@ -45,8 +56,17 @@ class MatrixClient {
       return false;
     }
 
+    return await MatrixClient.checkHomeserverUrl(this.homeserverUrl);
+  }
+
+  /**
+   * Checks if the given homeserver url corresponds to a valid matrix homeserver.
+   * @param {string} homeserverUrl the url to check
+   * @returns {Promise<boolean>} a promise that resolves to true if the url is valid, false otherwise
+   */
+  public static async checkHomeserverUrl(homeserverUrl: string): Promise<boolean> {
     try {
-      const response = await this.getRequest('/_matrix/client/versions');
+      const response = await axios.get(homeserverUrl + '/_matrix/client/versions');
 
       // validate response status
       if (response?.status !== 200) {
@@ -154,7 +174,7 @@ class MatrixClient {
     homeserverName: string
   ): Promise<string | false> {
     const axiosInstance = axios.create({
-      baseURL: 'https://' + homeserverName,
+      baseURL: homeserverName,
     });
     let response;
     try {
@@ -162,11 +182,11 @@ class MatrixClient {
     } catch (error) {
       return false;
     }
-    if (!response.data.homeserver.baseURL) {
+
+    if (!response.data['m.homeserver']['base_url']) {
       return false;
     }
-    console.log(response);
-    return response.data.homeserver.baseURL;
+    return response.data['m.homeserver']['base_url'];
   }
 }
 
