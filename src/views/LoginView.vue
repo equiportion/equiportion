@@ -46,6 +46,7 @@ async function login() {
       matrixClient = new MatrixClient(homeserverUrl);
 
       const isHomeserverUrlValid: Boolean = await matrixClient.isHomeserverUrlValid();
+      console.log(isHomeserverUrlValid);
       if (!isHomeserverUrlValid) {
         error.value = 'Ungültiger Homeserver-Name';
         return;
