@@ -42,7 +42,6 @@ function loadRooms() {
     return false;
   }) as (TransactionEvent | MRoomMemberEvent)[];
   events.value.reverse();
-  console.log(events.value);
 
   const compensationCalculation = new NonOptimizedCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
@@ -58,12 +57,6 @@ function isMembershipEvent(event: MRoomMemberEvent): string | undefined {
   ) {
     return content.membership;
   }
-}
-
-//get displayname from MRoomMemberEvent
-function getDisplayname(event: MRoomMemberEvent): string {
-  const members = room.value?.getMembers() as {[userId: string]: User};
-  return members[event.getStateKey()].getDisplayname() ?? members[event.getStateKey()].getUserId();
 }
 
 // load room
@@ -250,9 +243,9 @@ function centsPart(num: number): string {
                 </div>
                 <div
                   v-if="event instanceof MRoomMemberEvent"
-                  class="flex flex-row justify-center italic text-gray-600 text-sm"
+                  class="flex flex-row justify-center items-center italic text-gray-600 text-sm gap-1"
                 >
-                  {{ getDisplayname(event) }}&nbsp;
+                  <UserBadge :user="room?.getMembers()[event.getStateKey()]!" class="shadow-md"></UserBadge>
                   <div v-if="isMembershipEvent(event) == 'join'">ist beigetreten</div>
                   <div v-if="isMembershipEvent(event) == 'leave'">hat den Raum verlassen</div>
                   <div v-if="isMembershipEvent(event) == 'invite'">wurde eingeladen</div>
