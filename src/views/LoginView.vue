@@ -57,7 +57,6 @@ async function login() {
     //if the function did not return yet then homeserverUrl contains a valid homeserverUrl now
     error.value = undefined;
     setCookie(cookieNames.homeserverUrl, homeserverUrl);
-    router.push({name: 'login'});
 
     loginMatrixClient = new LoginMatrixClient(homeserverUrl);
   } else {
