@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, watch, type Ref} from 'vue';
 
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import LoginProcessBase from '@/views/partials/LoginProcessBase.vue';
 import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
-import LoginStepsBar from '@/views/partials/LoginStepsBar.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 
-import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient.js';
+import MatrixClient from '@/logic/models/clients/MatrixClient';
+import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient';
 import router from '@/router';
 
 const loading = ref(false);
@@ -17,19 +17,12 @@ const password = ref('');
 
 const error = ref();
 
-const loginMatrixClient = new LoginMatrixClient();
-validateHomeserverUrl();
-
-async function validateHomeserverUrl() {
-  if (!(await loginMatrixClient.isHomeserverUrlValid())) {
-    router.push({name: 'enter-homeserver'});
-  }
-}
+const loginMatrixClient = ref(new LoginMatrixClient());
 
 async function login() {
   loading.value = true;
 
-  const successful = await loginMatrixClient.passwordLogin(userId.value, password.value);
+  const successful = await loginMatrixClient.value.passwordLogin(userId.value, password.value);
   if (successful) {
     error.value = undefined;
     router.push({name: 'home'}).then(() => {
@@ -41,16 +34,53 @@ async function login() {
 
   loading.value = false;
 }
+
+const showHomeserverWarning = ref(false);
+const homeserverChecking: Ref<number> = ref(0);
+
+watch(
+  () => userId.value,
+  async () => {
+    if (userId.value.split(':').length != 2) {
+      loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
+      return;
+    }
+
+    homeserverChecking.value++;
+
+    const userIdValue = ref(userId.value);
+
+    const homeserverUrlTest = 'https://' + userIdValue.value.split(':')[1];
+
+    if (await MatrixClient.checkHomeserverUrl(homeserverUrlTest)) {
+      loginMatrixClient.value.setHomeserverUrl(homeserverUrlTest);
+      showHomeserverWarning.value = false;
+    } else {
+      if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
+        const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
+        if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
+          if (fromWellKnown) {
+            loginMatrixClient.value.setHomeserverUrl(fromWellKnown);
+            showHomeserverWarning.value = false;
+          } else {
+            showHomeserverWarning.value = true;
+          }
+        }
+      }
+    }
+
+    homeserverChecking.value--;
+  },
+  {immediate: true}
+);
 </script>
 
 <template>
   <LoginProcessBase>
     <form id="login-form" class="mt-8 flex flex-col gap-6 w-full" @submit.prevent="login">
-      <LoginStepsBar :active="2" />
-
-      <span class="text-center"
-        >Am Server "{{ loginMatrixClient.getHomeserverUrl() }}" anmelden</span
-      >
+      <span v-show="!showHomeserverWarning" class="text-center">
+        Am Server "{{ loginMatrixClient.getHomeserverUrl()?.split('://')[1] }}" anmelden
+      </span>
 
       <SystemAlert severity="warning">
         <p class="font-bold">Hinweis:</p>
@@ -59,6 +89,19 @@ async function login() {
           späteren Version ist mit Unterstützung von SSO, etc. zu rechnen.
         </p>
       </SystemAlert>
+
+      <SystemAlert v-show="showHomeserverWarning" severity="danger">
+        <p class="font-bold">Achtung: Homeserver nicht erreichbar</p>
+        <p>
+          Leider konnte dein Homeserver nicht erreicht bzw. aufgefunden werden. Bitte überprüfe
+          deine Eingabe und versuche es erneut.
+        </p>
+      </SystemAlert>
+
+      <div v-show="homeserverChecking > 0" class="flex flex-col items-center">
+        <i class="fa-solid fa-spinner animate-spin text-3xl text-gray-300"></i>
+        <span class="text-sm text-gray-400">Suche Homeserver...</span>
+      </div>
 
       <InputFieldWithLabelAndError
         id="username"
@@ -80,7 +123,12 @@ async function login() {
       />
 
       <div class="sm:flex sm:items-center sm:gap-4">
-        <LoginContinueButton id="loginbutton" :loading="loading" @continue="login">
+        <LoginContinueButton
+          id="loginbutton"
+          :loading="loading"
+          :disabled="showHomeserverWarning || homeserverChecking > 0"
+          @continue="login"
+        >
           Anmelden <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </LoginContinueButton>
       </div>

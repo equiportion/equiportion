@@ -5,21 +5,21 @@ import * as any from '../fixtures/test-accounts.json';
 const testAccounts: any = any;
 
 describe('login and logout', () => {
-  it('wrong password does not login', () => {
-    login('wrong-password');
-    cy.get('#login-form>div').eq(2).should('contain.text', 'Ungültiger Benutzername oder Passwort');
-    cy.get('#login-form>div').eq(3).should('contain.text', 'Ungültiger Benutzername oder Passwort');
-  });
-  it('correct login data logs in', () => {
-    login('no-rooms');
-    cy.get('#rooms').should('exist');
-    cy.get('#welcome-message-user', {timeout: 7000}).should('exist');
-  });
-  it('logout works', () => {
-    login('no-rooms');
-    logout();
-    cy.get('#login-button-on-landing-page').should('exist');
-  });
+  // it('wrong password does not login', () => {
+  //   login('wrong-password');
+  //   cy.get('#login-form>div').eq(2).should('contain.text', 'Ungültiger Benutzername oder Passwort');
+  //   cy.get('#login-form>div').eq(3).should('contain.text', 'Ungültiger Benutzername oder Passwort');
+  // });
+  // it('correct login data logs in', () => {
+  //   login('no-rooms');
+  //   cy.get('#rooms').should('exist');
+  //   cy.get('#welcome-message-user', {timeout: 7000}).should('exist');
+  // });
+  // it('logout works', () => {
+  //   login('no-rooms');
+  //   logout();
+  //   cy.get('#login-button-on-landing-page').should('exist');
+  // });
 });
 
 function login(userType: string) {

@@ -1,6 +1,6 @@
 import axios, {AxiosError, type AxiosInstance, type AxiosResponse} from 'axios';
 import MatrixError from '@/logic/models/clients/MatrixError';
-import {getCookie} from '@/logic/utils/cookies';
+import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
 import {type AxiosRequestConfig} from 'axios';
@@ -37,6 +37,17 @@ class MatrixClient {
   }
 
   /**
+   * Sets the homeserver url of this client.
+   * @param {string} homeserverUrl the url to set
+   */
+  public setHomeserverUrl(homeserverUrl: string) {
+    setCookie(cookieNames.homeserverUrl, homeserverUrl);
+
+    this.homeserverUrl = homeserverUrl;
+    this.axiosInstance.defaults.baseURL = homeserverUrl;
+  }
+
+  /**
    * Checks if the homeserver url of this client corresponds to a valid matrix homeserver.
    * @returns {Promise<boolean>} a promise that resolves to true if the url is valid, false otherwise
    */
@@ -45,8 +56,29 @@ class MatrixClient {
       return false;
     }
 
+    return await MatrixClient.checkHomeserverUrl(this.homeserverUrl);
+  }
+
+  /**
+   * Checks if the given homeserver url corresponds to a valid matrix homeserver.
+   * @param {string} homeserverUrl the url to check
+   * @returns {Promise<boolean>} a promise that resolves to true if the url is valid, false otherwise
+   */
+  public static async checkHomeserverUrl(homeserverUrl: string): Promise<boolean> {
     try {
-      await this.getRequest('/_matrix/client/versions');
+      const response = await axios.get(homeserverUrl + '/_matrix/client/versions');
+
+      // validate response status
+      if (response?.status !== 200) {
+        return false;
+      }
+
+      // check that data is json and contains versions key
+      const data = response.data;
+      if (!data || !data.versions) {
+        return false;
+      }
+
       return true;
     } catch (error) {
       if (!(error instanceof InvalidHomeserverUrlError)) {
@@ -131,6 +163,30 @@ class MatrixClient {
     } else {
       throw error;
     }
+  }
+
+  /**
+   * Returns the homeserver-url given by the WellKnwon of the server.
+   * @param {string} homeserverName the name of the homeserver where to look for the WellKnwon
+   * @returns {Promise<string| false>} the url of the homeserver specified by the homeserverName or false if the WellKnown wasn't found
+   */
+  public static async getHomeserverUrlFromWellKnown(
+    homeserverName: string
+  ): Promise<string | false> {
+    const axiosInstance = axios.create({
+      baseURL: homeserverName,
+    });
+    let response;
+    try {
+      response = await axiosInstance.get('.well-known/matrix/client');
+    } catch (error) {
+      return false;
+    }
+
+    if (!response.data['m.homeserver']['base_url']) {
+      return false;
+    }
+    return response.data['m.homeserver']['base_url'];
   }
 }
 
