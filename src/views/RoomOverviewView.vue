@@ -195,7 +195,7 @@ watch(
           :options="[
             {label: 'Neuen Raum erstellen', value: 'new', icon: 'fa-solid fa-plus'},
             {
-              label: 'bestehenden Matrix-Raum hinzufügen',
+              label: 'Bestehenden Matrix-Raum hinzufügen',
               value: 'existing',
               icon: 'fa-solid fa-users-rectangle',
             },
@@ -215,7 +215,7 @@ watch(
                 :disabled="roomCreationDisabled"
                 @click="createNewRoom()"
               >
-                <i class="fa-solid fa-plus"></i> erstellen
+                <i class="fa-solid fa-plus"></i> Erstellen
               </StandardButton>
             </div>
             <div v-else-if="newRoomMethod == 'existing'" class="w-full flex flex-col gap-5">
