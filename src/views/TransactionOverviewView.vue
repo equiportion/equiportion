@@ -18,6 +18,7 @@ import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
+import BalanceTile from './partials/BalanceTile.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -181,17 +182,6 @@ async function loadMoreTransactions() {
     });
   }
 }
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 </script>
 
 <template>
@@ -316,34 +306,7 @@ function centsPart(num: number): string {
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <span
-                v-if="compensation[member.getUserId()] && compensation[member.getUserId()] > 0"
-                class="text-sm text-red-600 font-bold"
-              >
-                <i class="fa-solid fa-coins"></i>
-                Du schuldest
-                {{ eurosPart(compensation[member.getUserId()]) }},{{
-                  centsPart(compensation[member.getUserId()])
-                }}
-                €
-              </span>
-              <span
-                v-else-if="compensation[member.getUserId()] && compensation[member.getUserId()] < 0"
-                class="text-sm text-green-600 font-bold"
-              >
-                <i class="fa-solid fa-coins"></i>
-                Schuldet dir
-                {{
-                  eurosPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
-                }},{{
-                  centsPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
-                }}
-                €
-              </span>
-              <span v-else class="text-sm text-blue-600 font-bold">
-                <i class="fa-solid fa-coins"></i>
-                Ausgeglichen
-              </span>
+              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
             </div>
           </template>
           <!--invited members-->
@@ -366,6 +329,7 @@ function centsPart(num: number): string {
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
+              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
             </div>
           </div>
         </div>
