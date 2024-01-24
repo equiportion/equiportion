@@ -2,7 +2,7 @@
 /**
  * Generic Functions
  */
- function eurosPart(num: number): string {
+function eurosPart(num: number): string {
   return Math.floor(num / 100).toString();
 }
 
@@ -24,7 +24,10 @@ const props = defineProps({
     {{ eurosPart(props.compensation) }},{{ centsPart(props.compensation) }}
     €
   </span>
-  <span v-else-if="props.compensation && props.compensation < 0" class="text-sm text-green-600 font-bold">
+  <span
+    v-else-if="props.compensation && props.compensation < 0"
+    class="text-sm text-green-600 font-bold"
+  >
     <i class="fa-solid fa-coins"></i>
     Schuldet dir
     {{ eurosPart(parseInt(props.compensation.toString().replace('-', ''))) }},{{
