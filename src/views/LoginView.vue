@@ -53,17 +53,17 @@ watch(
     const homeserverUrlTest = 'https://' + userIdValue.value.split(':')[1];
 
     if (await MatrixClient.checkHomeserverUrl(homeserverUrlTest)) {
+      homeserverChecking.value = 0;
       loginMatrixClient.value.setHomeserverUrl(homeserverUrlTest);
       showHomeserverWarning.value = false;
-      homeserverChecking.value = 0;
     } else {
       if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
         const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
         if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
           if (fromWellKnown) {
+            homeserverChecking.value = 0;
             loginMatrixClient.value.setHomeserverUrl(fromWellKnown);
             showHomeserverWarning.value = false;
-            homeserverChecking.value = 0;
           } else {
             showHomeserverWarning.value = true;
           }
