@@ -71,7 +71,7 @@ watch(
       }
     }
 
-    if (homeserverChecking.value != 0) {
+    if (homeserverChecking.value > 0) {
       homeserverChecking.value--;
     }
     console.log(homeserverChecking.value);
