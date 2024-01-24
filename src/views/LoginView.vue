@@ -70,6 +70,7 @@ watch(
     }
 
     homeserverChecking.value--;
+    console.log(homeserverChecking.value);
   },
   {immediate: true}
 );
