@@ -41,7 +41,7 @@ const homeserverChecking: Ref<number> = ref(0);
 watch(
   () => userId.value,
   async () => {
-    if (userId.value.split(':').length != 2) {
+    if (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) {
       loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
       return;
     }
