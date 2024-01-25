@@ -311,7 +311,7 @@ async function loadMoreTransactions() {
           </template>
           <!--invited members-->
           <div v-if="invitedMembers.length > 0" class="opacity-50">
-            <span class="text-sm text-gray-800 items-center">Eingeladenes Mitglied</span>
+            <span class="text-sm text-gray-800 items-center">Eingeladen</span>
             <div
               v-for="member in invitedMembers"
               :key="member.getUserId()"
@@ -322,7 +322,7 @@ async function loadMoreTransactions() {
           </div>
           <!--left members-->
           <div v-if="leftMembers.length > 0" class="opacity-50">
-            <span class="text-sm text-gray-800">Entferntes Mitglied</span>
+            <span class="text-sm text-gray-800">Ehemalige Mitglieder</span>
             <div
               v-for="member in leftMembers"
               :key="member.getUserId()"
