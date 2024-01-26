@@ -41,7 +41,7 @@ const homeserverChecking: Ref<number> = ref(0);
 watch(
   () => userId.value,
   async () => {
-    if (userId.value.split(':').length != 2) {
+    if (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) {
       loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
       return;
     }
@@ -53,6 +53,7 @@ watch(
     const homeserverUrlTest = 'https://' + userIdValue.value.split(':')[1];
 
     if (await MatrixClient.checkHomeserverUrl(homeserverUrlTest)) {
+      homeserverChecking.value = 0;
       loginMatrixClient.value.setHomeserverUrl(homeserverUrlTest);
       showHomeserverWarning.value = false;
     } else {
@@ -60,6 +61,7 @@ watch(
         const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
         if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
           if (fromWellKnown) {
+            homeserverChecking.value = 0;
             loginMatrixClient.value.setHomeserverUrl(fromWellKnown);
             showHomeserverWarning.value = false;
           } else {
@@ -69,7 +71,9 @@ watch(
       }
     }
 
-    homeserverChecking.value--;
+    if (homeserverChecking.value > 0) {
+      homeserverChecking.value--;
+    }
   },
   {immediate: true}
 );
