@@ -29,10 +29,6 @@ const room: Ref<Room | undefined> = ref(undefined);
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
 
-const actualMembers: Ref<User[]> = ref([]);
-const invitedMembers: Ref<User[]> = ref([]);
-const leftMembers: Ref<User[]> = ref([]);
-
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
