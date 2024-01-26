@@ -281,9 +281,9 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
           </div>
         </div>
       </div>
+
       <!--Member list-->
       <div
-        v-if="false"
         v-show="memberListOpen"
         id="memberList"
         class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
@@ -294,11 +294,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
 
         <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
+
+          <!-- current user -->
           <UserTile
             :user="room?.getMember(loggedInUser.getUserId())!"
             class="bg-gray-300 p-2 rounded-lg"
           />
-          <template v-for="member in actualMembers" :key="member.getUserId()">
+
+          <!-- all current room members-->
+          <template v-for="member in room?.getMembers()" :key="member.getUserId()">
             <div
               v-if="member.getUserId() != loggedInUser.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
@@ -307,27 +311,36 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
             </div>
           </template>
+
           <!--invited members-->
-          <div v-if="invitedMembers.length > 0" class="opacity-50">
+          <div
+            v-if="
+              room?.getMembers(['invite']) && Object.keys(room!.getMembers(['invite'])).length > 0
+            "
+            class="opacity-50"
+          >
             <span class="text-sm text-gray-800 items-center">Eingeladen</span>
             <div
-              v-for="member in invitedMembers"
+              v-for="member in room!.getMembers(['invite'])"
               :key="member.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
             </div>
           </div>
+
           <!--left members-->
-          <div v-if="leftMembers.length > 0" class="opacity-50">
-            <span class="text-sm text-gray-800">Ehemalige Mitglieder</span>
+          <div
+            v-if="room?.getMembers(['left']) && Object.keys(room!.getMembers(['left'])).length > 0"
+            class="opacity-50"
+          >
+            <span class="text-sm text-gray-800 items-center">Ehemalige Mitglieder</span>
             <div
-              v-for="member in leftMembers"
+              v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
             </div>
           </div>
         </div>
