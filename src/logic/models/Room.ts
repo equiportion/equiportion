@@ -171,10 +171,23 @@ class Room {
 
   /**
    * Gets all users in this room.
+   * @param {string[]} [typeInRoom=['member']] the type of users to get (valid values are: 'member', 'invite' or 'left')
    * @returns {{[userId: string]: User}} all users in this room
    */
-  public getMembers(): {[userId: string]: User} {
-    return this.members;
+  public getMembers(typeInRoom: string[] = ['member']): {[userId: string]: User} {
+    if (typeInRoom.length == 0) {
+      return this.members;
+    }
+
+    // get all members of the given types
+    const returnMembers: {[userId: string]: User} = {};
+    Object.values(this.members).forEach((member: User) => {
+      if (typeInRoom.includes(member.getTypeInRoom())) {
+        returnMembers[member.getUserId()] = member;
+      }
+    });
+
+    return returnMembers;
   }
 
   /**
