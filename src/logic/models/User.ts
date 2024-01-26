@@ -7,6 +7,7 @@ class User {
   private userId: string;
   private displayname?: string;
   private avatarUrl?: string;
+  private typeInRoom: string = 'member';
 
   /**
    * Creates a new user using the given parameters.
@@ -72,6 +73,22 @@ class User {
    */
   public setAvatarUrl(avatarUrl?: string): void {
     this.avatarUrl = avatarUrl;
+  }
+
+  /**
+   * Gets this user's type in a room.
+   * @returns {string} the type in a room (either 'member', 'invite' or 'left')
+   */
+  public getTypeInRoom(): string {
+    return this.typeInRoom;
+  }
+
+  /**
+   * Sets this user's type in a room.
+   * @param {string} typeInRoom the new type in a room (either 'member', 'invite' or 'left')
+   */
+  public setTypeInRoom(typeInRoom: string): void {
+    this.typeInRoom = typeInRoom;
   }
 }
 

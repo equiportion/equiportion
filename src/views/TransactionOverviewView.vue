@@ -18,7 +18,8 @@ import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
-import BalanceTile from './partials/BalanceTile.vue';
+import BalanceSpan from './partials/BalanceSpan.vue';
+import MatrixEvent from '@/logic/models/events/MatrixEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -26,62 +27,19 @@ const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
-const events: Ref<(TransactionEvent | MRoomMemberEvent)[]> = ref([]);
-
-const actualMembers: Ref<User[]> = ref([]);
-const invitedMembers: Ref<User[]> = ref([]);
-const leftMembers: Ref<User[]> = ref([]);
+const events: Ref<MatrixEvent[]> = ref([]);
 
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
-  transactionEvents.value = room.value?.getEvents(TransactionEvent.TYPE) as TransactionEvent[];
-  transactionEvents.value.reverse();
+  events.value = room.value?.getEvents()!;
+  events.value.reverse();
 
-  events.value = room.value?.getEvents().filter((event) => {
-    if (event instanceof TransactionEvent) {
-      return true;
-    } else if (event instanceof MRoomMemberEvent) {
-      return isMembershipEvent(event);
-    }
-    return false;
-  }) as (TransactionEvent | MRoomMemberEvent)[];
-
-  //get actual, invited and left members
-  events.value.forEach((event) => {
-    if (event instanceof MRoomMemberEvent) {
-      const member = room.value?.getMembers()[event.getStateKey()]!;
-      if (isMembershipEvent(event) == 'join') {
-        invitedMembers.value = invitedMembers.value.filter(
-          (invitedMember) => invitedMember !== member
-        );
-        leftMembers.value = leftMembers.value.filter((leftMember) => leftMember !== member);
-        actualMembers.value.push(member);
-      } else if (isMembershipEvent(event) == 'leave' && !leftMembers.value.includes(member)) {
-        leftMembers.value.push(member);
-        actualMembers.value = actualMembers.value.filter((actualMember) => actualMember !== member);
-      } else if (isMembershipEvent(event) == 'invite' && !invitedMembers.value.includes(member)) {
-        invitedMembers.value.push(member);
-      }
-    }
-  });
-
+  events.value = room.value?.getEvents() as (TransactionEvent | MRoomMemberEvent)[];
   events.value.reverse();
 
   const compensationCalculation = new NonOptimizedCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
-}
-
-//check if event is join, leave or invite
-function isMembershipEvent(event: MRoomMemberEvent): string | undefined {
-  const content = event.toEventContent() as {membership?: string};
-  if (
-    content.membership === 'join' ||
-    content.membership === 'leave' ||
-    content.membership === 'invite'
-  ) {
-    return content.membership;
-  }
 }
 
 // load room
@@ -93,8 +51,6 @@ waitForInitialSync().then(() => {
 watch(roomId, () => {
   loadRooms();
 });
-
-const transactionEvents: Ref<TransactionEvent[]> = ref([]);
 
 const loggedInUser = useLoggedInUserStore().user;
 
@@ -176,11 +132,23 @@ async function loadMoreTransactions() {
   showTransactionsLoader.value = false;
 
   // restart the intersection observer
-  if (reloadAgain == true) {
+  if (reloadAgain === true) {
     onIntersect(observeRef.value!, () => {
       loadMoreTransactions();
     });
   }
+}
+
+/**
+ * function to help vscode not to explode because of ts in vue
+ * (not support at the moment see https://github.com/vuejs/vetur/issues/1854)
+ */
+function asTransactionEvent(event: MatrixEvent): TransactionEvent {
+  return event as TransactionEvent;
+}
+
+function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
+  return event as MRoomMemberEvent;
 }
 </script>
 
@@ -238,37 +206,62 @@ async function loadMoreTransactions() {
 
           <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
-            <div v-show="transactionEvents && transactionEvents.length <= 0">
+            <div v-show="events && events.length <= 0">
               <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
-                Keine Transaktionen vorhanden
+                Ganz schön leer hier... Füge weitere Personen hinzu und erstelle eine Transaktion!
               </span>
             </div>
 
             <!--the header of the table containing the transactions-->
             <div
-              v-show="!(transactionEvents && transactionEvents.length <= 0)"
+              v-show="!(events && events.length <= 0)"
               id="transactions"
               class="flex flex-col justify-center gap-5"
             >
-              <!--shows all transaction using the transacion tile partial-->
-              <div v-for="event in events" :key="event.getEventId()">
-                <div v-if="event instanceof TransactionEvent">
-                  <TransactionTile :transaction="event as TransactionEvent" />
-                </div>
+              <!--shows all transactions and membership events using the transacion tile partial / membership view -->
+              <template v-for="event in events" :key="event.getEventId()">
+                <template v-if="!!(event instanceof TransactionEvent)">
+                  <TransactionTile :transaction="asTransactionEvent(event)" />
+                </template>
+
                 <div
-                  v-if="event instanceof MRoomMemberEvent"
-                  class="flex flex-row justify-center items-center italic text-gray-600 text-sm gap-1"
+                  v-else-if="!!(event instanceof MRoomMemberEvent)"
+                  class="flex flex-row justify-center items-center gap-1"
                 >
-                  <!--shows all membership change-->
                   <UserBadge
-                    :user="room?.getMembers()[event.getStateKey()]!"
+                    :user="room?.getMember(asMRoomMemberEvent(event).getUserId())!"
+                    size="sm"
                     class="shadow-md"
-                  ></UserBadge>
-                  <div v-if="isMembershipEvent(event) == 'join'">ist beigetreten</div>
-                  <div v-if="isMembershipEvent(event) == 'leave'">hat den Raum verlassen</div>
-                  <div v-if="isMembershipEvent(event) == 'invite'">wurde eingeladen</div>
+                  />
+
+                  <!-- string for which membership change was performed-->
+                  <span
+                    v-if="asMRoomMemberEvent(event).getMembershipType() == 'join'"
+                    class="italic text-gray-600 text-sm"
+                  >
+                    ist beigetreten
+                  </span>
+                  <span
+                    v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'leave'"
+                    class="italic text-gray-600 text-sm"
+                  >
+                    hat den Raum verlassen
+                  </span>
+                  <span
+                    v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'invite'"
+                    class="italic text-gray-600 text-sm"
+                  >
+                    wurde eingeladen
+                  </span>
+                  <span
+                    v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'ban'"
+                    class="italic text-gray-600 text-sm"
+                  >
+                    wurde aus dem Raum verbannt
+                  </span>
+                  <span v-else>unbekannte Mitgliedsänderung</span>
                 </div>
-              </div>
+              </template>
 
               <div ref="observeRef"></div>
               <HeightFade>
@@ -284,6 +277,7 @@ async function loadMoreTransactions() {
           </div>
         </div>
       </div>
+
       <!--Member list-->
       <div
         v-show="memberListOpen"
@@ -296,40 +290,53 @@ async function loadMoreTransactions() {
 
         <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
+
+          <!-- current user -->
           <UserTile
             :user="room?.getMember(loggedInUser.getUserId())!"
             class="bg-gray-300 p-2 rounded-lg"
           />
-          <template v-for="member in actualMembers" :key="member.getUserId()">
+
+          <!-- all current room members-->
+          <template v-for="member in room?.getMembers()" :key="member.getUserId()">
             <div
               v-if="member.getUserId() != loggedInUser.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
+              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
             </div>
           </template>
+
           <!--invited members-->
-          <div v-if="invitedMembers.length > 0" class="opacity-50">
+          <div
+            v-if="
+              room?.getMembers(['invite']) && Object.keys(room!.getMembers(['invite'])).length > 0
+            "
+            class="opacity-50"
+          >
             <span class="text-sm text-gray-800 items-center">Eingeladen</span>
             <div
-              v-for="member in invitedMembers"
+              v-for="member in room!.getMembers(['invite'])"
               :key="member.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
             </div>
           </div>
+
           <!--left members-->
-          <div v-if="leftMembers.length > 0" class="opacity-50">
-            <span class="text-sm text-gray-800">Ehemalige Mitglieder</span>
+          <div
+            v-if="room?.getMembers(['left']) && Object.keys(room!.getMembers(['left'])).length > 0"
+            class="opacity-50"
+          >
+            <span class="text-sm text-gray-800 items-center">Ehemalige Mitglieder</span>
             <div
-              v-for="member in leftMembers"
+              v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
             </div>
           </div>
         </div>

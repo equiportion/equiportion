@@ -22,7 +22,7 @@ class NonOptimizedCompensation implements ICompensationAlgorithm {
     const ownUserId = useLoggedInUserStore().user.getUserId();
 
     // get all members of the room
-    const members = room.getMembers();
+    const members = room.getMembers(['member', 'left']);
     const userIds = Object.keys(members);
 
     // get balances
