@@ -176,7 +176,7 @@ async function loadMoreTransactions() {
   showTransactionsLoader.value = false;
 
   // restart the intersection observer
-  if (reloadAgain == true) {
+  if (reloadAgain === true) {
     onIntersect(observeRef.value!, () => {
       loadMoreTransactions();
     });
