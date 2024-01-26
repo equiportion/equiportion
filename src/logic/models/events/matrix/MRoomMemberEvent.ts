@@ -72,21 +72,31 @@ class MRoomMemberEvent extends StateEvent {
   }
 
   /**
-   * Executes this event on its room
+   * Executes this event on its room; in this case it updates the member with the given userId.
    * @returns {void}
    */
   public execute(): void {
-    //TODO: handle other membership types
-    if (this.membership != 'join') {
-      return;
-    }
-
     const roomsStore = useRoomsStore();
     const room = roomsStore.getRoom(this.getRoomId())!;
-    const member = room?.getMember(this.userId);
+    const member = room.getMember(this.userId);
 
-    member?.setAvatarUrl(this.avatarUrl);
-    member?.setDisplayname(this.displayname);
+    member.setAvatarUrl(this.avatarUrl);
+    member.setDisplayname(this.displayname);
+
+    switch (this.membership) {
+      case 'join':
+        member.setTypeInRoom('member');
+        break;
+      case 'invite':
+        member.setTypeInRoom('invite');
+        break;
+      case 'leave':
+      case 'ban':
+        member.setTypeInRoom('left');
+        break;
+      default:
+        break;
+    }
   }
 
   /**
