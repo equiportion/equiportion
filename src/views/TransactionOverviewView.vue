@@ -260,10 +260,7 @@ async function loadMoreTransactions() {
                   class="flex flex-row justify-center items-center italic text-gray-600 text-sm gap-1"
                 >
                   <!--shows all membership change-->
-                  <UserBadge
-                    :user="room?.getMembers()[event.getStateKey()]!"
-                    class="shadow-md"
-                  ></UserBadge>
+                  <UserBadge :user="room?.getMembers()[event.getStateKey()]!" class="shadow-md" />
                   <div v-if="isMembershipEvent(event) == 'join'">ist beigetreten</div>
                   <div v-if="isMembershipEvent(event) == 'leave'">hat den Raum verlassen</div>
                   <div v-if="isMembershipEvent(event) == 'invite'">wurde eingeladen</div>
