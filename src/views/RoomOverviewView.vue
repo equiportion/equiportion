@@ -5,7 +5,6 @@ import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useRoomsStore} from '@/stores/rooms';
 import HeightFade from '@/components/transitions/HeightFade.vue';
-import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
@@ -15,6 +14,7 @@ import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
+import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 
 const clientStateStore = useClientStateStore();
 
@@ -32,7 +32,7 @@ function calculateBalance() {
       continue;
     }
 
-    const compensationCalculation = new NonOptimizedCompensation();
+    const compensationCalculation = new BipartiteCompensation();
     const compensation = compensationCalculation.calculateCompensation(room);
     for (const comp of Object.values(compensation)) {
       sum += comp;

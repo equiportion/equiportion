@@ -41,7 +41,7 @@ class NonOptimizedCompensation implements ICompensationAlgorithm {
       const userIdsCombined: string = userIdList.join('');
 
       // get balance
-      const balance: number = balances[userIdsCombined] * (-1) ** Number(orderChangeIndicator);
+      const balance: number = (balances[userIdsCombined] ?? 0) * (-1) ** Number(orderChangeIndicator);
 
       // add balance to compensation
       compensation[userId] = balance;

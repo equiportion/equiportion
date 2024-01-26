@@ -57,7 +57,7 @@ watch(roomId, () => {
   loadRoom();
 });
 
-// all Schuldner
+// all debtors
 const debtors: Ref<{user: User; fixedAmount: number}[]> = ref([]);
 
 // function to add a debtor when clicking on a user in the dropdown
