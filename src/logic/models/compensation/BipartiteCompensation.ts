@@ -31,7 +31,6 @@ class BipartiteCompensation implements ICompensationAlgorithm {
     let iterations = 0;
 
     while (!this.isSettled(balanceTotals)) {
-      console.log(balanceTotals);
       if (iterations > userIds.length) {
         // this should not happen and is meant as a failsafe
         throw new Error('Calculating compensations failed due to faulty values');
