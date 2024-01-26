@@ -108,6 +108,22 @@ class MRoomMemberEvent extends StateEvent {
   }
 
   /**
+   * Gets the type of the membership change this event represents
+   * @returns {string} the type of the membership change this event represents (join, invite, leave, ban)
+   */
+  public getMembershipType(): string {
+    return this.membership;
+  }
+
+  /**
+   * Gets the userId of the member this event updates
+   * @returns {string} the userId of the member this event updates
+   */
+  public getUserId(): string {
+    return this.userId;
+  }
+
+  /**
    * Gets the content of this event as a Json object (for matrix api)
    * @returns {{}} the content of this event
    */
