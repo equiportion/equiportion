@@ -18,6 +18,7 @@ import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
+import BalanceTile from './partials/BalanceTile.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -26,6 +27,10 @@ const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<(TransactionEvent | MRoomMemberEvent)[]> = ref([]);
+
+const actualMembers: Ref<User[]> = ref([]);
+const invitedMembers: Ref<User[]> = ref([]);
+const leftMembers: Ref<User[]> = ref([]);
 
 // load rooms
 function loadRooms() {
@@ -41,13 +46,33 @@ function loadRooms() {
     }
     return false;
   }) as (TransactionEvent | MRoomMemberEvent)[];
+
+  //get actual, invited and left members
+  events.value.forEach((event) => {
+    if (event instanceof MRoomMemberEvent) {
+      const member = room.value?.getMembers()[event.getStateKey()]!;
+      if (isMembershipEvent(event) == 'join') {
+        invitedMembers.value = invitedMembers.value.filter(
+          (invitedMember) => invitedMember !== member
+        );
+        leftMembers.value = leftMembers.value.filter((leftMember) => leftMember !== member);
+        actualMembers.value.push(member);
+      } else if (isMembershipEvent(event) == 'leave' && !leftMembers.value.includes(member)) {
+        leftMembers.value.push(member);
+        actualMembers.value = actualMembers.value.filter((actualMember) => actualMember !== member);
+      } else if (isMembershipEvent(event) == 'invite' && !invitedMembers.value.includes(member)) {
+        invitedMembers.value.push(member);
+      }
+    }
+  });
+
   events.value.reverse();
 
   const compensationCalculation = new NonOptimizedCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
 }
 
-//check if event is join
+//check if event is join, leave or invite
 function isMembershipEvent(event: MRoomMemberEvent): string | undefined {
   const content = event.toEventContent() as {membership?: string};
   if (
@@ -157,17 +182,6 @@ async function loadMoreTransactions() {
     });
   }
 }
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 </script>
 
 <template>
@@ -245,6 +259,7 @@ function centsPart(num: number): string {
                   v-if="event instanceof MRoomMemberEvent"
                   class="flex flex-row justify-center items-center italic text-gray-600 text-sm gap-1"
                 >
+                  <!--shows all membership change-->
                   <UserBadge
                     :user="room?.getMembers()[event.getStateKey()]!"
                     class="shadow-md"
@@ -285,42 +300,38 @@ function centsPart(num: number): string {
             :user="room?.getMember(loggedInUser.getUserId())!"
             class="bg-gray-300 p-2 rounded-lg"
           />
-          <template v-for="member in room?.getMembers()" :key="member.getUserId()">
+          <template v-for="member in actualMembers" :key="member.getUserId()">
             <div
               v-if="member.getUserId() != loggedInUser.getUserId()"
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <span
-                v-if="compensation[member.getUserId()] && compensation[member.getUserId()] > 0"
-                class="text-sm text-red-600 font-bold"
-              >
-                <i class="fa-solid fa-coins"></i>
-                Du schuldest
-                {{ eurosPart(compensation[member.getUserId()]) }},{{
-                  centsPart(compensation[member.getUserId()])
-                }}
-                €
-              </span>
-              <span
-                v-else-if="compensation[member.getUserId()] && compensation[member.getUserId()] < 0"
-                class="text-sm text-green-600 font-bold"
-              >
-                <i class="fa-solid fa-coins"></i>
-                Schuldet dir
-                {{
-                  eurosPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
-                }},{{
-                  centsPart(parseInt(compensation[member.getUserId()].toString().replace('-', '')))
-                }}
-                €
-              </span>
-              <span v-else class="text-sm text-blue-600 font-bold">
-                <i class="fa-solid fa-coins"></i>
-                Ausgeglichen
-              </span>
+              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
             </div>
           </template>
+          <!--invited members-->
+          <div v-if="invitedMembers.length > 0" class="opacity-50">
+            <span class="text-sm text-gray-800 items-center">Eingeladen</span>
+            <div
+              v-for="member in invitedMembers"
+              :key="member.getUserId()"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+            >
+              <UserTile :user="member" class="w-full" />
+            </div>
+          </div>
+          <!--left members-->
+          <div v-if="leftMembers.length > 0" class="opacity-50">
+            <span class="text-sm text-gray-800">Ehemalige Mitglieder</span>
+            <div
+              v-for="member in leftMembers"
+              :key="member.getUserId()"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+            >
+              <UserTile :user="member" class="w-full" />
+              <BalanceTile :compensation="compensation[member.getUserId()]"></BalanceTile>
+            </div>
+          </div>
         </div>
       </div>
     </div>
