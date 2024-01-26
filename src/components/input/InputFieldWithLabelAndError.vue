@@ -80,7 +80,7 @@ const inputValue = computed({
 </script>
 <template>
   <div>
-    <label for="Email" class="block text-sm font-medium text-gray-700"> {{ label }} </label>
+    <label :for="id" class="block text-sm font-medium text-gray-700"> {{ label }} </label>
     <InputField
       :id="id"
       v-model="inputValue"
