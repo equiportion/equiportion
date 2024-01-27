@@ -19,7 +19,7 @@ class NonOptimizedCompensation implements ICompensationAlgorithm {
     const compensation: {[userId: string]: number} = {};
 
     // get own user id
-    const ownUserId = useLoggedInUserStore().user.getUserId();
+    const loggedInUserId = useLoggedInUserStore().user.getUserId();
 
     // get all members of the room
     const members = room.getMembers(['member', 'left']);
@@ -31,13 +31,13 @@ class NonOptimizedCompensation implements ICompensationAlgorithm {
     // loop over all members
     userIds.forEach((userId: string) => {
       // skip own user
-      if (userId === ownUserId) {
+      if (userId === loggedInUserId) {
         return;
       }
 
       // get combined user ids and direction of balance
-      const userIdList: string[] = [userId, ownUserId].sort();
-      const orderChangeIndicator: boolean = userIdList[1] == ownUserId;
+      const userIdList: string[] = [userId, loggedInUserId].sort();
+      const orderChangeIndicator: boolean = userIdList[1] == loggedInUserId;
       const userIdsCombined: string = userIdList.join('');
 
       // get balance

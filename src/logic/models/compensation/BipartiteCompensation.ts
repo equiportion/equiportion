@@ -4,13 +4,15 @@ import Room from '@/logic/models/Room';
 
 /**
  * A compensation algorithm which calculates how much a user has to pay to which person and how much a user gets from which person.
- * This algorithm is not optimized and will calculate just the difference between the logged in user and any other user.
+ * This algorithm is optimal in the total value of compensation-transactions and produces no more than n-1 compensation-transactions,
+ * where n ist the number of users in the room.
  *
  * @implements {ICompensationAlgorithm}
  */
 class BipartiteCompensation implements ICompensationAlgorithm {
   /**
-   * Calculates the compensation for the given room. This algorithm is not optimized and will calculate just the difference between the logged in user and any other user.
+   * Calculates the compensation for the given room. This algorithm is optimal in the total value of compensation-transactions and
+   * produces no more than n-1 compensation-transactions, where n ist the number of users in the room.
    * @param {Room} room the room
    * @return {{[userId: string]: number}} the compensation, a positive number means that the user has to pay, a negative number means that the user gets money
    */
@@ -74,6 +76,11 @@ class BipartiteCompensation implements ICompensationAlgorithm {
     return compensation;
   }
 
+  /**
+   * Checks if all balance-total are == 0.
+   * @param {{[userId: string]: number}} balanceTotals the balance-totals to check
+   * @returns {boolean} true if all balance-total are == 0, false otherwise
+   */
   private isSettled(balanceTotals: {[userId: string]: number}): boolean {
     for (const balanceTotal of Object.values(balanceTotals)) {
       if (balanceTotal != 0) {
@@ -84,6 +91,11 @@ class BipartiteCompensation implements ICompensationAlgorithm {
     return true;
   }
 
+  /**
+   * Calculates balance-totals for each user using balances between two users.
+   * @param {{[userIds: string]: number}} balances the balances between two users
+   * @returns {{[userId: string]: number}} the balance-totals for each user
+   */
   private calculateBalanceTotals(balances: {[userIds: string]: number}): {
     [userId: string]: number;
   } {
