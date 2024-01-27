@@ -25,7 +25,6 @@ class BipartiteCompensation implements ICompensationAlgorithm {
     // get balance-totals
     const balances = room.getBalances();
     const balanceTotals = this.calculateBalanceTotals(balances); // corresponds to K in this algorithm's pseudocode in the documentation
-    console.log(`${Object.keys(balanceTotals).length} members`);
 
     let iteration = 0;
 
