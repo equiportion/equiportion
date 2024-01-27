@@ -105,13 +105,8 @@ class BipartiteCompensation implements ICompensationAlgorithm {
 
       // Add Balance to balance-totals
       const balance = balances[userIds];
-      if (balance > 0) {
-        balanceTotals[userId1] += balance;
-        balanceTotals[userId2] -= balance;
-      } else if (balance < 0) {
-        balanceTotals[userId1] -= balance;
-        balanceTotals[userId2] += balance;
-      }
+      balanceTotals[userId1] -= balance;
+      balanceTotals[userId2] += balance;
     }
 
     return balanceTotals;
