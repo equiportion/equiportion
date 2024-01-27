@@ -12,7 +12,7 @@ import Room from '@/logic/models/Room';
 class BipartiteCompensation implements ICompensationAlgorithm {
   /**
    * Calculates the compensation for the given room. This algorithm is optimal in the total value of compensation-transactions and
-   * produces no more than n-1 compensation-transactions, where n ist the number of users in the room.
+   * produces no more than n-1 compensation-transactions, where n ist the number of users that have a balance-total != 0.
    * @param {Room} room the room
    * @return {{[userId: string]: number}} the compensation, a positive number means that the user has to pay, a negative number means that the user gets money
    */
@@ -22,19 +22,16 @@ class BipartiteCompensation implements ICompensationAlgorithm {
     // get own user id
     const loggedInUserId = useLoggedInUserStore().user.getUserId();
 
-    // get all members of the room
-    const members = room.getMembers(['member', 'left']);
-    const userIds = Object.keys(members);
-
     // get balance-totals
     const balances = room.getBalances();
     const balanceTotals = this.calculateBalanceTotals(balances); // corresponds to K in this algorithm's pseudocode in the documentation
+    console.log(`${Object.keys(balanceTotals).length} members`);
 
-    let iterations = 0;
+    let iteration = 0;
 
     while (!this.isSettled(balanceTotals)) {
-      if (iterations > userIds.length) {
-        // this should not happen and is meant as a failsafe
+      if (iteration >= Object.keys(balanceTotals).length - 1) {
+        // this should not happen (see documentation) and is meant as a failsafe
         throw new Error('Calculating compensations failed due to faulty values');
       }
 
@@ -70,7 +67,7 @@ class BipartiteCompensation implements ICompensationAlgorithm {
       balanceTotals[userIdPositive!] -= minAbsoluteBalanceTotal;
       balanceTotals[userIdNegative!] += minAbsoluteBalanceTotal;
 
-      iterations++;
+      iteration++;
     }
 
     return compensation;
