@@ -96,7 +96,7 @@ watch(
         </p>
       </SystemAlert>
 
-      <SystemAlert v-show="showHomeserverWarning" severity="danger">
+      <SystemAlert v-show="showHomeserverWarning" id="homeserverWarning" severity="danger">
         <p class="font-bold">Achtung: Homeserver nicht erreichbar</p>
         <p>
           Leider konnte dein Homeserver nicht erreicht bzw. aufgefunden werden. Bitte überprüfe

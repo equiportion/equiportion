@@ -1,8 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
-import * as any from '../fixtures/test-accounts.json';
-
-const testAccounts: any = any;
+import {standard} from '../support/stubs';
 
 describe('login and logout', () => {
   // it('wrong password does not login', () => {
@@ -20,21 +18,49 @@ describe('login and logout', () => {
   //   logout();
   //   cy.get('#login-button-on-landing-page').should('exist');
   // });
+
+  it('login', () => {
+    standard();
+    cy.intercept({
+      url: '/_matrix/client/v3/login',
+      method: 'POST',
+    }).as('loginPost');
+    cy.visit('http://localhost:5173/login');
+    cy.get('#username').type('@psetest:mtrx.cz');
+    cy.get('#homeserver').type('testpassword321');
+    cy.get('#loginbutton').click();
+    cy.wait('@matrix_client_versions').then(({response}) => {
+      expect(response?.body.versions.length).to.eq(14);
+    });
+    cy.wait('@loginPost').then(({request}) => {
+      expect(request.body.password).to.eq('testpassword321');
+      expect(request.body.identifier.user).to.eq('@psetest:mtrx.cz');
+      expect(request.body.type).to.eq('m.login.password');
+    });
+  });
+  it('shows error message if homerserver invalid', () => {
+    cy.visit('http://localhost:5173/login');
+    cy.get('#username').type('@psetest:invalidhomeserver');
+    cy.get('#homeserver').type('testpassword321');
+    cy.get('#homeserverWarning').should('be.visible');
+    cy.get('#loginbutton').should(
+      'have.class',
+      'w-full disabled inline-block shrink-0 rounded-md border border-gray-200 bg-gray-400 px-12 py-3 text-sm font-medium text-white transition'
+    );
+  });
+  it('checks well-known', () => {
+    cy.intercept(
+      {
+        url: '/.well-known/matrix/client',
+      },
+      {
+        fixture: 'well-known_matrix_client.json',
+      }
+    ).as('wellKnownGet');
+    cy.visit('http://localhost:5173/login');
+    cy.get('#username').type('@psetest:example.com');
+    cy.wait('@wellKnownGet').then(({response}) => {
+      expect(response?.body['m.homeserver'].base_url).to.eq('https://matrix.example.com');
+    });
+  });
 });
-
-function login(userType: string) {
-  cy.visit('http://localhost:5173/welcome');
-  cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
-  cy.get('#login-button-on-landing-page').click();
-  cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
-  cy.get('#homeserver').type(testAccounts[userType]['homeserver']);
-  cy.get('#goToLoginButton').click();
-  cy.get('#username', {timeout: 10000}).type(testAccounts[userType]['username']);
-  cy.get('#homeserver').type(testAccounts[userType]['password']);
-  cy.get('#loginbutton').click();
-}
-
-function logout() {
-  cy.get('#profile-picture').click();
-  cy.get('#logout-button').click();
-}
