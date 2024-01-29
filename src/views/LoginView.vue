@@ -59,10 +59,14 @@ watch(
     } else {
       if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
         const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
+        const isFromWellKnownValid = fromWellKnown
+          ? await MatrixClient.checkHomeserverUrl(fromWellKnown)
+          : false;
+
         if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
-          if (fromWellKnown) {
+          if (isFromWellKnownValid) {
             homeserverChecking.value = 0;
-            loginMatrixClient.value.setHomeserverUrl(fromWellKnown);
+            loginMatrixClient.value.setHomeserverUrl(fromWellKnown as string);
             showHomeserverWarning.value = false;
           } else {
             showHomeserverWarning.value = true;
