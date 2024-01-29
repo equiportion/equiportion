@@ -28,13 +28,13 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '@/assets/LogoSquare.svg',
+            src: 'LogoSquare.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',
           },
           {
-            src: '@/assets/LogoSquare.png',
+            src: 'LogoSquare.png',
             sizes: '1000x1000',
             type: 'image/png',
             purpose: 'any maskable',
