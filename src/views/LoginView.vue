@@ -60,7 +60,7 @@ watch(
       if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
         const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
         if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
-          if (fromWellKnown && await MatrixClient.checkHomeserverUrl(fromWellKnown)) {
+          if (fromWellKnown && (await MatrixClient.checkHomeserverUrl(fromWellKnown))) {
             homeserverChecking.value = 0;
             loginMatrixClient.value.setHomeserverUrl(fromWellKnown);
             showHomeserverWarning.value = false;
