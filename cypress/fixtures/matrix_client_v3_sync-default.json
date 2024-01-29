@@ -749,6 +749,18 @@
               "event_id": "$gIuGHjcmmTFlk0LlLZd-5O-B5ZyVc0Lmf8_QSz71qdg"
             },
             {
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "activate_app": "true"
+              },
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
+            },
+            {
               "type": "edu.kit.kastel.dsn.pse.payment_information",
               "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
               "content": {
@@ -1108,6 +1120,18 @@
         "state": {
           "events": [
             {
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "activate_app": "true"
+              },
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
+            },
+            {
               "type": "m.room.member",
               "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
               "content": {
@@ -1274,71 +1298,16 @@
               "event_id": "$b6ee3DPNgGm6Hcg5ylL2RAv5PrzB9cK2sfKVRxZ4UKI"
             },
             {
-              "type": "edu.kit.kastel.dsn.pse.payment_information",
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
               "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
               "content": {
-                "0": {
-                  "type": "iban",
-                  "information": {
-                    "iban": "DE1234567890"
-                  }
-                },
-                "1": {
-                  "type": "paypal",
-                  "information": {
-                    "mail": ""
-                  }
-                }
+                "activate_app": "true"
               },
-              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
-              "origin_server_ts": 1701455927841,
+              "origin_server_ts": 1701442160072,
               "unsigned": {
-                "age": 1192692078
+                "age": 1206459848
               },
-              "event_id": "$Zm63Ykpe6EpEeoCwrSe5UvArRbSubqGzCHF2BbhgA_E"
-            },
-            {
-              "type": "m.room.member",
-              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
-              "content": {
-                "membership": "join",
-                "displayname": "Testbenutzer",
-                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
-              },
-              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
-              "origin_server_ts": 1701516743301,
-              "unsigned": {
-                "replaces_state": "$tmnLmSTlGDT6lcJ4LLe_CwIuQf59FBM7nJX0QoAWhSI",
-                "prev_content": {
-                  "membership": "join",
-                  "displayname": "Testbenutzer"
-                },
-                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
-                "age": 1131876618
-              },
-              "event_id": "$SkRKgdd_ZasV0AwG2OJqncGuJQ2A4CUQkO8shdFdf3A"
-            },
-            {
-              "type": "m.room.member",
-              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
-              "content": {
-                "membership": "join",
-                "displayname": "Testbenutzer",
-                "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/mGYIzhWfiLjroATqGjyiNQBu"
-              },
-              "state_key": "@stub:stub.pse.dsn.kastel.kit.edu",
-              "origin_server_ts": 1701789203084,
-              "unsigned": {
-                "replaces_state": "$SkRKgdd_ZasV0AwG2OJqncGuJQ2A4CUQkO8shdFdf3A",
-                "prev_content": {
-                  "membership": "join",
-                  "displayname": "Testbenutzer",
-                  "avatar_url": "mxc://stub.pse.dsn.kastel.kit.edu/rEsSmqcueNMdYEUmlVSTeKdG"
-                },
-                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
-                "age": 859416835
-              },
-              "event_id": "$9al6AyKO2p8KXdQyjWy-v-dupAteykVXvJNlUVwRPdQ"
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
             },
             {
               "type": "m.room.member",
@@ -1395,6 +1364,26 @@
                 "age": 102817619
               },
               "event_id": "$mVUmJjuRsOwtLy03nl6QxKfU51WDuiAcUJF6HVnfmqk"
+            },
+            {
+              "type": "m.room.member",
+              "sender": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "membership": "leave",
+                "displayname": "philipptest3"
+              },
+              "state_key": "@philipptest3:stub.pse.dsn.kastel.kit.edu",
+              "origin_server_ts": 1702545802300,
+              "unsigned": {
+                "replaces_state": "$mVUmJjuRsOwtLy03nl6QxKfU51WDuiAcUJF6HVnfmqk",
+                "prev_content": {
+                  "membership": "join",
+                  "displayname": "philipptest3"
+                },
+                "prev_sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+                "age": 102817620
+              },
+              "event_id": "$mVUmJjuRsOwtLy03nl6QxKfU53WDuiAcUJF6HVnfmqk"
             }
           ],
           "prev_batch": "t10-31_6740_0_79_133_1_27_2892_0_2",
@@ -1434,6 +1423,18 @@
                 "age": 1213610801
               },
               "event_id": "$wVc4_gIYO_UmnboJRvOuXZd74hhy5y6g9v9VdYpdpx4"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "activate_app": "true"
+              },
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
             },
             {
               "type": "m.room.member",
@@ -1794,6 +1795,18 @@
         },
         "state": {
           "events": [
+            {
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "activate_app": "true"
+              },
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
+            },
             {
               "type": "m.room.join_rules",
               "sender": "@test1:stub.example.com",
@@ -2282,6 +2295,18 @@
                 "age": 1206459847
               },
               "event_id": "$aIluZP3OTZs2WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
+            },
+            {
+              "type": "edu.kit.kastel.dsn.pse.equiportion_settings",
+              "sender": "@stub:stub.pse.dsn.kastel.kit.edu",
+              "content": {
+                "activate_app": "true"
+              },
+              "origin_server_ts": 1701442160072,
+              "unsigned": {
+                "age": 1206459848
+              },
+              "event_id": "$aIluZP3OTZs3WvbDTaXPgcGxh3Pc_Fp6Q1lQbo5L9FA"
             },
             {
               "type": "edu.kit.kastel.dsn.pse.payment_information",
