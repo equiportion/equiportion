@@ -48,6 +48,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const inputValue = ref('');
@@ -81,16 +86,28 @@ const classes = computed(() => {
 });
 </script>
 <template>
-  <input
-    :id="id"
-    v-model="inputValue"
-    :type="type"
-    :name="name"
-    :class="classes"
-    :placeholder="placeholder"
-    :min="min"
-    :max="max"
-    :step="step"
-    :disabled="disabled"
-  />
+  <div class="relative">
+    <Transition name="fade">
+      <div
+        v-show="loading"
+        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+      >
+        <span class="text-gray-500 sm:text-sm">
+          <i class="fa fa-spinner animate-spin"></i>
+        </span>
+      </div>
+    </Transition>
+    <input
+      :id="id"
+      v-model="inputValue"
+      :type="type"
+      :name="name"
+      :class="classes"
+      :placeholder="placeholder"
+      :min="min"
+      :max="max"
+      :step="step"
+      :disabled="disabled"
+    />
+  </div>
 </template>
