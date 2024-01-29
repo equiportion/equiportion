@@ -2,6 +2,7 @@
 import {onMounted} from 'vue';
 import {RouterView} from 'vue-router';
 import initLocal from '@/logic/utils/local';
+import ReloadPrompt from '@/components/pwa/ReloadPrompt.vue';
 
 onMounted(() => {
   initLocal();
@@ -14,4 +15,5 @@ onMounted(() => {
       <component :is="Component" />
     </transition>
   </RouterView>
+  <ReloadPrompt />
 </template>
