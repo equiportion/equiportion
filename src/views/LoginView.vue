@@ -56,21 +56,19 @@ watch(
       homeserverChecking.value = 0;
       loginMatrixClient.value.setHomeserverUrl(homeserverUrlTest);
       showHomeserverWarning.value = false;
-    } else {
-      if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
-        const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
-        const isFromWellKnownValid = fromWellKnown
-          ? await MatrixClient.checkHomeserverUrl(fromWellKnown)
-          : false;
+    } else if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
+      const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
+      const isFromWellKnownValid = fromWellKnown
+        ? await MatrixClient.checkHomeserverUrl(fromWellKnown)
+        : false;
 
-        if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
-          if (isFromWellKnownValid) {
-            homeserverChecking.value = 0;
-            loginMatrixClient.value.setHomeserverUrl(fromWellKnown as string);
-            showHomeserverWarning.value = false;
-          } else {
-            showHomeserverWarning.value = true;
-          }
+      if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
+        if (isFromWellKnownValid) {
+          homeserverChecking.value = 0;
+          loginMatrixClient.value.setHomeserverUrl(fromWellKnown as string);
+          showHomeserverWarning.value = false;
+        } else {
+          showHomeserverWarning.value = true;
         }
       }
     }
@@ -106,11 +104,6 @@ watch(
         </p>
       </SystemAlert>
 
-      <div v-show="homeserverChecking > 0" class="flex flex-col items-center">
-        <i class="fa-solid fa-spinner animate-spin text-3xl text-gray-300"></i>
-        <span class="text-sm text-gray-400">Suche Homeserver...</span>
-      </div>
-
       <InputFieldWithLabelAndError
         id="username"
         v-model:model-value="userId"
@@ -119,6 +112,7 @@ watch(
         placeholder="z.B. @maxmustermann:matrix.org"
         label="Benutzername"
         :error="error"
+        :loading="homeserverChecking > 0"
       />
       <InputFieldWithLabelAndError
         id="homeserver"
