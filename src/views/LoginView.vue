@@ -59,7 +59,9 @@ watch(
     } else {
       if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
         const fromWellKnown = await MatrixClient.getHomeserverUrlFromWellKnown(homeserverUrlTest);
-        const isFromWellKnownValid = fromWellKnown ? (await MatrixClient.checkHomeserverUrl(fromWellKnown)) : false;
+        const isFromWellKnownValid = fromWellKnown
+          ? (await MatrixClient.checkHomeserverUrl(fromWellKnown))
+          : false;
 
         if ('https://' + userId.value.split(':')[1] == homeserverUrlTest) {
           if (isFromWellKnownValid) {
