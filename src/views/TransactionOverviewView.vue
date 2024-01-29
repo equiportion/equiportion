@@ -16,10 +16,10 @@ import type Room from '@/logic/models/Room';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
-import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
+import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -38,7 +38,7 @@ function loadRooms() {
   events.value = room.value?.getEvents() as (TransactionEvent | MRoomMemberEvent)[];
   events.value.reverse();
 
-  const compensationCalculation = new NonOptimizedCompensation();
+  const compensationCalculation = new BipartiteCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
 }
 

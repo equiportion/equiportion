@@ -13,7 +13,8 @@ function centsPart(num: number): string {
 const props = defineProps({
   compensation: {
     type: Number,
-    required: true,
+    required: false,
+    default: 0,
   },
 });
 </script>

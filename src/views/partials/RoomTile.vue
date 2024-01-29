@@ -6,7 +6,7 @@ import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
-import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
+import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 
 const props = defineProps({
   room: {
@@ -43,7 +43,7 @@ const sum: Ref<number | undefined> = ref(undefined);
 watch(
   () => props.room,
   () => {
-    const compensationCalculation = new NonOptimizedCompensation();
+    const compensationCalculation = new BipartiteCompensation();
     const compensation = compensationCalculation.calculateCompensation(props.room);
     let sumCalc = 0;
     for (const userId in compensation) {
