@@ -9,7 +9,7 @@ describe('the creation of new rooms', () => {
           method: 'POST',
         },
         {
-          fixture: '',
+          fixture: 'glpat-KBx3sYYCAE82tRHdBAwL',
         }
       ).as('newRoomEventPost');
 
