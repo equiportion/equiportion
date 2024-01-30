@@ -3,10 +3,15 @@ import {authenticated} from '../support/stubs';
 describe('the creation of new rooms', () => {
   it('event is sent on room creation', () => {
     authenticated(() => {
-      cy.intercept({
-        url: '/_matrix/client/v3/createRoom*',
-        method: 'POST',
-      }).as('newRoomEventPost');
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/createRoom*',
+          method: 'POST',
+        },
+        {
+          fixture: '',
+        }
+      ).as('newRoomEventPost');
 
       cy.visit('http://localhost:5173/');
 
