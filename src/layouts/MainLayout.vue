@@ -70,7 +70,7 @@ function logout() {
       </div>
     </header>
 
-    <main class="w-full pt-[104px]">
+    <main class="w-full pt-[104px] min-h-screen">
       <slot />
     </main>
   </div>

@@ -57,7 +57,7 @@ watch(roomId, () => {
   loadRoom();
 });
 
-// all Schuldner
+// all debtors
 const debtors: Ref<{user: User; fixedAmount: number}[]> = ref([]);
 
 // function to add a debtor when clicking on a user in the dropdown
@@ -120,13 +120,31 @@ const restSum = computed(() => {
 });
 
 const restValue = computed(() => {
-  return Math.floor(restSum.value / debtors.value.length);
+  const restValue: {[key: string]: number} = {};
+  debtors.value.forEach((debtor) => {
+    restValue[debtor.user.getUserId()] = Math.floor(restSum.value / debtors.value.length);
+  });
+
+  let rest = restSum.value % debtors.value.length;
+  let i = 0;
+  while (rest > 0) {
+    restValue[debtors.value[i].user.getUserId()] += 1;
+    rest -= 1;
+    i += 1;
+
+    if (i >= debtors.value.length) {
+      i = 0;
+    }
+  }
+
+  return restValue;
 });
 
 const sumSingle = computed(() => {
   const sumSingle: {[key: string]: number} = {};
   debtors.value.forEach((debtor) => {
-    sumSingle[debtor.user.getUserId()] = debtor.fixedAmount + restValue.value;
+    sumSingle[debtor.user.getUserId()] =
+      debtor.fixedAmount + restValue.value[debtor.user.getUserId()];
   });
   return sumSingle;
 });
@@ -328,7 +346,7 @@ function centsPart(num: number): string {
               />
             </template>
           </MoneyInputWrapper>
-          <MoneyInputWrapper v-model="restValue">
+          <MoneyInputWrapper v-model="restValue[debtor.user.getUserId()]">
             <template #input="{inputValue}">
               <InputFieldWithLabelAndError
                 type="text"

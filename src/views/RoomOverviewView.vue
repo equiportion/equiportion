@@ -5,9 +5,16 @@ import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useRoomsStore} from '@/stores/rooms';
 import HeightFade from '@/components/transitions/HeightFade.vue';
-import NonOptimizedCompensation from '@/logic/models/compensation/NonOptimizedCompensation';
-import {watch, ref} from 'vue';
+import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import StandardButton from '@/components/buttons/StandardButton.vue';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import ButtonSelect from '@/components/input/ButtonSelect.vue';
+import SelectInput from '@/components/input/SelectInput.vue';
+import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
+import useGlobalEventBus from '@/composables/useGlobalEventBus';
+import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 
 const clientStateStore = useClientStateStore();
 
@@ -21,7 +28,11 @@ const balance = ref(0);
 function calculateBalance() {
   let sum = 0;
   for (const room of Object.values(rooms)) {
-    const compensationCalculation = new NonOptimizedCompensation();
+    if (room.isVisible() === false) {
+      continue;
+    }
+
+    const compensationCalculation = new BipartiteCompensation();
     const compensation = compensationCalculation.calculateCompensation(room);
     for (const comp of Object.values(compensation)) {
       sum += comp;
@@ -69,6 +80,80 @@ function eurosPart(num: number): string {
 function centsPart(num: number): string {
   return ('00' + (num % 100)).slice(-2);
 }
+
+/**
+ * Room creation
+ */
+const newRoomName = ref('');
+const newRoomMethod = ref('');
+const newRoomSelection = ref('');
+const roomsActionLoading = ref(false);
+
+const roomCreationDisabled = computed(() => {
+  return newRoomName.value == '';
+});
+
+const roomSelectionDisabled = computed(() => {
+  return newRoomSelection.value == '';
+});
+
+const roomsAsOptions = computed(() => {
+  return Object.values(rooms)
+    .filter((room) => !room.isVisible())
+    .map((room) => {
+      return {value: room.getRoomId(), label: room.getName() ?? room.getRoomId()};
+    });
+});
+
+/**
+ * creates a completely new room
+ */
+async function createNewRoom() {
+  if (newRoomName.value === '') {
+    return;
+  }
+  roomsActionLoading.value = true;
+  await AuthenticatedMatrixClient.getClient().createRoom(newRoomName.value);
+
+  newRoomName.value = '';
+  newRoomSelection.value = '';
+  newRoomMethod.value = '';
+
+  roomsActionLoading.value = false;
+}
+
+/**
+ * makes an existing room visible in the app
+ */
+async function makeRoomVisible() {
+  if (newRoomSelection.value === '') {
+    return;
+  }
+
+  roomsActionLoading.value = true;
+
+  const newEquiportionSettingsEvent = new EquiPortionSettingsEvent(
+    '',
+    newRoomSelection.value,
+    true
+  );
+  await newEquiportionSettingsEvent.publish();
+
+  newRoomSelection.value = '';
+  newRoomMethod.value = '';
+
+  roomsActionLoading.value = false;
+}
+
+const {bus} = useGlobalEventBus();
+watch(
+  () => bus.value.get('click'),
+  (val) => {
+    if (!val[0]['no-close']) {
+      newRoomMethod.value = '';
+    }
+  }
+);
 </script>
 <template>
   <MainLayout id="main-layout">
@@ -100,6 +185,66 @@ function centsPart(num: number): string {
       </div>
     </div>
 
+    <!-- Toolbar -->
+    <div id="toolBar" class="flex flex-col items-center gap-5 p-2 lg:p-5">
+      <div
+        class="flex flex-col items-center lg:items-start justify-between w-full lg:max-w-[80%] gap-5 p-5 rounded-lg bg-gray-100 lg:hover:bg-gray-200 shadow-lg transition lg:hover:scale-[101%] no-close"
+      >
+        <ButtonSelect
+          v-model="newRoomMethod"
+          :options="[
+            {label: 'Neuen Raum erstellen', value: 'new', icon: 'fa-solid fa-plus'},
+            {
+              label: 'Bestehenden Matrix-Raum hinzufügen',
+              value: 'existing',
+              icon: 'fa-solid fa-users-rectangle',
+            },
+          ]"
+        />
+        <HeightFade>
+          <div v-show="newRoomMethod != ''" class="w-full">
+            <div v-if="newRoomMethod == 'new'" class="w-full flex flex-col gap-5">
+              <InputFieldWithLabelAndError
+                v-model="newRoomName"
+                label="Name des neuen Raums"
+                type="text"
+                class="w-full"
+              />
+              <StandardButton
+                :loading="roomsActionLoading"
+                :disabled="roomCreationDisabled"
+                @click="createNewRoom()"
+              >
+                <i class="fa-solid fa-plus"></i> Erstellen
+              </StandardButton>
+            </div>
+            <div v-else-if="newRoomMethod == 'existing'" class="w-full flex flex-col gap-5">
+              <template v-if="roomsAsOptions.length > 0">
+                <SelectInput
+                  v-model="newRoomSelection"
+                  label="Matrix-Raum auswählen"
+                  :options="roomsAsOptions"
+                />
+                <StandardButton
+                  :loading="roomsActionLoading"
+                  :disabled="roomSelectionDisabled"
+                  @click="makeRoomVisible()"
+                >
+                  <i class="fa-solid fa-plus"></i> Raum in EquiPortion nutzen
+                </StandardButton>
+              </template>
+              <template v-else>
+                <span class="text-sm text-gray-600">
+                  Keine Matrix-Räume gefunden, die noch nicht in EquiPortion genutzt werden!
+                </span>
+              </template>
+            </div>
+            <div v-else class="h-20"></div>
+          </div>
+        </HeightFade>
+      </div>
+    </div>
+
     <!--Rooms-->
     <div id="rooms" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <HeightFade>
@@ -118,7 +263,7 @@ function centsPart(num: number): string {
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in rooms" :key="room.id">
-        <RoomTile :room="room" />
+        <RoomTile v-if="room.isVisible()" :room="room" />
       </template>
     </div>
     <!--End of rooms-->

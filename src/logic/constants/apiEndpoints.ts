@@ -23,6 +23,7 @@ const apiEndpoints = {
   roomMessagesGet(roomId: string, from: string, dir: string) {
     return `/_matrix/client/v3/rooms/${roomId}/messages?from=${from}&dir=${dir}`;
   },
+  roomCreate: '/_matrix/client/v3/createRoom',
 };
 
 export default apiEndpoints;
