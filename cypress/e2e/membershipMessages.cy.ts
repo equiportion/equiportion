@@ -1,6 +1,6 @@
 import {authenticated} from '../support/stubs';
 
-describe('main layout: profile dropdown', () => {
+describe('membership messages are shown', () => {
   it('user leaves room is shown as message', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
