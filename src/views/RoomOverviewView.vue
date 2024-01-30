@@ -205,12 +205,14 @@ watch(
           <div v-show="newRoomMethod != ''" class="w-full">
             <div v-if="newRoomMethod == 'new'" class="w-full flex flex-col gap-5">
               <InputFieldWithLabelAndError
+                id="roomNameInputField"
                 v-model="newRoomName"
                 label="Name des neuen Raums"
                 type="text"
                 class="w-full"
               />
               <StandardButton
+                id="createRoomButton"
                 :loading="roomsActionLoading"
                 :disabled="roomCreationDisabled"
                 @click="createNewRoom()"
