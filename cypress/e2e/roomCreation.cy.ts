@@ -1,7 +1,7 @@
 import {authenticated} from '../support/stubs';
 
 describe('the creation of new rooms', () => {
-  it('event is sent on room creation', () => {
+  it('event is sent onglpat-KBx3sYYCAE82tRHdBAwL room creation', () => {
     authenticated(() => {
       cy.intercept(
         {
