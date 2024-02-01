@@ -39,10 +39,36 @@ async function loginWithPassword() {
 const showHomeserverWarning = ref(false);
 const homeserverChecking: Ref<number> = ref(0);
 
+// check url for loginToken
+const loginUsingToken = ref(false);
+const urlParams = new URLSearchParams(window.location.search);
+const loginToken = urlParams.get('loginToken');
+onMounted(async () => {
+  if (loginToken) {
+    console.log(loginMatrixClient.value.getHomeserverUrl());
+    loginUsingToken.value = true;
+
+    const successful = await loginMatrixClient.value.tokenLogin(loginToken);
+    if (successful) {
+      router.push({name: 'home'}).then(() => {
+        router.go(0);
+      });
+    } else {
+      error.value = 'Ungültiger Login-Token';
+    }
+
+    loginUsingToken.value = false;
+  }
+});
+
+// login form homeserver validation
 watch(
   () => userId.value,
   async () => {
-    if (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) {
+    if (
+      (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) &&
+      !loginToken
+    ) {
       await loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
       showHomeserverWarning.value = false;
       homeserverChecking.value = 0;
@@ -82,28 +108,6 @@ watch(
   },
   {immediate: true}
 );
-
-// check url for loginToken
-const loginUsingToken = ref(false);
-
-onMounted(async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const loginToken = urlParams.get('loginToken');
-  if (loginToken) {
-    loginUsingToken.value = true;
-
-    const successful = await loginMatrixClient.value.tokenLogin(loginToken);
-    if (successful) {
-      router.push({name: 'home'}).then(() => {
-        router.go(0);
-      });
-    } else {
-      error.value = 'Ungültiger Login-Token';
-    }
-
-    loginUsingToken.value = false;
-  }
-});
 </script>
 
 <template>
