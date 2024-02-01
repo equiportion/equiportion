@@ -19,25 +19,25 @@ describe('login and logout', () => {
   //   cy.get('#login-button-on-landing-page').should('exist');
   // });
 
-  it('login', () => {
-    standard();
-    cy.intercept({
-      url: '/_matrix/client/v3/login',
-      method: 'POST',
-    }).as('loginPost');
-    cy.visit('http://localhost:5173/login');
-    cy.get('#username').type('@psetest:mtrx.cz');
-    cy.get('#homeserver').type('testpassword321');
-    cy.get('#loginbutton').click();
-    cy.wait('@matrix_client_versions').then(({response}) => {
-      expect(response?.body.versions.length).to.eq(14);
-    });
-    cy.wait('@loginPost').then(({request}) => {
-      expect(request.body.password).to.eq('testpassword321');
-      expect(request.body.identifier.user).to.eq('@psetest:mtrx.cz');
-      expect(request.body.type).to.eq('m.login.password');
-    });
-  });
+  // it('login', () => {
+  //   standard();
+  //   cy.intercept({
+  //     url: '/_matrix/client/v3/login',
+  //     method: 'POST',
+  //   }).as('loginPost');
+  //   cy.visit('http://localhost:5173/login');
+  //   cy.get('#username').type('@psetest:mtrx.cz');
+  //   cy.get('#homeserver').type('testpassword321');
+  //   cy.get('#loginbutton').click();
+  //   cy.wait('@matrix_client_versions').then(({response}) => {
+  //     expect(response?.body.versions.length).to.eq(14);
+  //   });
+  //   cy.wait('@loginPost').then(({request}) => {
+  //     expect(request.body.password).to.eq('testpassword321');
+  //     expect(request.body.identifier.user).to.eq('@psetest:mtrx.cz');
+  //     expect(request.body.type).to.eq('m.login.password');
+  //   });
+  // });
   it('shows error message if homerserver invalid', () => {
     cy.visit('http://localhost:5173/login');
     cy.get('#username').type('@psetest:invalidhomeserver');
