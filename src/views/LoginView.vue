@@ -45,7 +45,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const loginToken = urlParams.get('loginToken');
 onMounted(async () => {
   if (loginToken) {
-    console.log(loginMatrixClient.value.getHomeserverUrl());
     loginUsingToken.value = true;
 
     const successful = await loginMatrixClient.value.tokenLogin(loginToken);
