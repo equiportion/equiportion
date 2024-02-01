@@ -2,6 +2,7 @@ const apiEndpoints = {
   //Don't require authentification
   versions: '',
   login: '/_matrix/client/v3/login',
+  ssoRedirect: '/_matrix/client/v3/login/sso/redirect',
 
   //Require authentification
   whoami: '/_matrix/client/v3/account/whoami',

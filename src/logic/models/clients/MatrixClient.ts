@@ -4,6 +4,7 @@ import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
 import {type AxiosRequestConfig} from 'axios';
+import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /**
  * A client that can make requests to a matrix homeserver.
@@ -11,6 +12,7 @@ import {type AxiosRequestConfig} from 'axios';
 class MatrixClient {
   private homeserverUrl?: string;
   protected axiosInstance: AxiosInstance;
+  private supportedLoginFlows: string[] = [];
 
   /**
    * Creates a new client.
@@ -39,12 +41,40 @@ class MatrixClient {
   /**
    * Sets the homeserver url of this client.
    * @param {string} homeserverUrl the url to set
+   * @returns {Promise<void>} a promise that resolves when the homeserver url is set
    */
-  public setHomeserverUrl(homeserverUrl: string) {
+  public async setHomeserverUrl(homeserverUrl: string): Promise<void> {
     setCookie(cookieNames.homeserverUrl, homeserverUrl);
 
     this.homeserverUrl = homeserverUrl;
     this.axiosInstance.defaults.baseURL = homeserverUrl;
+
+    await this.fetchSupportedLoginFlows();
+  }
+
+  /**
+   * Gets the supported login flows of the homeserver of this client.
+   * @returns {Promise<void>} a promise that resolves when the supported login flows are fetched
+   */
+  private async fetchSupportedLoginFlows(): Promise<void> {
+    const response = await this.getRequest(apiEndpoints.login);
+
+    if (!response?.data.flows) {
+      throw new Error('No supported login flows found');
+    }
+
+    this.supportedLoginFlows = [];
+    response.data.flows.forEach((flow: {type: string}) => {
+      this.supportedLoginFlows?.push(flow.type);
+    });
+  }
+
+  /**
+   * Gets the supported login flows of the homeserver of this client.
+   * @returns {string[]} the supported login flows
+   */
+  public getSupportedLoginFlows(): string[] {
+    return this.supportedLoginFlows;
   }
 
   /**
