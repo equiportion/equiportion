@@ -43,7 +43,7 @@ watch(
   () => userId.value,
   async () => {
     if (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) {
-      loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
+      await loginMatrixClient.value.setHomeserverUrl('https://matrix.org');
       showHomeserverWarning.value = false;
       homeserverChecking.value = 0;
       return;
@@ -113,7 +113,7 @@ onMounted(async () => {
       class="mt-8 flex flex-col gap-6 w-full"
       @submit.prevent="loginWithPassword"
     >
-      <span v-show="!showHomeserverWarning" class="text-center">
+      <span v-show="!showHomeserverWarning && homeserverChecking == 0" class="text-center">
         Am Server "{{ loginMatrixClient.getHomeserverUrl()?.split('://')[1] }}" anmelden
       </span>
 
