@@ -86,10 +86,6 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-window.addEventListener('offline', () => {
-  router.push({name: 'offline'});
-});
-
 /**
  * Animations
  */
