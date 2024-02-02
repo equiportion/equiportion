@@ -24,6 +24,33 @@ class LoginMatrixClient extends MatrixClient {
       password: password,
     };
 
+    return await this.authenticateAtHomeserver(data);
+  }
+
+  /**
+   * Sends a login request to the matrix API using token login.
+   * @param {string} token the token the user entered
+   * @returns {Promise<Boolean>} a promise that resolves to true when the login request is successful, false otherwise
+   */
+  public async tokenLogin(token: string): Promise<Boolean> {
+    const data = {
+      type: 'm.login.token',
+      token: token,
+    };
+
+    return await this.authenticateAtHomeserver(data);
+  }
+
+  /**
+   * Sends a login request to the matrix API using token login.
+   * @param data the authentication data to send to the homeserver
+   * @returns {Promise<Boolean>} a promise that resolves to true when the login request is successful, false otherwise
+   */
+  private async authenticateAtHomeserver(data: {
+    type: string;
+    token?: string;
+    identifier?: any;
+  }): Promise<Boolean> {
     try {
       const response = await this.postRequest(apiEndpoints.login, data);
 
@@ -42,6 +69,14 @@ class LoginMatrixClient extends MatrixClient {
 
       return false;
     }
+  }
+
+  /**
+   * Redirects the user to the SSO login page of the homeserver.
+   */
+  public redirectToSsoLogin(): void {
+    const hrefCleaned = window.location.href.split('?')[0];
+    window.location.href = `${this.getHomeserverUrl()}${apiEndpoints.ssoRedirect}?redirectUrl=${hrefCleaned}`;
   }
 }
 
