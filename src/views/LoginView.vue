@@ -26,9 +26,9 @@ async function loginWithPassword() {
   const successful = await loginMatrixClient.value.passwordLogin(userId.value, password.value);
   if (successful) {
     error.value = undefined;
-    router.push({name: 'home'}).then(() => {
-      router.go(0);
-    });
+    const dashboardUrl = window.location.href.split('login')[0];
+    window.location.href = dashboardUrl;
+    return;
   } else {
     error.value = 'Ungültiger Benutzername oder Passwort';
   }
@@ -49,9 +49,9 @@ onMounted(async () => {
 
     const successful = await loginMatrixClient.value.tokenLogin(loginToken);
     if (successful) {
-      router.push({name: 'home'}).then(() => {
-        router.go(0);
-      });
+      const dashboardUrl = window.location.href.split('login?')[0];
+      window.location.href = dashboardUrl;
+      return;
     } else {
       error.value = 'Ungültiger Login-Token';
     }
@@ -64,6 +64,10 @@ onMounted(async () => {
 watch(
   () => userId.value,
   async () => {
+    if (loginToken) {
+      return;
+    }
+
     if (
       (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) &&
       !loginToken
@@ -111,11 +115,7 @@ watch(
 
 <template>
   <LoginProcessBase>
-    <form
-      id="login-form"
-      class="mt-8 flex flex-col gap-6 w-full"
-      @submit.prevent="loginWithPassword"
-    >
+    <div id="login-form" class="mt-8 flex flex-col gap-6 w-full">
       <span v-show="!showHomeserverWarning && homeserverChecking == 0" class="text-center">
         Am Server "{{ loginMatrixClient.getHomeserverUrl()?.split('://')[1] }}" anmelden
       </span>
@@ -197,6 +197,6 @@ watch(
           <i class="fa-solid fa-spinner animate-spin text-3xl text-gray-400"></i>
         </div>
       </template>
-    </form>
+    </div>
   </LoginProcessBase>
 </template>
