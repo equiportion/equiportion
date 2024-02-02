@@ -116,7 +116,7 @@ watch(
 );
 </script>
 <template>
-  <div >
+  <div>
     <span v-show="loading" :class="props.class" class="flex items-center justify-center h-full">
       <i class="fa-solid fa-spinner animate-spin"></i>
     </span>
