@@ -23,7 +23,7 @@ export default defineConfig({
         short_name: 'EquiPortion',
         description:
           'Aufteilen von Rechnungen war noch nie so einfach. Mit EquiPortion kannst du deine Rechnungen aufteilen und mit deinen Freunden teilen. Einfach, schnell und sicher über den Matrix-Server deines Vertrauens.',
-        theme_color: '#98e9e1',
+        theme_color: '#ffffff',
         display: 'standalone',
         icons: [
           {
