@@ -20,6 +20,10 @@ import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
+import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
+import StandardButton from '@/components/buttons/StandardButton.vue';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -28,10 +32,17 @@ const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
+const stateEvents: Ref<MatrixEvent[]> = ref([]);
+
+const inviteLoading = ref(false);
+const userToInviteId = ref('');
+const userIdError = ref('');
 
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
+  stateEvents.value = room.value?.getEventsWithStateEvents('m.room.create')!;
+  console.log(stateEvents);
   events.value = room.value?.getEvents()!;
   events.value.reverse();
 
@@ -69,7 +80,17 @@ function toggleMemberList(): void {
   memberListOpen.value = !memberListOpen.value;
 }
 
+function toggleBanButton(): void {
+  banButtonOpen.value = !banButtonOpen.value;
+}
+
+function toggleInviteModal(): void {
+  inviteModalOpen.value = !inviteModalOpen.value;
+}
+
 const memberListOpen = ref(false);
+const banButtonOpen = ref(false);
+const inviteModalOpen = ref(false);
 
 const iconClasses = computed(() => {
   if (memberListOpen.value) {
@@ -150,6 +171,40 @@ function asTransactionEvent(event: MatrixEvent): TransactionEvent {
 function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
   return event as MRoomMemberEvent;
 }
+
+async function changeMembership(user: User, membership: string): Promise<boolean> {
+  const memberEvent = new MRoomMemberEvent(
+    MatrixEvent.EVENT_ID_NEW,
+    roomId.value,
+    user.getUserId(),
+    user.getAvatarUrl()!,
+    user.getDisplayname()!,
+    membership,
+    ''
+  );
+  try {
+    await memberEvent.publish();
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
+async function inviteMember(userId: string) {
+  inviteLoading.value = true;
+  const newUser = room.value?.getMember(userId);
+  try {
+    const success = await changeMembership(newUser!, 'invite');
+    if (!success) {
+      userIdError.value = 'Benutzername nicht gefunden';
+      inviteLoading.value = false;
+    } else {
+      window.location.reload();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
 </script>
 
 <template>
@@ -162,6 +217,39 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
     >
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
+
+    <!--modal for inviting user-->
+    <div
+      v-show="inviteModalOpen"
+      data-modal-backdrop="static"
+      class="fixed inset-0 z-50 flex justify-center items-center w-full backdrop-blur-sm backdrop-brightness-75"
+    >
+      <div
+        class="relative p-4 gap-3 w-full max-w-2xl max-h-full flex flex-col bg-slate-50 rounded-md"
+      >
+        <div class="flex flex-row">
+          <p class="font-bold text-xl grow">In diesen Raum einladen</p>
+          <i class="fa-solid fa-xmark" @click="toggleInviteModal"></i>
+        </div>
+        <p>gib einen Benutzername ein:</p>
+        <div class="flex flex-row gap-2">
+          <InputFieldWithLabelAndError
+            v-model="userToInviteId"
+            type="text"
+            :error="userIdError"
+            name="username"
+            placeholder="z.B. @maxmustermann:matrix.org"
+            class="w-full"
+          />
+          <StandardButton
+            class="w-auto"
+            :loading="inviteLoading"
+            @click="inviteMember(userToInviteId)"
+            >einladen</StandardButton
+          >
+        </div>
+      </div>
+    </div>
 
     <div class="flex flex-col lg:flex-row min-h-screen">
       <!--content-->
@@ -284,10 +372,14 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
         id="memberList"
         class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
-        <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
-          <i class="fa-solid fa-angles-right"></i>
-        </RoundButton>
-
+        <div class="flex flex-row items-center justify-between">
+          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
+            <i class="fa-solid fa-angles-right"></i>
+          </RoundButton>
+          <StandardButton class="w-auto px-4" @click="toggleInviteModal"
+            >In diesen Raum einladen</StandardButton
+          >
+        </div>
         <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
           <!--shows the display names of all members in a room if possible or the member id if not-->
 
@@ -301,10 +393,21 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
             <div
               v-if="member.getUserId() != loggedInUser.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex items-center bg-gray-300 p-2 rounded-lg"
             >
-              <UserTile :user="member" class="w-full" />
-              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
+              <div class="flex flex-col items-center gap-1 w-full">
+                <UserTile :user="member" class="w-full" />
+                <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
+              </div>
+              <!--ban button-->
+              <DropdownMenu>
+                <template #trigger>
+                  <i class="fa-solid fa-ellipsis-vertical px-2"></i>
+                </template>
+                <DropdownButton id="logout-button" @click="changeMembership(member, 'ban')">
+                  Mitglied bannen
+                </DropdownButton>
+              </DropdownMenu>
             </div>
           </template>
 
