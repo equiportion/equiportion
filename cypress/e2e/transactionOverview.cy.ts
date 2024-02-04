@@ -45,7 +45,7 @@ describe('/', () => {
   // });
 
   // TODO fix
-  /* it('does not show transaction balance to myself', () => {
+  it('does not show transaction balance to myself', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(2).click();
@@ -56,5 +56,5 @@ describe('/', () => {
         .and('not.contain', 'Schuldet dir')
         .and('not.contain', 'Ausgeglichen');
     });
-  }); */
+  });
 });
