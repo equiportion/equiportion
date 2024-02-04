@@ -142,34 +142,36 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.nextBatch = response.data.next_batch;
 
     const roomsStore = useRoomsStore();
-    const rooms = roomsStore.rooms;
+    const joinedRooms = roomsStore.joinedRooms;
+    const invitedRooms = roomsStore.invitedRooms;
 
     const joinedRoomsData = response.data.rooms?.join;
     const invitedRoomsData = response.data.rooms?.invite;
-    const newRooms = {
-      ...joinedRoomsData,
-      ...invitedRoomsData,
-    };
-    if (newRooms && Object.keys(newRooms).length > 0) {
-      for (const roomId in newRooms) {
+
+    if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
+      for (const roomId in joinedRoomsData) {
         // Create a new room if it doesn't exist yet
-        if (!rooms[roomId]) {
-          const newRoom = new Room(roomId);
-          rooms[roomId] = newRoom;
-          if (roomId in invitedRoomsData) {
-            newRoom.setName(
-              invitedRoomsData[roomId].invite_state.events.find(
-                (event: {type: string}) => event.type === 'm.room.name'
-              ).content.name
-            );
-          }
+        if (!joinedRooms[roomId]) {
+          joinedRooms[roomId] = new Room(roomId);
         }
-        if (roomId in joinedRoomsData) {
-          rooms[roomId].sync(joinedRoomsData[roomId]);
+
+        joinedRooms[roomId].sync(joinedRoomsData[roomId]);
+      }
+    }
+    if (invitedRoomsData && Object.keys(invitedRoomsData).length > 0) {
+      for (const roomId in invitedRoomsData) {
+        // Create a new room if it doesn't exist yet
+        if (!invitedRooms[roomId]) {
+          const newRoom = new Room(roomId);
+          invitedRooms[roomId] = newRoom;
+          newRoom.setName(
+            invitedRoomsData[roomId].invite_state.events.find(
+              (event: {type: string}) => event.type === 'm.room.name'
+            ).content.name
+          );
         }
       }
     }
-    console.log(rooms)
     clientStateStore.syncing = false;
   }
 

@@ -3,16 +3,16 @@ import {defineStore} from 'pinia';
 import {ref, type Ref} from 'vue';
 
 export const useRoomsStore = defineStore('rooms', () => {
-  const rooms: Ref<{[roomId: string]: Room}> = ref({});
-
+  const joinedRooms: Ref<{[roomId: string]: Room}> = ref({});
+  const invitedRooms: Ref<{[roomId: string]: Room}> = ref({});
   /**
    * Get a room by its roomId.
    * @param {string} roomId the matrix-room-id of the room
    * @returns {Room | undefined} the room if it exists, else undefined
    */
   function getRoom(roomId: string): Room | undefined {
-    return rooms.value[roomId];
+    return joinedRooms.value[roomId];
   }
 
-  return {rooms, getRoom};
+  return {joinedRooms: joinedRooms,invitedRooms: invitedRooms, getRoom};
 });

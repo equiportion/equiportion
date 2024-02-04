@@ -9,12 +9,15 @@ import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
+import RoundButton from '@/components/buttons/RoundButton.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
+import MatrixEvent from '@/logic/models/events/MatrixEvent';
 
 const clientStateStore = useClientStateStore();
 
@@ -22,13 +25,13 @@ const loggedInUserStore = useLoggedInUserStore();
 const loggedInUser = loggedInUserStore.user;
 
 const roomsStore = useRoomsStore();
-const rooms = roomsStore.rooms;
-
+const joinedRooms = roomsStore.joinedRooms;
+const invitedRooms = roomsStore.invitedRooms;
 
 const balance = ref(0);
 function calculateBalance() {
   let sum = 0;
-  for (const room of Object.values(rooms)) {
+  for (const room of Object.values(joinedRooms)) {
     if (room.isVisible() === false) {
       continue;
     }
@@ -44,7 +47,7 @@ function calculateBalance() {
 waitForInitialSync().then(() => {
   calculateBalance();
 });
-watch(rooms, () => {
+watch(joinedRooms, () => {
   calculateBalance();
 });
 
@@ -99,7 +102,7 @@ const roomSelectionDisabled = computed(() => {
 });
 
 const roomsAsOptions = computed(() => {
-  return Object.values(rooms)
+  return Object.values(joinedRooms)
     .filter((room) => !room.isVisible())
     .map((room) => {
       return {value: room.getRoomId(), label: room.getName() ?? room.getRoomId()};
@@ -144,6 +147,31 @@ async function makeRoomVisible() {
   newRoomMethod.value = '';
 
   roomsActionLoading.value = false;
+}
+
+const joinLoading = ref(false);
+/**
+ * joins a room
+ */
+async function joinRoom(roomId: string) {
+  joinLoading.value = true;
+  const joinEvent = new MRoomMemberEvent(
+    MatrixEvent.EVENT_ID_NEW,
+    roomId,
+    loggedInUser.getUserId(),
+    loggedInUser.getAvatarUrl()!,
+    loggedInUser.getDisplayname()!,
+    'join',
+    ''
+  );
+  try {
+    await joinEvent.publish();
+    console.log(joinedRooms[roomId])
+    joinedRooms[roomId].setVisible(true);
+  } catch (e) {
+    console.error(e);
+  }
+  joinLoading.value = false;
 }
 
 const {bus} = useGlobalEventBus();
@@ -259,13 +287,27 @@ watch(
         </span>
       </HeightFade>
       <span
-        v-show="clientStateStore.numberOfSyncs > 0 && rooms && Object.keys(rooms).length <= 0"
+        v-show="
+          clientStateStore.numberOfSyncs > 0 &&
+          joinedRooms &&
+          Object.keys(joinedRooms).length <= 0 &&
+          invitedRooms &&
+          Object.keys(invitedRooms).length <= 0
+        "
         id="no-rooms-message"
         class="text-sm text-gray-300"
       >
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
-      <template v-for="room in rooms" :key="room.id">
+      <template v-for="room in invitedRooms" :key="room.id">
+        <div
+          class="flex flex-col items-center lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 shadow-lg"
+        >
+          <p class="flex items-center">Du wurdest in {{ room.getName() }} eingeladen</p>
+          <RoundButton :loading="joinLoading" @click="joinRoom(room.getRoomId())"><i class="fa-solid fa-check"></i></RoundButton>
+        </div>
+      </template>
+      <template v-for="room in joinedRooms" :key="room.id">
         <RoomTile v-if="room.isVisible()" :room="room" />
       </template>
     </div>

@@ -77,16 +77,11 @@ function toggleMemberList(): void {
   memberListOpen.value = !memberListOpen.value;
 }
 
-function toggleBanButton(): void {
-  banButtonOpen.value = !banButtonOpen.value;
-}
-
 function toggleInviteModal(): void {
   inviteModalOpen.value = !inviteModalOpen.value;
 }
 
 const memberListOpen = ref(false);
-const banButtonOpen = ref(false);
 const inviteModalOpen = ref(false);
 
 const iconClasses = computed(() => {
