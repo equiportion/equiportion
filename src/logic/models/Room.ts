@@ -18,6 +18,7 @@ class Room {
   private name?: string;
   private topic?: string;
   private avatarUrl?: string;
+  private creatorId?: string;
 
   private members: {[userId: string]: User} = {};
 
@@ -47,6 +48,16 @@ class Room {
   public sync(data: any) {
     const stateEvents = data.state.events;
     const timelineEvents = data.timeline.events;
+
+    if (!this.creatorId) {
+      const creatorFound = timelineEvents.find(
+        (event: {type: string}) => event.type === 'm.room.create'
+      );
+      if (creatorFound) {
+        this.creatorId = creatorFound.content.creator;
+      }
+    }
+
     const prevBatch = data.timeline.prev_batch;
 
     if (prevBatch == '') {
@@ -167,6 +178,15 @@ class Room {
    */
   public setAvatarUrl(avatarUrl: string) {
     this.avatarUrl = avatarUrl;
+  }
+
+  /**
+   * Gets a specific member of this room.
+   * @param userId the id of the user
+   * @returns {User} the user with the given id, or a new user with the given id if the user is not loaded yet
+   */
+  public getCreatorId(): string | undefined {
+    return this.creatorId;
   }
 
   /**

@@ -29,6 +29,7 @@ const roomId = ref(useRoute().params.roomId.toString());
 
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
+const roomCreatorId = ref('');
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
@@ -189,6 +190,7 @@ async function inviteMember(userId: string) {
     const success = await changeMembership(newUser!, 'invite');
     if (!success) {
       userIdError.value = 'Benutzername nicht gefunden';
+      //bug: ungultige User werden angezeigt
       inviteLoading.value = false;
     } else {
       window.location.reload();
@@ -368,7 +370,10 @@ async function inviteMember(userId: string) {
           <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
             <i class="fa-solid fa-angles-right"></i>
           </RoundButton>
-          <StandardButton class="w-auto px-4" @click="toggleInviteModal"
+          <StandardButton
+            v-show="room?.getCreatorId() == loggedInUser.getUserId()"
+            class="w-auto px-4"
+            @click="toggleInviteModal"
             >In diesen Raum einladen</StandardButton
           >
         </div>
@@ -392,7 +397,7 @@ async function inviteMember(userId: string) {
                 <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
               </div>
               <!--ban button-->
-              <DropdownMenu>
+              <DropdownMenu v-show="roomCreatorId == loggedInUser.getUserId()">
                 <template #trigger>
                   <i class="fa-solid fa-ellipsis-vertical px-2"></i>
                 </template>
