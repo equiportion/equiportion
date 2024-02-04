@@ -44,7 +44,6 @@ describe('/', () => {
   //   });
   // });
 
-  // TODO fix
   it('does not show transaction balance to myself', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
