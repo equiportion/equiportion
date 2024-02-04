@@ -1,7 +1,6 @@
 import {authenticated} from '../support/stubs';
 
 describe('/', () => {
-  // TODO fix
   it('room with more transactions than shown', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
