@@ -145,17 +145,31 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const rooms = roomsStore.rooms;
 
     const joinedRoomsData = response.data.rooms?.join;
-    if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
-      for (const roomId in joinedRoomsData) {
+    const invitedRoomsData = response.data.rooms?.invite;
+    const newRooms = {
+      ...joinedRoomsData,
+      ...invitedRoomsData,
+    };
+    if (newRooms && Object.keys(newRooms).length > 0) {
+      for (const roomId in newRooms) {
         // Create a new room if it doesn't exist yet
         if (!rooms[roomId]) {
-          rooms[roomId] = new Room(roomId);
+          const newRoom = new Room(roomId);
+          rooms[roomId] = newRoom;
+          if (roomId in invitedRoomsData) {
+            newRoom.setName(
+              invitedRoomsData[roomId].invite_state.events.find(
+                (event: {type: string}) => event.type === 'm.room.name'
+              ).content.name
+            );
+          }
         }
-
-        rooms[roomId].sync(joinedRoomsData[roomId]);
+        if (roomId in joinedRoomsData) {
+          rooms[roomId].sync(joinedRoomsData[roomId]);
+        }
       }
     }
-
+    console.log(rooms)
     clientStateStore.syncing = false;
   }
 

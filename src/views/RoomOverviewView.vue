@@ -24,6 +24,7 @@ const loggedInUser = loggedInUserStore.user;
 const roomsStore = useRoomsStore();
 const rooms = roomsStore.rooms;
 
+
 const balance = ref(0);
 function calculateBalance() {
   let sum = 0;

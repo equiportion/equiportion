@@ -32,7 +32,6 @@ const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
-const stateEvents: Ref<MatrixEvent[]> = ref([]);
 
 const inviteLoading = ref(false);
 const userToInviteId = ref('');
@@ -41,8 +40,6 @@ const userIdError = ref('');
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
-  stateEvents.value = room.value?.getEventsWithStateEvents('m.room.create')!;
-  console.log(stateEvents);
   events.value = room.value?.getEvents()!;
   events.value.reverse();
 
