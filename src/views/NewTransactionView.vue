@@ -249,7 +249,7 @@ function centsPart(num: number): string {
       <SystemAlert v-if="submitError" severity="danger">{{ submitError }}</SystemAlert>
 
       <!-- Creditor -->
-      <div class="flex flex-col items-center">
+      <div id="toplevelCreditorDiv" class="flex flex-col items-center">
         <div
           v-if="!creditorVal"
           class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
