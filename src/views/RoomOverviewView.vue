@@ -149,12 +149,10 @@ async function makeRoomVisible() {
   roomsActionLoading.value = false;
 }
 
-const joinLoading = ref(false);
 /**
  * joins a room
  */
 async function joinRoom(roomId: string) {
-  joinLoading.value = true;
   const joinEvent = new MRoomMemberEvent(
     MatrixEvent.EVENT_ID_NEW,
     roomId,
@@ -166,12 +164,10 @@ async function joinRoom(roomId: string) {
   );
   try {
     await joinEvent.publish();
-    console.log(joinedRooms[roomId])
     joinedRooms[roomId].setVisible(true);
   } catch (e) {
     console.error(e);
   }
-  joinLoading.value = false;
 }
 
 const {bus} = useGlobalEventBus();
@@ -304,7 +300,9 @@ watch(
           class="flex flex-col items-center lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 shadow-lg"
         >
           <p class="flex items-center">Du wurdest in {{ room.getName() }} eingeladen</p>
-          <RoundButton :loading="joinLoading" @click="joinRoom(room.getRoomId())"><i class="fa-solid fa-check"></i></RoundButton>
+          <RoundButton @click="joinRoom(room.getRoomId())"
+            ><i class="fa-solid fa-check"></i
+          ></RoundButton>
         </div>
       </template>
       <template v-for="room in joinedRooms" :key="room.id">

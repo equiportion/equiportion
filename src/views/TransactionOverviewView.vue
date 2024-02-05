@@ -29,7 +29,6 @@ const roomId = ref(useRoute().params.roomId.toString());
 
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
-const roomCreatorId = ref('');
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
@@ -184,13 +183,16 @@ async function changeMembership(user: User, membership: string): Promise<boolean
 }
 
 async function inviteMember(userId: string) {
+  if (userId && room.value!.getMembers()[userId]) {
+    userIdError.value = 'Benutzer ist ein Mitglied im Raum';
+    return;
+  }
   inviteLoading.value = true;
   const newUser = room.value?.getMember(userId);
   try {
     const success = await changeMembership(newUser!, 'invite');
     if (!success) {
       userIdError.value = 'Benutzername nicht gefunden';
-      //bug: ungultige User werden angezeigt
       inviteLoading.value = false;
     } else {
       window.location.reload();
@@ -206,7 +208,7 @@ async function inviteMember(userId: string) {
     <!--shows a button that enables the user to add a new transaction-->
     <RoundButton
       id="newTransactionButton"
-      class="fixed bottom-5 right-5 shadow-lg"
+      class="fixed bottom-5 right-5 shadow-lg z-50"
       @click="newTransaction"
     >
       <i class="fa-solid fa-plus"></i>
@@ -223,10 +225,10 @@ async function inviteMember(userId: string) {
       >
         <div class="flex flex-row">
           <p class="font-bold text-xl grow">In diesen Raum einladen</p>
-          <i class="fa-solid fa-xmark" @click="toggleInviteModal"></i>
+          <i class="fa-solid fa-xmark cursor-pointer" @click="toggleInviteModal"></i>
         </div>
         <p>gib einen Benutzername ein:</p>
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-col lg:flex-row gap-2">
           <InputFieldWithLabelAndError
             v-model="userToInviteId"
             type="text"
@@ -271,7 +273,7 @@ async function inviteMember(userId: string) {
               >
                 <!--shows the display names of all members in a room if possible or the member id if not-->
                 <template v-for="member in showUserBadges" :key="member.getUserId()">
-                  <UserBadge :user="member" class="shadow-md" />
+                  <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
                 </template>
                 <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
 
@@ -370,14 +372,11 @@ async function inviteMember(userId: string) {
           <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
             <i class="fa-solid fa-angles-right"></i>
           </RoundButton>
-          <StandardButton
-            v-show="room?.getCreatorId() == loggedInUser.getUserId()"
-            class="w-auto px-4"
-            @click="toggleInviteModal"
-            >In diesen Raum einladen</StandardButton
-          >
+          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleInviteModal()">
+            <i class="fa-solid fa-user-plus text-sm"></i>
+          </RoundButton>
         </div>
-        <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
+        <div id="userTiles" class="flex flex-col gap-2">
           <!--shows the display names of all members in a room if possible or the member id if not-->
 
           <!-- current user -->
@@ -389,6 +388,7 @@ async function inviteMember(userId: string) {
           <!-- all current room members-->
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
             <div
+              v-show="member.getUserId() != ''"
               v-if="member.getUserId() != loggedInUser.getUserId()"
               class="flex items-center bg-gray-300 p-2 rounded-lg"
             >
@@ -397,7 +397,7 @@ async function inviteMember(userId: string) {
                 <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
               </div>
               <!--ban button-->
-              <DropdownMenu v-show="roomCreatorId == loggedInUser.getUserId()">
+              <DropdownMenu>
                 <template #trigger>
                   <i class="fa-solid fa-ellipsis-vertical px-2"></i>
                 </template>
