@@ -26,7 +26,7 @@ class Room {
 
   private stateEventIds: string[] = [];
   private stateEvents: {[eventId: string]: MatrixEvent} = {};
-  
+
   private previousBatch?: string | null = '';
 
   private visible: boolean = false;
