@@ -14,5 +14,5 @@ export const useRoomsStore = defineStore('rooms', () => {
     return joinedRooms.value[roomId];
   }
 
-  return {joinedRooms: joinedRooms,invitedRooms: invitedRooms, getRoom};
+  return {joinedRooms: joinedRooms, invitedRooms: invitedRooms, getRoom};
 });
