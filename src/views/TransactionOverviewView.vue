@@ -21,6 +21,8 @@ import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
+import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -31,7 +33,8 @@ const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
 
 const error = ref();
-const newRoomName = ref('');
+const newRoomName = ref();
+const newRoomTopic = ref();
 
 // load rooms
 function loadRooms() {
@@ -49,6 +52,8 @@ function loadRooms() {
 // load room
 waitForInitialSync().then(() => {
   loadRooms();
+  newRoomName.value = room.value?.getName() ?? '';
+  newRoomTopic.value = room.value?.getTopic() ?? '';
 });
 
 // update if room changes
@@ -115,6 +120,28 @@ onMounted(() => {
   // start the intersection observer
   intersectPageEnd();
 });
+
+function setRoomData(): void {
+  if (newRoomName.value != room.value?.getName()) {
+    const mRoomNameEvent = new MRoomNameEvent(
+      MatrixEvent.EVENT_ID_NEW,
+      roomId.value,
+      newRoomName.value
+    );
+    mRoomNameEvent.publish();
+  }
+  if (newRoomTopic.value != room.value?.getTopic()) {
+    const mRoomTopicEvent = new MRoomTopicEvent(
+      MatrixEvent.EVENT_ID_NEW,
+      roomId.value,
+      newRoomTopic.value
+    );
+    mRoomTopicEvent.publish();
+  }
+  newRoomName.value = room.value?.getName() ?? '';
+  newRoomTopic.value = room.value?.getTopic() ?? '';
+  changeRoomData.value = false;
+}
 
 const observeRef: Ref<HTMLElement | null> = ref(null);
 const showTransactionsLoader = ref(false);
@@ -189,42 +216,39 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <div>
               <div
                 v-if="changeRoomData"
-                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5"
+                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3"
               >
                 <div class="flex flex-row space-x-4 items-center">
                   <InputFieldWithLabelAndError
-                    id="username"
+                    id="roomName"
                     v-model:model-value="newRoomName"
                     type="text"
                     name=""
-                    :placeholder="room?.getName() ?? roomId"
+                    placeholder="Name eingeben"
                     label=""
                     :error="error"
                   />
-                  <RoundButton
-                    id="changeRoomData"
-                    class="shadow-lg h-8 w-8"
-                    @click="toggleChangeRoomData()"
+                  <RoundButton id="changeRoomData" class="shadow-lg h-8 w-8" @click="setRoomData()"
                     ><i class="fa-solid fa-check"></i
                   ></RoundButton>
                 </div>
                 <InputFieldWithLabelAndError
-                  id="username"
-                  v-model:model-value="newRoomName"
+                  id="roomTopic"
+                  v-model:model-value="newRoomTopic"
                   type="text"
                   name=""
-                  :placeholder="room?.getTopic()"
+                  placeholder="Thema eingeben"
                   label=""
                   :error="error"
                 />
               </div>
-              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
+              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3">
                 <!--shows the room name if possible or the room id if not-->
                 <div class="flex flex-row space-x-4 items-center">
                   <h1 class="flex text-3xl font-bold text-gray-900 break-all">
                     {{ room?.getName() ?? roomId }}
                   </h1>
-                  <!--Change Metdadata button-->
+                  <!--Change room data button-->
                   <RoundButton
                     id="changeRoomData"
                     class="shadow-lg h-8 w-8"
@@ -232,7 +256,9 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     ><i class="fa-solid fa-pen"></i
                   ></RoundButton>
                 </div>
-
+                <h2 class="flex text-2xl font-bold text-gray-800 break-all">
+                  {{ room?.getTopic() }}
+                </h2>
                 <div
                   id="memberBadgesList"
                   class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
