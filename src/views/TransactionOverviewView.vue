@@ -20,6 +20,7 @@ import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -28,6 +29,9 @@ const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
+
+const error = ref();
+const newRoomName = ref('');
 
 // load rooms
 function loadRooms() {
@@ -69,6 +73,11 @@ function toggleMemberList(): void {
   memberListOpen.value = !memberListOpen.value;
 }
 
+function toggleChangeRoomData(): void {
+  changeRoomData.value = !changeRoomData.value;
+}
+
+const changeRoomData = ref(false);
 const memberListOpen = ref(false);
 
 const iconClasses = computed(() => {
@@ -177,29 +186,63 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
             />
 
-            <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
-              <!--shows the room name if possible or the room id if not-->
-              <h1 class="flex text-3xl font-bold text-gray-900 break-all">
-                {{ room?.getName() ?? roomId }}
-              </h1>
-
+            <div>
               <div
-                id="memberBadgesList"
-                class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
+                v-if="changeRoomData"
+                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5"
               >
-                <!--shows the display names of all members in a room if possible or the member id if not-->
-                <template v-for="member in showUserBadges" :key="member.getUserId()">
-                  <UserBadge :user="member" class="shadow-md" />
-                </template>
-                <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
+                <div class="flex flex-row space-x-4 items-center">
+                  <InputFieldWithLabelAndError
+                    id="username"
+                    v-model:model-value="newRoomName"
+                    type="text"
+                    name=""
+                    :placeholder="room?.getName() ?? roomId"
+                    label=""
+                    :error="error"
+                  />
+                  <RoundButton
+                    id="changeRoomData"
+                    class="shadow-lg h-8 w-8"
+                    @click="toggleChangeRoomData()"
+                    ><i class="fa-solid fa-check"></i
+                  ></RoundButton>
+                </div>
+                <div></div>
+              </div>
+              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
+                <!--shows the room name if possible or the room id if not-->
+                <div class="flex flex-row space-x-4 items-center">
+                  <h1 class="flex text-3xl font-bold text-gray-900 break-all">
+                    {{ room?.getName() ?? roomId }}
+                  </h1>
+                  <!--Change Metdadata button-->
+                  <RoundButton
+                    id="changeRoomData"
+                    class="shadow-lg h-8 w-8"
+                    @click="toggleChangeRoomData()"
+                    ><i class="fa-solid fa-pen"></i
+                  ></RoundButton>
+                </div>
 
-                <RoundButton
-                  id="toggleMemberListButton"
-                  class="w-8 h-8 shadow-md"
-                  @click="toggleMemberList()"
+                <div
+                  id="memberBadgesList"
+                  class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
                 >
-                  <i :class="iconClasses"></i>
-                </RoundButton>
+                  <!--shows the display names of all members in a room if possible or the member id if not-->
+                  <template v-for="member in showUserBadges" :key="member.getUserId()">
+                    <UserBadge :user="member" class="shadow-md" />
+                  </template>
+                  <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
+
+                  <RoundButton
+                    id="toggleMemberListButton"
+                    class="w-8 h-8 shadow-md"
+                    @click="toggleMemberList()"
+                  >
+                    <i :class="iconClasses"></i>
+                  </RoundButton>
+                </div>
               </div>
             </div>
           </div>
