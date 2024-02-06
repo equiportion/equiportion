@@ -8,6 +8,8 @@ import NewTransactionView from '@/views/NewTransactionView.vue';
 import TransactionOverviewView from '@/views/TransactionOverviewView.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 
+import OfflineView from '@/views/OfflineView.vue';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -53,9 +55,17 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
+    {
+      path: '/offline',
+      name: 'offline',
+      component: OfflineView,
+    },
   ],
 });
 
+/**
+ * Auth handling
+ */
 router.beforeEach((to) => {
   if (!to.meta.requiresAuth) {
     return;
@@ -66,6 +76,19 @@ router.beforeEach((to) => {
   });
 });
 
+/**
+ * Offline handling
+ */
+router.beforeEach((to, from, next) => {
+  if (!navigator.onLine) {
+    localStorage.setItem('offlineRoute', from.fullPath);
+  }
+  next();
+});
+
+/**
+ * Animations
+ */
 router.afterEach((to, from) => {
   const toDepth = to.path.split('/').length;
   const fromDepth = from.path.split('/').length;
