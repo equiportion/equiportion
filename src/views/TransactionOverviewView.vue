@@ -208,11 +208,18 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
           <div class="flex flex-col items-center lg:flex-row mt-4">
             <!--shows the room picture-->
             <MxcOrPlaceholderImage
+              v-if="changeRoomData"
+              :mxc-url="room?.getAvatarUrl() ?? ''"
+              :placeholder-text="room?.getName() ?? '?'"
+              class="hover:brightness-50 rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+            />
+
+            <MxcOrPlaceholderImage
+              v-else
               :mxc-url="room?.getAvatarUrl() ?? ''"
               :placeholder-text="room?.getName() ?? '?'"
               class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
             />
-
             <div>
               <div
                 v-if="changeRoomData"
