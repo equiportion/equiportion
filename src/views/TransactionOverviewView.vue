@@ -208,7 +208,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     ><i class="fa-solid fa-check"></i
                   ></RoundButton>
                 </div>
-                <div></div>
+                <InputFieldWithLabelAndError
+                  id="username"
+                  v-model:model-value="newRoomName"
+                  type="text"
+                  name=""
+                  :placeholder="room?.getTopic()"
+                  label=""
+                  :error="error"
+                />
               </div>
               <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
                 <!--shows the room name if possible or the room id if not-->
