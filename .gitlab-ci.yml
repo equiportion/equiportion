@@ -101,6 +101,7 @@ cypress:
     - cp $TEST_ACCOUNTS cypress/fixtures/test-accounts.json
     - npx cypress install
     - npm run dev & npx cypress run
+    - npx nyc report --reporter=cobertura
     - npx nyc report --reporter=text-summary
   tags:
     - build
@@ -112,9 +113,12 @@ cypress:
       - cypress/videos/**/*.mp4
       - cypress/screenshots/**/*.png
       - cypress-report.xml
+    expire_in: 30 days
     reports:
       junit: cypress-report.xml
-    expire_in: 10 days
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
 
 #
 # Deploy Stage
