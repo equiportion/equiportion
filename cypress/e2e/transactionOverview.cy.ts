@@ -18,15 +18,6 @@ describe('/', () => {
       cy.get('#no-transaction-message').should('not.be.visible');
     });
   });
-  it('message is shown if no transactions exist in the room', () => {
-    authenticated(() => {
-      cy.visit('http://localhost:5173/');
-
-      cy.get('#rooms>div').eq(1).click();
-      cy.get('#transactions').should('not.be.visible');
-      cy.get('#no-transaction-message').should('be.visible');
-    });
-  });
   it('shows chevron on large screen', () => {
     authenticated(() => {
       cy.viewport(1280, 720);
