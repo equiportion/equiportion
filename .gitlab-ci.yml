@@ -101,11 +101,20 @@ cypress:
     - cp $TEST_ACCOUNTS cypress/fixtures/test-accounts.json
     - npx cypress install
     - npm run dev & npx cypress run
+    - npx nyc report --reporter=text-summary
   tags:
     - build
+  coverage: '/Statements\s+:\s(\d+.?\d+)%/'
   artifacts:
+    when: always
+    paths:
+      - coverage
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+      - cypress-report.xml
     reports:
       junit: cypress-report.xml
+    expire_in: 10 days
 
 #
 # Deploy Stage
