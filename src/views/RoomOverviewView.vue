@@ -150,21 +150,21 @@ async function makeRoomVisible() {
 }
 
 /**
- * joins a room
+ * acceept or recject an invite
  */
-async function joinRoom(roomId: string) {
+async function handleInvite(roomId: string, membership: string) {
   const joinEvent = new MRoomMemberEvent(
     MatrixEvent.EVENT_ID_NEW,
     roomId,
     loggedInUser.getUserId(),
     loggedInUser.getAvatarUrl()!,
     loggedInUser.getDisplayname()!,
-    'join',
+    membership,
     ''
   );
   try {
     await joinEvent.publish();
-    joinedRooms[roomId].setVisible(true);
+    if (membership == 'leave') joinedRooms[roomId].setVisible(true);
   } catch (e) {
     console.error(e);
   }
@@ -300,9 +300,14 @@ watch(
           class="flex flex-col items-center lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 shadow-lg"
         >
           <p class="flex items-center">Du wurdest in {{ room.getName() }} eingeladen</p>
-          <RoundButton @click="joinRoom(room.getRoomId())"
-            ><i class="fa-solid fa-check"></i
-          ></RoundButton>
+          <div class="flex flex-row self-center gap-2">
+            <RoundButton @click="handleInvite(room.getRoomId(), 'join')"
+              ><i class="fa-solid fa-check"></i
+            ></RoundButton>
+            <RoundButton @click="handleInvite(room.getRoomId(), 'leave')"
+              ><i class="fa-solid fa-xmark cursor-pointer"></i
+            ></RoundButton>
+          </div>
         </div>
       </template>
       <template v-for="room in joinedRooms" :key="room.id">

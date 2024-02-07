@@ -228,17 +228,17 @@ async function inviteMember(userId: string) {
           <i class="fa-solid fa-xmark cursor-pointer" @click="toggleInviteModal"></i>
         </div>
         <p>gib einen Benutzername ein:</p>
-        <div class="flex flex-col lg:flex-row md:flex-col gap-2">
+        <div class="flex flex-col items-center lg:flex-row gap-2">
           <InputFieldWithLabelAndError
             v-model="userToInviteId"
             type="text"
             :error="userIdError"
             name="username"
             placeholder="z.B. @maxmustermann:matrix.org"
-            class="w-full"
+            class="flex-grow w-full"
           />
           <StandardButton
-            class="lg:w-auto"
+            class="w-1/4"
             :loading="inviteLoading"
             @click="inviteMember(userToInviteId)"
             >einladen</StandardButton
