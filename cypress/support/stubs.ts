@@ -94,7 +94,7 @@ function authenticated(tests: Function, authenticatedOptions: authenticatedOptio
   });
 }
 
-function unauthenticated() {
+function unauthenticated(tests: Function) {
   standard();
 
   cy.intercept(
@@ -106,6 +106,8 @@ function unauthenticated() {
       fixture: 'matrix_client_v3_account_whoami-unauthenticated.json',
     }
   ).as('whoami_unauthenticated');
+
+  tests();
 }
 
 export {standard, authenticated, unauthenticated};
