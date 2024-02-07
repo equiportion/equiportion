@@ -316,11 +316,10 @@ function centsPart(num: number): string {
         placeholder="z.B. Einkauf"
       />
 
-      <div class="flex flex-col mt-5 w-full items-center gap-5">
+      <div id="unevenSplitting" class="flex flex-col mt-5 w-full items-center gap-5">
         <!-- Uneven splitting -->
         <div
           v-for="debtor in debtors"
-          id="unevenSplitting"
           :key="debtor.user.getUserId()"
           class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"
         >

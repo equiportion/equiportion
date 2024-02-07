@@ -51,8 +51,13 @@ describe('/', () => {
       cy.get('#rooms>div').eq(0).children().eq(1).children().eq(1).click();
       cy.get('#addDebtorButton').click();
       cy.get('#debtorUserDropdown').children().eq(1).click();
-      cy.get('#unevenSplitting').children().eq(0).should('contain', 'Testbenutzer');
-      cy.get('#unevenSplitting').children().eq(0).children().eq(1).click();
+      cy.get('#unevenSplitting')
+        .children()
+        .eq(0)
+        .children()
+        .eq(0)
+        .should('contain', 'Testbenutzer');
+      cy.get('#unevenSplitting').children().eq(0).children().eq(0).children().eq(1).click();
       cy.get('#noDebtorMessage').should('be.visible');
       cy.get('#addDebtorButton').should('exist');
     });
@@ -86,13 +91,13 @@ describe('/', () => {
       cy.get('#debtorUserDropdown').children().eq(1).children().eq(1).click();
       cy.get('#inputFieldPurpose').type('Testzwecke');
       cy.get('#submitButton').should('be.disabled');
-      cy.get('#unevenSplitting').children().eq(1).should('exist');
+      cy.get('#unevenSplitting').children().eq(0).children().eq(1).should('exist');
       cy.get('#inputFieldSum').type('0.0uwu');
       cy.get('#submitButton').should('be.disabled');
-      cy.get('#unevenSplitting').children().eq(2).should('exist');
+      cy.get('#unevenSplitting').children().eq(0).children().eq(2).should('exist');
       cy.get('#inputFieldSum').type('42.424');
       cy.get('#submitButton').should('not.be.disabled');
-      cy.get('#unevenSplitting').children().eq(3).should('exist');
+      cy.get('#unevenSplitting').children().eq(0).children().eq(3).should('exist');
     });
   });
   it('submit button disabled if purpose empty', () => {
@@ -160,7 +165,6 @@ describe('/', () => {
       });
     });
   });
-  // TODO fix!
   it('equal balance', () => {
     authenticated(() => {
       cy.intercept(
@@ -379,6 +383,8 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#unevenSplitting>div').eq(1).children().eq(1).type('3000');
       cy.get('#unevenSplitting>div')
+        .eq(0)
+        .children()
         .eq(1)
         .children()
         .eq(2)
@@ -387,7 +393,17 @@ describe('/', () => {
           'Die Summe der festen Beträge darf nicht größer als der Gesamtbetrag sein'
         );
       cy.get('#unevenSplitting>div')
-        .eq(5)
+        .eq(1)
+        .children()
+        .eq(1)
+        .children()
+        .eq(2)
+        .should(
+          'contain',
+          'Die Summe der festen Beträge darf nicht größer als der Gesamtbetrag sein'
+        );
+      cy.get('#unevenSplitting>div')
+        .eq(3)
         .children()
         .eq(2)
         .should(
@@ -410,11 +426,16 @@ describe('/', () => {
       cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
       cy.get('#inputFieldSum').type('2000');
       cy.get('#unevenSplitting>div').eq(1).children().eq(1).type('350');
-      /*cy.get('#unevenSplitting') //TODO warum funktioniert das nicht, bitte schaus mal an
+      cy.get('#unevenSplitting')
+        .children()
+        .eq(1) //TODO warum funktioniert das nicht, bitte schaus mal an
         .children()
         .eq(3)
-        .should('have.attr', 'placeholder')
-        .and('equal', '11,75');*/
+        .children()
+        .eq(1)
+        .children('input')
+        .eq(0)
+        .should('have.value', '11,75');
     });
   });
   it('balance 1', () => {
