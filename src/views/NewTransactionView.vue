@@ -49,7 +49,9 @@ function loadRoom() {
 waitForInitialSync().then(() => {
   loadRoom();
 
-  creditorVal.value = room.value?.getMembers()[loggedInUser.getUserId()];
+  creditorVal.value = room.value?.getMember(loggedInUser.getUserId());
+
+  prefillFromSessionStorage();
 });
 
 // update if room changes
@@ -217,6 +219,29 @@ async function submit() {
 
   submitLoading.value = false;
   router.push({name: 'transactions', params: {roomId: roomId.value}});
+}
+
+function prefillFromSessionStorage() {
+  if (!sessionStorage.getItem('compensation')) {
+    return;
+  }
+
+  const compensation = parseInt(sessionStorage.getItem('compensation')!);
+  console.log(compensation);
+  sessionStorage.removeItem('compensation');
+  const compensationUserId = sessionStorage.getItem('compensation_userId');
+  console.log(compensationUserId);
+  sessionStorage.removeItem('compensation_userId');
+
+  moneyVal.value = Math.abs(compensation);
+  reasonVal.value = 'Ausgleichszahlung';
+  if (compensation > 0) {
+    //creditor does not need to be set because the user is already set as creditor by default
+    addDebtor(room.value?.getMember(compensationUserId!)!);
+  } else {
+    creditorVal.value = room.value?.getMember(compensationUserId!);
+    addDebtor(room.value?.getMember(loggedInUser.getUserId())!);
+  }
 }
 
 /**
