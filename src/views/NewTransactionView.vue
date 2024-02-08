@@ -227,10 +227,8 @@ function prefillFromSessionStorage() {
   }
 
   const compensation = parseInt(sessionStorage.getItem('compensation')!);
-  console.log(compensation);
   sessionStorage.removeItem('compensation');
   const compensationUserId = sessionStorage.getItem('compensation_userId');
-  console.log(compensationUserId);
   sessionStorage.removeItem('compensation_userId');
 
   moneyVal.value = Math.abs(compensation);
