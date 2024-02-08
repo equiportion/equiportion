@@ -36,6 +36,8 @@ const error = ref();
 const newRoomName = ref();
 const newRoomTopic = ref();
 
+const isRoomPictureSet = ref(room.value?.getAvatarUrl == undefined);
+
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
@@ -217,12 +219,38 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
           <!--Room image and name -->
           <div class="flex flex-col items-center lg:flex-row mt-4">
             <!--shows the room picture when in edit mode-->
-            <MxcOrPlaceholderImage
+            <div
               v-if="changeRoomData"
-              :mxc-url="room?.getAvatarUrl() ?? ''"
-              :placeholder-text="room?.getName() ?? '?'"
-              class="hover:brightness-50 rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
-            />
+              class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center"
+            >
+              <div v-if="isRoomPictureSet">
+                <div
+                  class="rounded-full hover:bg-gray-400 bg-gray-300 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center"
+                >
+                  <div class="flex flex-col absolute text-center">
+                    <h1><i class="fa-solid fa-upload"></i></h1>
+                    <h2>Bild hochladen</h2>
+                    <input type="file" accept="image/jpg, image/jpeg" />
+                  </div>
+                </div>
+              </div>
+              <div v-else>
+                <MxcOrPlaceholderImage
+                  :mxc-url="room?.getAvatarUrl() ?? ''"
+                  :placeholder-text="room?.getName() ?? '?'"
+                  class="hover:brightness-50 absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+                />
+                <div
+                  class="rounded-full opacity-0 hover:opacity-100 hover:bg-gray-300 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center"
+                >
+                  <div class="flex flex-col absolute text-center">
+                    <h1><i class="fa-solid fa-upload"></i></h1>
+                    <h2>Bild hochladen</h2>
+                    <input type="file" accept="image/jpg, image/jpeg" />
+                  </div>
+                </div>
+              </div>
+            </div>
             <!--shows the room picture-->
             <MxcOrPlaceholderImage
               v-else
