@@ -137,7 +137,7 @@ async function makeRoomVisible() {
   roomsActionLoading.value = true;
 
   const newEquiportionSettingsEvent = new EquiPortionSettingsEvent(
-    '',
+    MatrixEvent.EVENT_ID_NEW,
     newRoomSelection.value,
     true
   );
