@@ -12,7 +12,13 @@ export const useRoomsStore = defineStore('rooms', () => {
    * @returns {Room | undefined} the room if it exists, else undefined
    */
   function getRoom(roomId: string): Room | undefined {
-    return joinedRooms.value[roomId];
+    if (joinedRooms.value[roomId]) {
+      return joinedRooms.value[roomId];
+    } else if (invitedRooms.value[roomId]) {
+      return invitedRooms.value[roomId];
+    } else {
+      return undefined;
+    }
   }
 
   return {joinedRooms: joinedRooms, invitedRooms: invitedRooms, getRoom};

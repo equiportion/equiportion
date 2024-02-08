@@ -9,15 +9,14 @@ import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import RoundButton from '@/components/buttons/RoundButton.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
-import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
+import InvitedRoomTile from '@/views/partials/InvitedRoomTile.vue';
 
 const clientStateStore = useClientStateStore();
 
@@ -149,27 +148,6 @@ async function makeRoomVisible() {
   roomsActionLoading.value = false;
 }
 
-/**
- * acceept or recject an invite
- */
-async function handleInvite(roomId: string, membership: string) {
-  const joinEvent = new MRoomMemberEvent(
-    MatrixEvent.EVENT_ID_NEW,
-    roomId,
-    loggedInUser.getUserId(),
-    loggedInUser.getAvatarUrl()!,
-    loggedInUser.getDisplayname()!,
-    membership,
-    ''
-  );
-  try {
-    await joinEvent.publish();
-    if (membership == 'leave') joinedRooms[roomId].setVisible(true);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 const {bus} = useGlobalEventBus();
 watch(
   () => bus.value.get('click'),
@@ -296,19 +274,7 @@ watch(
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
       <template v-for="room in invitedRooms" :key="room.id">
-        <div
-          class="flex flex-col items-center lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 shadow-lg"
-        >
-          <p class="flex items-center">Du wurdest in {{ room.getName() }} eingeladen</p>
-          <div class="flex flex-row self-center gap-2">
-            <RoundButton @click="handleInvite(room.getRoomId(), 'join')"
-              ><i class="fa-solid fa-check"></i
-            ></RoundButton>
-            <RoundButton @click="handleInvite(room.getRoomId(), 'leave')"
-              ><i class="fa-solid fa-xmark cursor-pointer"></i
-            ></RoundButton>
-          </div>
-        </div>
+        <InvitedRoomTile :room="room" />
       </template>
       <template v-for="room in joinedRooms" :key="room.id">
         <RoomTile v-if="room.isVisible()" :room="room" />

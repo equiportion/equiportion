@@ -45,31 +45,53 @@ class Room {
    * @param data the data from the sync-API
    */
   public sync(data: any) {
-    const stateEvents = data.state.events;
-    const timelineEvents = data.timeline.events;
+    const stateEvents = data.state?.events;
+    const timelineEvents = data.timeline?.events;
+    const inviteEvents = data.invite_state?.events;
 
-    const prevBatch = data.timeline.prev_batch;
+    const prevBatch = data.timeline?.prev_batch;
 
     if (prevBatch == '') {
       this.previousBatch = prevBatch;
     }
 
-    for (const stateEvent of stateEvents) {
-      const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
-      if (!event) {
-        continue;
+    if (stateEvents) {
+      for (const stateEvent of stateEvents) {
+        const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
+        if (!event) {
+          continue;
+        }
+        this.addStateEvent(event);
+        event.execute();
       }
-      this.addStateEvent(event);
-      event.execute();
+    } else if (inviteEvents) {
+      let i = 0;
+      for (const inviteEvent of inviteEvents) {
+        // manually insert id as this is not provided by the server
+        const transformEvent = JSON.parse(JSON.stringify(inviteEvent));
+        transformEvent.event_id = 'invite_' + i;
+
+        // convert to event and execute on room
+        const event = EventParser.jsonToEvent(transformEvent, this.getRoomId());
+        if (!event) {
+          continue;
+        }
+        this.addStateEvent(event);
+        event.execute();
+
+        i++;
+      }
     }
 
-    for (const timelineEvent of timelineEvents) {
-      const event = EventParser.jsonToEvent(timelineEvent, this.getRoomId());
-      if (!event) {
-        continue;
+    if (timelineEvents) {
+      for (const timelineEvent of timelineEvents) {
+        const event = EventParser.jsonToEvent(timelineEvent, this.getRoomId());
+        if (!event) {
+          continue;
+        }
+        this.addEvent(event);
+        event.execute();
       }
-      this.addEvent(event);
-      event.execute();
     }
   }
 
