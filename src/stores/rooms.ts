@@ -5,8 +5,9 @@ import {ref, type Ref} from 'vue';
 export const useRoomsStore = defineStore('rooms', () => {
   const joinedRooms: Ref<{[roomId: string]: Room}> = ref({});
   const invitedRooms: Ref<{[roomId: string]: Room}> = ref({});
+
   /**
-   * Get a room by its roomId.
+   * Get a (joined) room by its roomId.
    * @param {string} roomId the matrix-room-id of the room
    * @returns {Room | undefined} the room if it exists, else undefined
    */
