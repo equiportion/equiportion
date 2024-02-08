@@ -139,6 +139,20 @@ async function loadMoreTransactions() {
   }
 }
 
+//reidrects to new transaction view and stores compensation and user id of participant in session storage
+function redirectToCompensationPayment(compensation: number, userId: string) {
+  if (!compensation) {
+    return;
+  }
+
+  sessionStorage.setItem('compensation', compensation.toString());
+  sessionStorage.setItem('compensation_userId', userId);
+  router.push({
+    name: 'new-transaction',
+    params: {roomId: roomId.value},
+  });
+}
+
 /**
  * function to help vscode not to explode because of ts in vue
  * (not support at the moment see https://github.com/vuejs/vetur/issues/1854)
@@ -304,7 +318,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
+              <BalanceSpan
+                :compensation="compensation[member.getUserId()]"
+                @click="
+                  redirectToCompensationPayment(
+                    compensation[member.getUserId()],
+                    member.getUserId()
+                  )
+                "
+              ></BalanceSpan>
             </div>
           </template>
 
@@ -319,7 +341,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <div
               v-for="member in room!.getMembers(['invite'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
             </div>
@@ -334,9 +356,10 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <div
               v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
+              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
             </div>
           </div>
         </div>
