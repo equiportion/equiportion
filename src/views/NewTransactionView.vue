@@ -236,7 +236,7 @@ function centsPart(num: number): string {
     <!-- Submit Button (bottom right) -->
     <RoundButton
       id="submitButton"
-      class="fixed bottom-5 right-5 shadow-lg"
+      class="fixed bottom-5 right-5 shadow-lg z-50"
       :disabled="submitDisabled"
       :loading="submitLoading"
       @click="submit"
