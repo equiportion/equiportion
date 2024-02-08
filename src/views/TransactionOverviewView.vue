@@ -341,7 +341,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <div
               v-for="member in room!.getMembers(['invite'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
             </div>
@@ -356,9 +356,10 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <div
               v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
+              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
             </div>
           </div>
         </div>
