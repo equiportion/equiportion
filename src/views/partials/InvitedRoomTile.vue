@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import {type PropType, ref} from 'vue';
 import Room from '@/logic/models/Room';
-import {useLoggedInUserStore} from '@/stores/loggedInUser';
-import MatrixEvent from '@/logic/models/events/MatrixEvent';
-import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
@@ -17,9 +14,6 @@ const props = defineProps({
 
 const acceptLoading = ref(false);
 const rejectLoading = ref(false);
-
-const loggedInUserStore = useLoggedInUserStore();
-const loggedInUser = loggedInUserStore.user;
 
 /**
  * Accepts the invite to the room
@@ -36,7 +30,9 @@ async function acceptInvite() {
     console.error(e);
   }
 
-  acceptLoading.value = false;
+  if (response) {
+    acceptLoading.value = false;
+  }
 }
 
 async function rejectInvite() {
@@ -51,10 +47,9 @@ async function rejectInvite() {
     console.error(e);
   }
 
-  if (response?.status == 200) {
-
+  if (response) {
+    rejectLoading.value = false;
   }
-  rejectLoading.value = false;
 }
 </script>
 <template>
