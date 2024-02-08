@@ -221,6 +221,7 @@ async function submit() {
   router.push({name: 'transactions', params: {roomId: roomId.value}});
 }
 
+//takes compensation and participating user from session storage and prefills trransaction refs with it
 function prefillFromSessionStorage() {
   if (!sessionStorage.getItem('compensation')) {
     return;
