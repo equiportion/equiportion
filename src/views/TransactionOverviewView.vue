@@ -130,14 +130,16 @@ onMounted(() => {
   intersectPageEnd();
 });
 
-function setRoomData(): void {
+const roomDataSetLoading = ref(false);
+async function setRoomData(): Promise<void> {
+  roomDataSetLoading.value = true;
   if (newRoomName.value != room.value?.getName()) {
     const mRoomNameEvent = new MRoomNameEvent(
       MatrixEvent.EVENT_ID_NEW,
       roomId.value,
       newRoomName.value
     );
-    mRoomNameEvent.publish();
+    await mRoomNameEvent.publish();
   }
   if (newRoomTopic.value != room.value?.getTopic()) {
     const mRoomTopicEvent = new MRoomTopicEvent(
@@ -145,9 +147,10 @@ function setRoomData(): void {
       roomId.value,
       newRoomTopic.value
     );
-    mRoomTopicEvent.publish();
+    await mRoomTopicEvent.publish();
   }
   changeRoomData.value = false;
+  roomDataSetLoading.value = false;
 }
 
 /**
@@ -258,6 +261,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   />
                   <RoundButton
                     id="changeRoomData"
+                    :loading="roomDataSetLoading"
                     class="shadow-lg h-8 w-8 hidden lg:block"
                     @click="setRoomData()"
                     ><i class="fa-solid fa-check"></i
@@ -274,6 +278,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 />
                 <RoundButton
                   id="changeRoomData"
+                  :loading="roomDataSetLoading"
                   class="shadow-lg h-8 w-8 lg:hidden"
                   @click="setRoomData()"
                   ><i class="fa-solid fa-check"></i
