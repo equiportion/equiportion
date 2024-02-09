@@ -5,6 +5,7 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
 /** Models */
 import MatrixClient from '@/logic/models/clients/MatrixClient';
 import Room from '@/logic/models/Room';
+import User from '@/logic/models/User';
 
 /** Events */
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
@@ -105,7 +106,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
       return;
     }
 
-    await Promise.all([this.updateLoggedInUser(), this.updateJoinedRooms()]).then(() => {
+    await Promise.all([this.updateLoggedInUser(), this.updateRooms()]).then(() => {
       clientStateStore.numberOfSyncs++;
 
       // restart long poll, but after a second to prevent too many requests when long polling is unsupported
@@ -116,10 +117,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Updates the joined rooms using the matrix sync-API-endpoint.
+   * Updates the joined (and invited) rooms using the matrix sync-API-endpoint.
    * @returns {Promise<void>} a promise that resolves when the rooms have been updated
    */
-  private async updateJoinedRooms(): Promise<void> {
+  private async updateRooms(): Promise<void> {
     const clientStateStore = useClientStateStore();
 
     const data: {since?: string; timeout: number} = {timeout: 10000};
@@ -142,17 +143,36 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.nextBatch = response.data.next_batch;
 
     const roomsStore = useRoomsStore();
-    const rooms = roomsStore.rooms;
+    const joinedRooms = roomsStore.joinedRooms;
+    const invitedRooms = roomsStore.invitedRooms;
 
     const joinedRoomsData = response.data.rooms?.join;
+    const invitedRoomsData = response.data.rooms?.invite;
+
     if (joinedRoomsData && Object.keys(joinedRoomsData).length > 0) {
       for (const roomId in joinedRoomsData) {
-        // Create a new room if it doesn't exist yet
-        if (!rooms[roomId]) {
-          rooms[roomId] = new Room(roomId);
+        // if the room is also in the invited rooms, remove it from there
+        if (invitedRooms[roomId]) {
+          delete invitedRooms[roomId];
         }
 
-        rooms[roomId].sync(joinedRoomsData[roomId]);
+        // Create a new room if it doesn't exist yet
+        if (!joinedRooms[roomId]) {
+          joinedRooms[roomId] = new Room(roomId);
+        }
+
+        joinedRooms[roomId].sync(joinedRoomsData[roomId]);
+      }
+    }
+
+    if (invitedRoomsData && Object.keys(invitedRoomsData).length > 0) {
+      for (const roomId in invitedRoomsData) {
+        // Create a new room if it doesn't exist yet
+        if (!invitedRooms[roomId]) {
+          invitedRooms[roomId] = new Room(roomId);
+        }
+
+        invitedRooms[roomId].sync(invitedRoomsData[roomId]);
       }
     }
 
@@ -218,6 +238,72 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const response = await this.postRequest(apiEndpoints.roomCreate, data);
 
     return response?.status === 200;
+  }
+
+  /**
+   * Joins a room with the given roomId.
+   * @param {string} roomId the roomId of the room to join
+   * @returns {Promise<boolean>} a promise that resolves to true if the room has been joined, false if not
+   */
+  public async joinRoom(roomId: string): Promise<boolean> {
+    const response = await this.postRequest(apiEndpoints.roomJoin(roomId));
+
+    if (response?.status === 200) {
+      // remove the room from the invited rooms
+      const invitedRooms = useRoomsStore().invitedRooms;
+      delete invitedRooms[roomId];
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Leaves a room with the given roomId.
+   * @param {string} roomId the roomId of the room to leave
+   * @returns {Promise<boolean>} a promise that resolves to true if the room has been left, false if not
+   */
+  public async leaveRoom(roomId: string): Promise<boolean> {
+    const response = await this.postRequest(apiEndpoints.roomLeave(roomId));
+
+    if (response?.status === 200) {
+      // remove the room from the joined and invited rooms
+      const joinedRooms = useRoomsStore().joinedRooms;
+      const invitedRooms = useRoomsStore().invitedRooms;
+      delete joinedRooms[roomId];
+      delete invitedRooms[roomId];
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Performs a search in the homeservers user directory.
+   * @param searchString the string to search for
+   * @param [limit=10] the maximum number of users to return
+   * @returns {Promise<User[]>} a promise that resolves to an array of users that match the search string
+   */
+  public async searchUsers(searchString: string, limit: number = 10): Promise<User[]> {
+    const response = await this.postRequest(apiEndpoints.userDirectorySearch, {
+      search_term: searchString,
+      limit: limit,
+    });
+
+    if (!response) {
+      throw new Error('No response from homeserver');
+    } else if (response.status !== 200) {
+      throw new MatrixError(response);
+    }
+
+    const users: User[] = [];
+    for (const user of response.data.results) {
+      users.push(new User(user.user_id, user.display_name, user.avatar_url));
+    }
+
+    return users;
   }
 }
 

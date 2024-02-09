@@ -20,6 +20,10 @@ import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
+import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
+import InviteModal from './partials/InviteModal.vue';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -65,11 +69,16 @@ function newTransaction(): void {
   });
 }
 
+const memberListOpen = ref(false);
+const inviteModalOpen = ref(false);
+
 function toggleMemberList(): void {
   memberListOpen.value = !memberListOpen.value;
 }
 
-const memberListOpen = ref(false);
+function toggleInviteModal(): void {
+  inviteModalOpen.value = !inviteModalOpen.value;
+}
 
 const iconClasses = computed(() => {
   if (memberListOpen.value) {
@@ -154,6 +163,36 @@ function redirectToCompensationPayment(compensation: number, userId: string) {
 }
 
 /**
+ * Kick a user from the room.
+ */
+async function kickUser(userId: string) {
+  const success = await room.value?.kickUser(userId);
+
+  if (!success) {
+    alert('Fehler beim Kicken des Mitglieds. Bitte prüfe, ob du die nötigen Rechte hast!');
+  }
+}
+
+/**
+ * Leave the room.
+ */
+async function leaveRoom() {
+  // ask for confirmation
+  if (!confirm('Möchtest du den Raum wirklich verlassen?')) {
+    return;
+  }
+
+  const client = AuthenticatedMatrixClient.getClient();
+  const success = await client.leaveRoom(roomId.value);
+
+  if (!success) {
+    alert('Fehler beim Verlassen des Raums! Bitte probiere es später erneut.');
+  } else {
+    router.push({name: 'home'});
+  }
+}
+
+/**
  * function to help vscode not to explode because of ts in vue
  * (not support at the moment see https://github.com/vuejs/vetur/issues/1854)
  */
@@ -171,11 +210,14 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
     <!--shows a button that enables the user to add a new transaction-->
     <RoundButton
       id="newTransactionButton"
-      class="fixed bottom-5 right-5 shadow-lg"
+      class="fixed bottom-5 right-5 shadow-lg z-50"
       @click="newTransaction"
     >
       <i class="fa-solid fa-plus"></i>
     </RoundButton>
+
+    <!--modal for inviting user-->
+    <InviteModal v-model:open="inviteModalOpen" :room="room" />
 
     <div class="flex flex-col lg:flex-row min-h-screen">
       <!--content-->
@@ -203,7 +245,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               >
                 <!--shows the display names of all members in a room if possible or the member id if not-->
                 <template v-for="member in showUserBadges" :key="member.getUserId()">
-                  <UserBadge :user="member" class="shadow-md" />
+                  <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
                 </template>
                 <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
 
@@ -298,35 +340,60 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
         id="memberList"
         class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
-        <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
-          <i class="fa-solid fa-angles-right"></i>
-        </RoundButton>
-
-        <div id="userTiles" class="flex flex-col gap-2 overflow-y-auto">
-          <!--shows the display names of all members in a room if possible or the member id if not-->
-
+        <div class="flex flex-row items-center justify-between">
+          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
+            <i class="fa-solid fa-angles-right"></i>
+          </RoundButton>
+          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleInviteModal()">
+            <i class="fa-solid fa-user-plus text-sm"></i>
+          </RoundButton>
+        </div>
+        <div id="userTiles" class="flex flex-col gap-2">
           <!-- current user -->
-          <UserTile
-            :user="room?.getMember(loggedInUser.getUserId())!"
-            class="bg-gray-300 p-2 rounded-lg"
-          />
+          <div class="flex items-center bg-gray-300 p-2 rounded-lg">
+            <UserTile :user="room?.getMember(loggedInUser.getUserId())!" class="w-full" />
+
+            <button class="text-red-600" title="Raum verlassen" @click="leaveRoom()">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
 
           <!-- all current room members-->
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
             <div
+              v-show="member.getUserId() != ''"
               v-if="member.getUserId() != loggedInUser.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg"
+              class="flex items-center bg-gray-300 p-2 rounded-lg"
             >
-              <UserTile :user="member" class="w-full" />
-              <BalanceSpan
-                :compensation="compensation[member.getUserId()]"
-                @click="
-                  redirectToCompensationPayment(
-                    compensation[member.getUserId()],
-                    member.getUserId()
-                  )
-                "
-              ></BalanceSpan>
+              <div class="flex flex-col items-center gap-1 w-full">
+                <UserTile :user="member" class="w-full" />
+                <BalanceSpan :compensation="compensation[member.getUserId()]" />
+              </div>
+
+              <!-- dropdown menu for banning and creating compensation payments -->
+              <DropdownMenu>
+                <template #trigger>
+                  <i class="fa-solid fa-ellipsis-vertical px-2"></i>
+                </template>
+
+                <DropdownButton
+                  v-show="compensation[member.getUserId()]"
+                  @click="
+                    redirectToCompensationPayment(
+                      compensation[member.getUserId()],
+                      member.getUserId()
+                    )
+                  "
+                >
+                  <i class="fa-solid fa-money-bill-transfer"></i>
+                  <span>Ausgleichs-Transaktion erstellen</span>
+                </DropdownButton>
+
+                <DropdownButton @click="kickUser(member.getUserId())">
+                  <i class="fa-solid fa-user-slash text-red-600"></i>
+                  <span class="grow text-red-600">Mitglied kicken</span>
+                </DropdownButton>
+              </DropdownMenu>
             </div>
           </template>
 
@@ -359,7 +426,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
+              <BalanceSpan :compensation="compensation[member.getUserId()]" />
             </div>
           </div>
         </div>
