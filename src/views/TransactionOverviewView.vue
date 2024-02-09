@@ -290,7 +290,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     <span class="hidden lg:block">Bild hochladen</span>
                   </div>
                 </label>
-                <input id="fileInput" type="file" class="hidden" />
+                <input id="fileInput" type="file" accept="image/jpg, image/jpeg" class="hidden" />
               </div>
             </div>
             <!--shows the room picture-->
@@ -366,15 +366,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   ><i class="fa-solid fa-pen"></i
                 ></RoundButton>
 
-              <div
-                id="memberBadgesList"
-                class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
-              >
-                <!--shows the display names of all members in a room if possible or the member id if not-->
-                <template v-for="member in showUserBadges" :key="member.getUserId()">
-                  <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
-                </template>
-                <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
+                <div
+                  id="memberBadgesList"
+                  class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
+                >
+                  <!--shows the display names of all members in a room if possible or the member id if not-->
+                  <template v-for="member in showUserBadges" :key="member.getUserId()">
+                    <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
+                  </template>
+                  <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
 
                   <RoundButton
                     id="toggleMemberListButton"
