@@ -312,12 +312,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<string>} a promise that resolves to the content uri of the uploaded file
    */
   public async uploadFile(file: File): Promise<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await this.postRequest(apiEndpoints.uploadFile, formData, {
+    const response = await this.postRequest(apiEndpoints.uploadFile, file, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': file.type,
       },
     });
 

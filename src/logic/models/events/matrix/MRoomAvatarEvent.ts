@@ -66,9 +66,6 @@ class MRoomAvatarEvent extends StateEvent {
   public toEventContent(): {} {
     return {
       url: this.avatarUrl,
-      info: {
-        mimetype: 'image/jpg'
-      }
     };
   }
 }
