@@ -166,6 +166,17 @@ function redirectToCompensationPayment(compensation: number, userId: string) {
 }
 
 /**
+ * Kick a user from the room.
+ */
+async function kickUser(userId: string) {
+  const success = await room.value?.kickUser(userId);
+
+  if (!success) {
+    alert('Fehler beim Kicken des Mitglieds. Bitte prüfe, ob du die nötigen Rechte hast!');
+  }
+}
+
+/**
  * function to help vscode not to explode because of ts in vue
  * (not support at the moment see https://github.com/vuejs/vetur/issues/1854)
  */
@@ -175,24 +186,6 @@ function asTransactionEvent(event: MatrixEvent): TransactionEvent {
 
 function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
   return event as MRoomMemberEvent;
-}
-
-async function changeMembership(user: User, membership: string): Promise<boolean> {
-  const memberEvent = new MRoomMemberEvent(
-    MatrixEvent.EVENT_ID_NEW,
-    roomId.value,
-    user.getUserId(),
-    user.getAvatarUrl()!,
-    user.getDisplayname()!,
-    membership,
-    ''
-  );
-  try {
-    await memberEvent.publish();
-  } catch (error) {
-    return false;
-  }
-  return true;
 }
 </script>
 
@@ -377,9 +370,9 @@ async function changeMembership(user: User, membership: string): Promise<boolean
                   <span>Ausgleichszahlung erstellen</span>
                 </DropdownButton>
 
-                <DropdownButton @click="changeMembership(member, 'ban')">
+                <DropdownButton @click="kickUser(member.getUserId())">
                   <i class="fa-solid fa-user-slash text-red-600"></i>
-                  <span class="grow text-red-600">Mitglied bannen</span>
+                  <span class="grow text-red-600">Mitglied kicken</span>
                 </DropdownButton>
               </DropdownMenu>
             </div>

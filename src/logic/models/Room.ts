@@ -410,6 +410,32 @@ class Room {
       return false;
     }
   }
+
+  /**
+   * Kicks a user from this room.
+   * @param userId the id of the user to kick
+   * @returns {Promise<boolean>} true if the user left the room, false otherwise
+   */
+  public async kickUser(userId: string): Promise<boolean> {
+    const client = AuthenticatedMatrixClient.getClient();
+
+    try {
+      const response = await client.postRequest(apiEndpoints.roomKick(this.getRoomId()), {
+        user_id: userId,
+        reason: 'Über EquiPortion gekickt',
+      });
+
+      if (!response) {
+        return false;
+      } else if (response.status !== 200) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }
 
 export default Room;
