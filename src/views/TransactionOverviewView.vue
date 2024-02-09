@@ -112,7 +112,9 @@ watch(roomId, () => {
 watch(
   room,
   () => {
-    updateNewRoomData();
+    if (!roomDataSetLoading.value) {
+      updateNewRoomData();
+    }
   },
   {deep: true}
 );
@@ -178,6 +180,7 @@ async function setRoomData(): Promise<void> {
     );
     await mRoomNameEvent.publish();
   }
+
   if (newRoomTopic.value != room.value?.getTopic()) {
     const mRoomTopicEvent = new MRoomTopicEvent(
       MatrixEvent.EVENT_ID_NEW,
