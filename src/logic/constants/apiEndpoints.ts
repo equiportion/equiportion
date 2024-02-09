@@ -30,6 +30,7 @@ const apiEndpoints = {
   userDirectorySearch: '/_matrix/client/v3/user_directory/search',
   roomInvite: (roomId: string) => `/_matrix/client/v3/rooms/${roomId}/invite`,
   roomKick: (roomId: string) => `/_matrix/client/v3/rooms/${roomId}/kick`,
+  uploadFile: '/_matrix/media/v3/upload',
 };
 
 export default apiEndpoints;
