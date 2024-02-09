@@ -2,9 +2,15 @@
 import {onMounted} from 'vue';
 import {RouterView} from 'vue-router';
 import initLocal from '@/logic/utils/local';
+import ReloadPrompt from '@/components/pwa/ReloadPrompt.vue';
+import router from '@/router';
 
 onMounted(() => {
   initLocal();
+
+  window.addEventListener('offline', () => {
+    router.push({name: 'offline'});
+  });
 });
 </script>
 
@@ -14,4 +20,5 @@ onMounted(() => {
       <component :is="Component" />
     </transition>
   </RouterView>
+  <ReloadPrompt />
 </template>

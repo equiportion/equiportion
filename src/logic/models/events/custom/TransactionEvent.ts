@@ -109,7 +109,7 @@ class TransactionEvent extends StateEvent {
     });
 
     const newTransactionevent: TransactionEvent = new TransactionEvent(
-      '',
+      MatrixEvent.EVENT_ID_NEW,
       room.getRoomId(),
       purpose,
       sum,
