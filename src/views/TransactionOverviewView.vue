@@ -141,6 +141,16 @@ onMounted(() => {
 });
 
 const roomDataSetLoading = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+const selectedFile = ref<File | null>(null);
+
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length) {
+    selectedFile.value = input.files[0];
+  }
+};
+
 async function setRoomData(): Promise<void> {
   roomDataSetLoading.value = true;
   if (newRoomName.value != room.value?.getName()) {
@@ -290,7 +300,14 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     <span class="hidden lg:block">Bild hochladen</span>
                   </div>
                 </label>
-                <input id="fileInput" type="file" accept="image/jpg, image/jpeg" class="hidden" />
+                <input
+                  id="fileInput"
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpg, image/jpeg"
+                  class="hidden"
+                  @change="handleFileChange"
+                />
               </div>
             </div>
             <!--shows the room picture-->
