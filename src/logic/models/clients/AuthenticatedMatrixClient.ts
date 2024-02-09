@@ -5,6 +5,7 @@ import apiEndpoints from '@/logic/constants/apiEndpoints';
 /** Models */
 import MatrixClient from '@/logic/models/clients/MatrixClient';
 import Room from '@/logic/models/Room';
+import User from '@/logic/models/User';
 
 /** Events */
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
@@ -277,6 +278,32 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     return false;
+  }
+
+  /**
+   * Performs a search in the homeservers user directory.
+   * @param searchString the string to search for
+   * @param [limit=10] the maximum number of users to return
+   * @returns {Promise<User[]>} a promise that resolves to an array of users that match the search string
+   */
+  public async searchUsers(searchString: string, limit: number = 10): Promise<User[]> {
+    const response = await this.postRequest(apiEndpoints.userDirectorySearch, {
+      search_term: searchString,
+      limit: limit,
+    });
+
+    if (!response) {
+      throw new Error('No response from homeserver');
+    } else if (response.status !== 200) {
+      throw new MatrixError(response);
+    }
+
+    const users: User[] = [];
+    for (const user of response.data.results) {
+      users.push(new User(user.user_id, user.display_name, user.avatar_url));
+    }
+
+    return users;
   }
 }
 

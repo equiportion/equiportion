@@ -384,6 +384,32 @@ class Room {
   public setVisible(visible: boolean) {
     this.visible = visible;
   }
+
+  /**
+   * Invites a user to this room.
+   * @param userId the id of the user to invite
+   * @returns {Promise<boolean>} true if the user was invited, false otherwise
+   */
+  public async inviteUser(userId: string): Promise<boolean> {
+    const client = AuthenticatedMatrixClient.getClient();
+
+    try {
+      const response = await client.postRequest(apiEndpoints.roomInvite(this.getRoomId()), {
+        user_id: userId,
+        reason: 'Über EquiPortion eingeladen',
+      });
+
+      if (!response) {
+        return false;
+      } else if (response.status !== 200) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }
 
 export default Room;

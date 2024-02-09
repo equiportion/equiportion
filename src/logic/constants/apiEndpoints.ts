@@ -27,6 +27,8 @@ const apiEndpoints = {
   roomCreate: '/_matrix/client/v3/createRoom',
   roomJoin: (roomId: string) => `/_matrix/client/v3/join/${roomId}`,
   roomLeave: (roomId: string) => `/_matrix/client/v3/rooms/${roomId}/leave`,
+  userDirectorySearch: '/_matrix/client/v3/user_directory/search',
+  roomInvite: (roomId: string) => `/_matrix/client/v3/rooms/${roomId}/invite`,
 };
 
 export default apiEndpoints;

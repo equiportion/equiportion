@@ -22,8 +22,7 @@ import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
-import StandardButton from '@/components/buttons/StandardButton.vue';
-import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import InviteModal from './partials/InviteModal.vue';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -73,6 +72,9 @@ function newTransaction(): void {
   });
 }
 
+const memberListOpen = ref(false);
+const inviteModalOpen = ref(false);
+
 function toggleMemberList(): void {
   memberListOpen.value = !memberListOpen.value;
 }
@@ -80,9 +82,6 @@ function toggleMemberList(): void {
 function toggleInviteModal(): void {
   inviteModalOpen.value = !inviteModalOpen.value;
 }
-
-const memberListOpen = ref(false);
-const inviteModalOpen = ref(false);
 
 const iconClasses = computed(() => {
   if (memberListOpen.value) {
@@ -195,26 +194,6 @@ async function changeMembership(user: User, membership: string): Promise<boolean
   }
   return true;
 }
-
-async function inviteMember(userId: string) {
-  if (userId && room.value!.getMembers()[userId]) {
-    userIdError.value = 'Benutzer ist ein Mitglied im Raum';
-    return;
-  }
-  inviteLoading.value = true;
-  const newUser = room.value?.getMember(userId);
-  try {
-    const success = await changeMembership(newUser!, 'invite');
-    if (!success) {
-      userIdError.value = 'Benutzername nicht gefunden';
-      inviteLoading.value = false;
-    } else {
-      window.location.reload();
-    }
-  } catch (e) {
-    console.error(e);
-  }
-}
 </script>
 
 <template>
@@ -229,37 +208,7 @@ async function inviteMember(userId: string) {
     </RoundButton>
 
     <!--modal for inviting user-->
-    <div
-      v-show="inviteModalOpen"
-      data-modal-backdrop="static"
-      class="fixed inset-0 z-50 flex justify-center items-center w-full backdrop-blur-sm backdrop-brightness-75"
-    >
-      <div
-        class="relative p-4 gap-3 w-full max-w-2xl max-h-full flex flex-col bg-slate-50 rounded-md"
-      >
-        <div class="flex flex-row">
-          <p class="font-bold text-xl grow">In diesen Raum einladen</p>
-          <i class="fa-solid fa-xmark cursor-pointer" @click="toggleInviteModal"></i>
-        </div>
-        <p>gib einen Benutzername ein:</p>
-        <div class="flex flex-col items-center lg:flex-row gap-2">
-          <InputFieldWithLabelAndError
-            v-model="userToInviteId"
-            type="text"
-            :error="userIdError"
-            name="username"
-            placeholder="z.B. @maxmustermann:matrix.org"
-            class="flex-grow w-full"
-          />
-          <StandardButton
-            class="w-1/4"
-            :loading="inviteLoading"
-            @click="inviteMember(userToInviteId)"
-            >einladen</StandardButton
-          >
-        </div>
-      </div>
-    </div>
+    <InviteModal v-model:open="inviteModalOpen" :room="room" />
 
     <div class="flex flex-col lg:flex-row min-h-screen">
       <!--content-->
@@ -391,8 +340,6 @@ async function inviteMember(userId: string) {
           </RoundButton>
         </div>
         <div id="userTiles" class="flex flex-col gap-2">
-          <!--shows the display names of all members in a room if possible or the member id if not-->
-
           <!-- current user -->
           <UserTile
             :user="room?.getMember(loggedInUser.getUserId())!"
@@ -408,23 +355,31 @@ async function inviteMember(userId: string) {
             >
               <div class="flex flex-col items-center gap-1 w-full">
                 <UserTile :user="member" class="w-full" />
-                <BalanceSpan
-                :compensation="compensation[member.getUserId()]"
-                @click="
-                  redirectToCompensationPayment(
-                    compensation[member.getUserId()],
-                    member.getUserId()
-                  )
-                "
-              ></BalanceSpan>
+                <BalanceSpan :compensation="compensation[member.getUserId()]" />
               </div>
-              <!--ban button-->
+
+              <!-- dropdown menu for banning and creating compensation payments -->
               <DropdownMenu>
                 <template #trigger>
                   <i class="fa-solid fa-ellipsis-vertical px-2"></i>
                 </template>
-                <DropdownButton id="logout-button" @click="changeMembership(member, 'ban')">
-                  Mitglied bannen
+
+                <DropdownButton
+                  v-show="compensation[member.getUserId()]"
+                  @click="
+                    redirectToCompensationPayment(
+                      compensation[member.getUserId()],
+                      member.getUserId()
+                    )
+                  "
+                >
+                  <i class="fa-solid fa-money-bill-transfer"></i>
+                  <span>Ausgleichszahlung erstellen</span>
+                </DropdownButton>
+
+                <DropdownButton @click="changeMembership(member, 'ban')">
+                  <i class="fa-solid fa-user-slash text-red-600"></i>
+                  <span class="grow text-red-600">Mitglied bannen</span>
                 </DropdownButton>
               </DropdownMenu>
             </div>
@@ -459,7 +414,7 @@ async function inviteMember(userId: string) {
               class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
-              <BalanceSpan :compensation="compensation[member.getUserId()]"></BalanceSpan>
+              <BalanceSpan :compensation="compensation[member.getUserId()]" />
             </div>
           </div>
         </div>
