@@ -37,24 +37,12 @@ const error = ref();
 const newRoomName = ref();
 const newRoomTopic = ref();
 const loggedInUser = useLoggedInUserStore().user;
-
-/**
- * Opens NewTransactionView of the room of this TransactionOverviewView.
- * @returns {void}
- */
-function newTransaction(): void {
-  router.push({
-    name: 'new-transaction',
-    params: {roomId: roomId.value},
-  });
-}
+const changeRoomData = ref(false);
+const showTransactionsLoader = ref(false);
+const observeRef = ref<HTMLElement | null>(null);
 
 const memberListOpen = ref(false);
 const inviteModalOpen = ref(false);
-
-function toggleMemberList(): void {
-  memberListOpen.value = !memberListOpen.value;
-}
 
 function toggleInviteModal(): void {
   inviteModalOpen.value = !inviteModalOpen.value;
