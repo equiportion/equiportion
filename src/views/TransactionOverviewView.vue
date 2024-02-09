@@ -8,7 +8,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref, onMounted} from 'vue';
+import {computed, ref, watch, type Ref, onMounted, type VNodeRef} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
@@ -25,18 +25,52 @@ import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
 import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
-
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
-
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
-
 const error = ref();
 const newRoomName = ref();
 const newRoomTopic = ref();
-
 const isRoomPictureSet = ref(room.value?.getAvatarUrl == undefined);
+const imageData: Ref<string | ArrayBuffer | null> = ref(null);
+const fileInput: Ref<VNodeRef | undefined> = ref();
+const loggedInUser = useLoggedInUserStore().user;
+const changeRoomData = ref(false);
+const memberListOpen = ref(false);
+const observeRef: Ref<HTMLElement | null> = ref(null);
+const showTransactionsLoader = ref(false);
+
+const iconClasses = computed(() => {
+  if (memberListOpen.value) {
+    return 'fa-solid fa-angles-right rotate-180 transition';
+  } else {
+    return 'fa-solid fa-angles-right transition';
+  }
+});
+
+const contentClasses = computed(() => {
+  if (memberListOpen.value) {
+    return 'hidden lg:flex flex-col p-5 items-center w-full';
+  } else {
+    return 'flex flex-col p-5 items-center w-full';
+  }
+});
+
+const showUserBadges = computed(() => {
+  let i = 0;
+  let badgeList: User[] = [];
+  const members = room.value?.getMembers();
+  for (const userId in members) {
+    if (i < 3) {
+      badgeList.push(members[userId]);
+    } else {
+      break;
+    }
+    i++;
+  }
+  return badgeList;
+});
 
 // load rooms
 function loadRooms() {
@@ -75,8 +109,6 @@ watch(
   {deep: true}
 );
 
-const loggedInUser = useLoggedInUserStore().user;
-
 /**
  * Opens NewTransactionView of the room of this TransactionOverviewView.
  * @returns {void}
@@ -95,40 +127,6 @@ function toggleMemberList(): void {
 function toggleChangeRoomData(): void {
   changeRoomData.value = !changeRoomData.value;
 }
-
-const changeRoomData = ref(false);
-const memberListOpen = ref(false);
-
-const iconClasses = computed(() => {
-  if (memberListOpen.value) {
-    return 'fa-solid fa-angles-right rotate-180 transition';
-  } else {
-    return 'fa-solid fa-angles-right transition';
-  }
-});
-
-const contentClasses = computed(() => {
-  if (memberListOpen.value) {
-    return 'hidden lg:flex flex-col p-5 items-center w-full';
-  } else {
-    return 'flex flex-col p-5 items-center w-full';
-  }
-});
-
-const showUserBadges = computed(() => {
-  let i = 0;
-  let badgeList: User[] = [];
-  const members = room.value?.getMembers();
-  for (const userId in members) {
-    if (i < 3) {
-      badgeList.push(members[userId]);
-    } else {
-      break;
-    }
-    i++;
-  }
-  return badgeList;
-});
 
 onMounted(() => {
   // start the intersection observer
@@ -154,9 +152,6 @@ function setRoomData(): void {
   }
   changeRoomData.value = false;
 }
-
-const observeRef: Ref<HTMLElement | null> = ref(null);
-const showTransactionsLoader = ref(false);
 
 /**
  * Checks whether the user sees the "observeRef" element.
