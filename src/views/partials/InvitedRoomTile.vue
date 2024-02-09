@@ -87,7 +87,7 @@ async function rejectInvite() {
         :danger="true"
         @click="rejectInvite()"
       >
-        <i class="fa-solid fa-trash"></i>
+        <i class="fa-solid fa-xmark"></i>
       </RoundButton>
     </div>
   </div>

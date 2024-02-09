@@ -88,7 +88,7 @@ async function sendInvitation() {
     }, 3000);
   } else {
     userIdError.value =
-      'Einladung fehlgeschlagen: Bitte prüfe, ob der Benutzer existiert (und noch nicht in diesem Raum ist) und ob du die Berechtigung hast, ihn einzuladen.';
+      'Einladung fehlgeschlagen: Bitte prüfe, ob der Benutzer*in existiert (und noch nicht in diesem Raum ist) und ob du die Berechtigung hast, ihn/sie einzuladen.';
   }
 }
 </script>

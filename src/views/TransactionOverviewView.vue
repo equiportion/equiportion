@@ -386,7 +386,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   "
                 >
                   <i class="fa-solid fa-money-bill-transfer"></i>
-                  <span>Ausgleichszahlung erstellen</span>
+                  <span>Ausgleichs-Transaktion erstellen</span>
                 </DropdownButton>
 
                 <DropdownButton @click="kickUser(member.getUserId())">
