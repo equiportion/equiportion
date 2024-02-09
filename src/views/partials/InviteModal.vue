@@ -88,7 +88,7 @@ async function sendInvitation() {
     }, 3000);
   } else {
     userIdError.value =
-      'Einladung fehlgeschlagen: Bitte prüfe, ob der Benutzer existiert und ob du die Berechtigung hast, ihn einzuladen.';
+      'Einladung fehlgeschlagen: Bitte prüfe, ob der Benutzer existiert (und noch nicht in diesem Raum ist) und ob du die Berechtigung hast, ihn einzuladen.';
   }
 }
 </script>
@@ -100,7 +100,7 @@ async function sendInvitation() {
     <div class="flex flex-col items-center gap-2">
       <InputFieldWithLabelAndError
         v-model="userId"
-        label="Matrix-Benutzer-ID"
+        label="Matrix-ID"
         type="text"
         :error="userIdError"
         name="username"
