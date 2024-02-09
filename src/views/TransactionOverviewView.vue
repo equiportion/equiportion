@@ -8,7 +8,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref, onMounted, type VNodeRef} from 'vue';
+import {computed, ref, watch, type Ref, onMounted} from 'vue';
 import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
@@ -32,9 +32,6 @@ const events: Ref<MatrixEvent[]> = ref([]);
 const error = ref();
 const newRoomName = ref();
 const newRoomTopic = ref();
-const isRoomPictureSet = ref(room.value?.getAvatarUrl == undefined);
-const imageData: Ref<string | ArrayBuffer | null> = ref(null);
-const fileInput: Ref<VNodeRef | undefined> = ref();
 const loggedInUser = useLoggedInUserStore().user;
 const changeRoomData = ref(false);
 const memberListOpen = ref(false);
@@ -218,32 +215,22 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               v-if="changeRoomData"
               class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center"
             >
-              <div v-if="isRoomPictureSet">
-                <div
-                  class="rounded-full hover:bg-gray-400 bg-gray-300 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center"
-                >
-                  <div class="flex flex-col absolute text-center">
-                    <h1><i class="fa-solid fa-upload"></i></h1>
-                    <h2>Bild hochladen</h2>
-                    <input type="file" accept="image/jpg, image/jpeg" />
-                  </div>
-                </div>
-              </div>
-              <div v-else>
+              <div>
                 <MxcOrPlaceholderImage
                   :mxc-url="room?.getAvatarUrl() ?? ''"
                   :placeholder-text="room?.getName() ?? '?'"
-                  class="hover:brightness-50 absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+                  class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
                 />
-                <div
-                  class="rounded-full opacity-0 hover:opacity-100 hover:bg-gray-300 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center"
+                <label
+                  class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
+                  for="fileInput"
                 >
                   <div class="flex flex-col absolute text-center">
-                    <h1><i class="fa-solid fa-upload"></i></h1>
-                    <h2>Bild hochladen</h2>
-                    <input type="file" accept="image/jpg, image/jpeg" />
+                    <span><i class="fa-solid fa-upload"></i></span>
+                    <span class="hidden lg:block">Bild hochladen</span>
                   </div>
-                </div>
+                </label>
+                <input id="fileInput" type="file" class="hidden" />
               </div>
             </div>
             <!--shows the room picture-->
