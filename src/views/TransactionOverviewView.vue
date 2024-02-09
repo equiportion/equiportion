@@ -321,7 +321,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   id="fileInput"
                   ref="fileInput"
                   type="file"
-                  accept="image/jpg"
+                  accept="image/png, image/gif, image/jpeg"
                   class="hidden"
                   @change="handleFileChange"
                 />
