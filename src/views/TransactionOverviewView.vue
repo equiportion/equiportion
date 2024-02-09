@@ -23,6 +23,7 @@ import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensa
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import InviteModal from './partials/InviteModal.vue';
+import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
 
 const roomId = ref(useRoute().params.roomId.toString());
 
@@ -31,10 +32,6 @@ const room: Ref<Room | undefined> = ref(undefined);
 
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
-
-const inviteLoading = ref(false);
-const userToInviteId = ref('');
-const userIdError = ref('');
 
 // load rooms
 function loadRooms() {
@@ -173,6 +170,25 @@ async function kickUser(userId: string) {
 
   if (!success) {
     alert('Fehler beim Kicken des Mitglieds. Bitte prüfe, ob du die nötigen Rechte hast!');
+  }
+}
+
+/**
+ * Leave the room.
+ */
+async function leaveRoom() {
+  // ask for confirmation
+  if (!confirm('Möchtest du den Raum wirklich verlassen?')) {
+    return;
+  }
+
+  const client = AuthenticatedMatrixClient.getClient();
+  const success = await client.leaveRoom(roomId.value);
+
+  if (!success) {
+    alert('Fehler beim Verlassen des Raums! Bitte probiere es später erneut.');
+  } else {
+    router.push({name: 'home'});
   }
 }
 
@@ -334,10 +350,13 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
         </div>
         <div id="userTiles" class="flex flex-col gap-2">
           <!-- current user -->
-          <UserTile
-            :user="room?.getMember(loggedInUser.getUserId())!"
-            class="bg-gray-300 p-2 rounded-lg"
-          />
+          <div class="flex items-center bg-gray-300 p-2 rounded-lg">
+            <UserTile :user="room?.getMember(loggedInUser.getUserId())!" class="w-full" />
+
+            <button class="text-red-600" title="Raum verlassen" @click="leaveRoom()">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
 
           <!-- all current room members-->
           <template v-for="member in room?.getMembers()" :key="member.getUserId()">
