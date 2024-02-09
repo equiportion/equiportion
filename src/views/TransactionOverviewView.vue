@@ -27,6 +27,7 @@ import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import InviteModal from './partials/InviteModal.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import MRoomAvatarEvent from '@/logic/models/events/matrix/MRoomAvatarEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
 const roomsStore = useRoomsStore();
@@ -153,6 +154,22 @@ const handleFileChange = (event: Event) => {
 
 async function setRoomData(): Promise<void> {
   roomDataSetLoading.value = true;
+
+  if (selectedFile.value) {
+    const client = AuthenticatedMatrixClient.getClient();
+    try {
+      const imageMxcUrl = await client.uploadFile(selectedFile.value);
+      const mRoomAvatarEvent = new MRoomAvatarEvent(
+        MatrixEvent.EVENT_ID_NEW,
+        roomId.value,
+        imageMxcUrl
+      );
+      await mRoomAvatarEvent.publish();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   if (newRoomName.value != room.value?.getName()) {
     const mRoomNameEvent = new MRoomNameEvent(
       MatrixEvent.EVENT_ID_NEW,
@@ -304,7 +321,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   id="fileInput"
                   ref="fileInput"
                   type="file"
-                  accept="image/jpg, image/jpeg"
+                  accept="image/jpg"
                   class="hidden"
                   @change="handleFileChange"
                 />
