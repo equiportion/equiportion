@@ -20,61 +20,30 @@ import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from './partials/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
+import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import InviteModal from './partials/InviteModal.vue';
 import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import MRoomAvatarEvent from '@/logic/models/events/matrix/MRoomAvatarEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
-
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
-
 const compensation: Ref<{[userId: string]: number}> = ref({});
 const events: Ref<MatrixEvent[]> = ref([]);
-
-// load rooms
-function loadRooms() {
-  room.value = roomsStore.getRoom(roomId.value);
-  events.value = room.value?.getEvents()!;
-  events.value.reverse();
-
-  events.value = room.value?.getEvents() as (TransactionEvent | MRoomMemberEvent)[];
-  events.value.reverse();
-
-  const compensationCalculation = new BipartiteCompensation();
-  compensation.value = compensationCalculation.calculateCompensation(room.value!);
-}
-
-// load room
-waitForInitialSync().then(() => {
-  loadRooms();
-});
-
-// update if room changes
-watch(roomId, () => {
-  loadRooms();
-});
-
+const error = ref();
+const newRoomName = ref();
+const newRoomTopic = ref();
 const loggedInUser = useLoggedInUserStore().user;
-
-/**
- * Opens NewTransactionView of the room of this TransactionOverviewView.
- * @returns {void}
- */
-function newTransaction(): void {
-  router.push({
-    name: 'new-transaction',
-    params: {roomId: roomId.value},
-  });
-}
+const changeRoomData = ref(false);
+const showTransactionsLoader = ref(false);
+const observeRef = ref<HTMLElement | null>(null);
 
 const memberListOpen = ref(false);
 const inviteModalOpen = ref(false);
-
-function toggleMemberList(): void {
-  memberListOpen.value = !memberListOpen.value;
-}
 
 function toggleInviteModal(): void {
   inviteModalOpen.value = !inviteModalOpen.value;
@@ -111,13 +80,118 @@ const showUserBadges = computed(() => {
   return badgeList;
 });
 
+// load rooms
+function loadRooms() {
+  room.value = roomsStore.getRoom(roomId.value);
+  events.value = room.value?.getEvents()!;
+  events.value.reverse();
+
+  events.value = room.value?.getEvents() as (TransactionEvent | MRoomMemberEvent)[];
+  events.value.reverse();
+
+  const compensationCalculation = new BipartiteCompensation();
+  compensation.value = compensationCalculation.calculateCompensation(room.value!);
+}
+
+function updateNewRoomData() {
+  newRoomName.value = room.value?.getName() ?? '';
+  newRoomTopic.value = room.value?.getTopic() ?? '';
+}
+
+// load room
+waitForInitialSync().then(() => {
+  loadRooms();
+  updateNewRoomData();
+});
+
+// update if room changes
+watch(roomId, () => {
+  loadRooms();
+});
+
+watch(
+  room,
+  () => {
+    if (!roomDataSetLoading.value) {
+      updateNewRoomData();
+    }
+  },
+  {deep: true}
+);
+
+/**
+ * Opens NewTransactionView of the room of this TransactionOverviewView.
+ * @returns {void}
+ */
+function newTransaction(): void {
+  router.push({
+    name: 'new-transaction',
+    params: {roomId: roomId.value},
+  });
+}
+
+function toggleMemberList(): void {
+  memberListOpen.value = !memberListOpen.value;
+}
+
+function toggleChangeRoomData(): void {
+  changeRoomData.value = !changeRoomData.value;
+}
+
 onMounted(() => {
   // start the intersection observer
   intersectPageEnd();
 });
 
-const observeRef: Ref<HTMLElement | null> = ref(null);
-const showTransactionsLoader = ref(false);
+const roomDataSetLoading = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+const selectedFile = ref<File | null>(null);
+
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length) {
+    selectedFile.value = input.files[0];
+  }
+};
+
+async function setRoomData(): Promise<void> {
+  roomDataSetLoading.value = true;
+
+  if (selectedFile.value) {
+    const client = AuthenticatedMatrixClient.getClient();
+    try {
+      const imageMxcUrl = await client.uploadFile(selectedFile.value);
+      const mRoomAvatarEvent = new MRoomAvatarEvent(
+        MatrixEvent.EVENT_ID_NEW,
+        roomId.value,
+        imageMxcUrl
+      );
+      await mRoomAvatarEvent.publish();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (newRoomName.value != room.value?.getName()) {
+    const mRoomNameEvent = new MRoomNameEvent(
+      MatrixEvent.EVENT_ID_NEW,
+      roomId.value,
+      newRoomName.value
+    );
+    await mRoomNameEvent.publish();
+  }
+
+  if (newRoomTopic.value != room.value?.getTopic()) {
+    const mRoomTopicEvent = new MRoomTopicEvent(
+      MatrixEvent.EVENT_ID_NEW,
+      roomId.value,
+      newRoomTopic.value
+    );
+    await mRoomTopicEvent.publish();
+  }
+  changeRoomData.value = false;
+  roomDataSetLoading.value = false;
+}
 
 /**
  * Checks whether the user sees the "observeRef" element.
@@ -226,36 +300,127 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
         <div class="flex flex-col lg:max-w-[1500px] w-full">
           <!--Room image and name -->
           <div class="flex flex-col items-center lg:flex-row mt-4">
+            <!--shows the room picture when in edit mode-->
+            <div
+              v-if="changeRoomData"
+              class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center"
+            >
+              <div>
+                <MxcOrPlaceholderImage
+                  :mxc-url="room?.getAvatarUrl() ?? ''"
+                  :placeholder-text="room?.getName() ?? '?'"
+                  class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+                />
+                <label
+                  class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
+                  for="fileInput"
+                >
+                  <div class="flex flex-col absolute text-center">
+                    <span><i class="fa-solid fa-upload"></i></span>
+                    <span class="hidden lg:block">Bild hochladen</span>
+                  </div>
+                </label>
+                <input
+                  id="fileInput"
+                  ref="fileInput"
+                  type="file"
+                  accept="image/png, image/gif, image/jpeg"
+                  class="hidden"
+                  @change="handleFileChange"
+                />
+              </div>
+            </div>
             <!--shows the room picture-->
             <MxcOrPlaceholderImage
+              v-else
               :mxc-url="room?.getAvatarUrl() ?? ''"
               :placeholder-text="room?.getName() ?? '?'"
               class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
             />
-
-            <div class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-5">
-              <!--shows the room name if possible or the room id if not-->
-              <h1 class="flex text-3xl font-bold text-gray-900 break-all">
-                {{ room?.getName() ?? roomId }}
-              </h1>
-
+            <div class="mt-2">
+              <!--edit mode with submit button and input fields-->
               <div
-                id="memberBadgesList"
-                class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
+                v-if="changeRoomData"
+                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3"
               >
-                <!--shows the display names of all members in a room if possible or the member id if not-->
-                <template v-for="member in showUserBadges" :key="member.getUserId()">
-                  <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
-                </template>
-                <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
-
+                <div class="flex flex-row space-x-4 items-center">
+                  <InputFieldWithLabelAndError
+                    id="roomName"
+                    v-model:model-value="newRoomName"
+                    type="text"
+                    name=""
+                    placeholder="Name eingeben"
+                    label=""
+                    :error="error"
+                  />
+                  <RoundButton
+                    id="changeRoomData"
+                    :loading="roomDataSetLoading"
+                    class="shadow-lg h-8 w-8 hidden lg:block"
+                    @click="setRoomData()"
+                    ><i class="fa-solid fa-check"></i
+                  ></RoundButton>
+                </div>
+                <InputFieldWithLabelAndError
+                  id="roomTopic"
+                  v-model:model-value="newRoomTopic"
+                  type="text"
+                  name=""
+                  placeholder="Thema eingeben"
+                  label=""
+                  :error="error"
+                />
                 <RoundButton
-                  id="toggleMemberListButton"
-                  class="w-8 h-8 shadow-md"
-                  @click="toggleMemberList()"
+                  id="changeRoomData"
+                  :loading="roomDataSetLoading"
+                  class="shadow-lg h-8 w-8 lg:hidden"
+                  @click="setRoomData()"
+                  ><i class="fa-solid fa-check"></i
+                ></RoundButton>
+              </div>
+              <!--room name and room topic-->
+              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3">
+                <!--shows the room name if possible or the room id if not-->
+                <div class="flex flex-row space-x-4">
+                  <h1 class="flex text-3xl font-bold text-gray-900 break-all items-center">
+                    {{ room?.getName() ?? roomId }}
+                  </h1>
+                  <!--Change room data button-->
+                  <RoundButton
+                    id="changeRoomData"
+                    class="shadow-lg h-8 w-8 hidden lg:block"
+                    @click="toggleChangeRoomData()"
+                    ><i class="fa-solid fa-pen"></i
+                  ></RoundButton>
+                </div>
+                <h2 class="flex text-2xl font-bold text-gray-800 break-all">
+                  {{ room?.getTopic() }}
+                </h2>
+                <RoundButton
+                  id="changeRoomData"
+                  class="shadow-lg h-8 w-8 lg:hidden"
+                  @click="toggleChangeRoomData()"
+                  ><i class="fa-solid fa-pen"></i
+                ></RoundButton>
+
+                <div
+                  id="memberBadgesList"
+                  class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
                 >
-                  <i :class="iconClasses"></i>
-                </RoundButton>
+                  <!--shows the display names of all members in a room if possible or the member id if not-->
+                  <template v-for="member in showUserBadges" :key="member.getUserId()">
+                    <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
+                  </template>
+                  <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
+
+                  <RoundButton
+                    id="toggleMemberListButton"
+                    class="w-8 h-8 shadow-md"
+                    @click="toggleMemberList()"
+                  >
+                    <i :class="iconClasses"></i>
+                  </RoundButton>
+                </div>
               </div>
             </div>
           </div>

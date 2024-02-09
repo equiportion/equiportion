@@ -305,6 +305,27 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     return users;
   }
+
+  /**
+   * Uploads a file to the homeserver and returns the content uri.
+   * @param file the file to upload
+   * @returns {Promise<string>} a promise that resolves to the content uri of the uploaded file
+   */
+  public async uploadFile(file: File): Promise<string> {
+    const response = await this.postRequest(apiEndpoints.uploadFile, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    if (!response) {
+      throw new Error('No response from homeserver');
+    } else if (response.status !== 200) {
+      throw new MatrixError(response);
+    }
+
+    return response.data.content_uri;
+  }
 }
 
 export default AuthenticatedMatrixClient;

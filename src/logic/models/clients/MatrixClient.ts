@@ -1,9 +1,13 @@
-import axios, {AxiosError, type AxiosInstance, type AxiosResponse} from 'axios';
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from 'axios';
 import MatrixError from '@/logic/models/clients/MatrixError';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
-import {type AxiosRequestConfig} from 'axios';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /**
@@ -122,11 +126,16 @@ class MatrixClient {
    * Sends a post request to the matrix homeserver.
    * @param url the endpoint to send the request to
    * @param data the data to send with the request
+   * @param config the config to use for the request
    * @returns {Promise<AxiosResponse | undefined>} a promise that resolves to the HTTP response or undefined if the request failed
    */
-  public async postRequest(url: string, data?: any): Promise<AxiosResponse | undefined> {
+  public async postRequest(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse | undefined> {
     try {
-      const response = await this.axiosInstance.post(url, data);
+      const response = await this.axiosInstance.post(url, data, config);
       return response;
     } catch (error) {
       this.handleRequestError(error);
