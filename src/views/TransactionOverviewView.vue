@@ -222,7 +222,7 @@ async function loadMoreTransactions() {
   }
 }
 
-//reidrects to new transaction view and stores compensation and user id of participant in session storage
+//redirects to new transaction view and stores compensation and user id of participant in session storage
 function redirectToCompensationPayment(compensation: number, userId: string) {
   if (!compensation) {
     return;
