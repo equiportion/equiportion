@@ -12,6 +12,16 @@ function standard() {
       fixture: 'matrix_client_versions.json',
     }
   ).as('matrix_client_versions');
+
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/_matrix/client/v3/login',
+    },
+    {
+      fixture: 'matrix_client_v3_login_get.json',
+    }
+  ).as('get_login');
 }
 
 type authenticatedOptions = {
