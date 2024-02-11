@@ -80,7 +80,7 @@ function authenticated(tests: Function, authenticatedOptions: authenticatedOptio
   cy.intercept(
     {
       method: 'GET',
-      url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/messages*',
+      url: '/_matrix/client/v3/rooms/*/messages*',
     },
     {
       fixture: 'matrix_client_v3_rooms_messages.json',

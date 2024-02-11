@@ -480,8 +480,20 @@ describe('/', () => {
       cy.get('#submitButton').click();
 
       cy.get('#toggleMemberListButton').click();
-      cy.get('#userTiles>div').eq(1).children().eq(1).should('contain', 'Du schuldest 10,00 €');
-      cy.get('#userTiles>div').eq(2).children().eq(1).should('contain', 'Ausgeglichen');
+      cy.get('#userTiles>div')
+        .eq(1)
+        .children()
+        .eq(0)
+        .children()
+        .eq(1)
+        .should('contain', 'Du schuldest 10,00 €');
+      cy.get('#userTiles>div')
+        .eq(2)
+        .children()
+        .eq(0)
+        .children()
+        .eq(1)
+        .should('contain', 'Ausgeglichen');
     });
   });
   it('balance 2', () => {
@@ -526,8 +538,20 @@ describe('/', () => {
       cy.get('#submitButton').click();
 
       cy.get('#toggleMemberListButton').click();
-      cy.get('#userTiles>div').eq(1).children().eq(1).should('contain', 'Schuldet dir 10,00 €');
-      cy.get('#userTiles>div').eq(2).children().eq(1).should('contain', 'Ausgeglichen');
+      cy.get('#userTiles>div')
+        .eq(1)
+        .children()
+        .eq(0)
+        .children()
+        .eq(1)
+        .should('contain', 'Schuldet dir 10,00 €');
+      cy.get('#userTiles>div')
+        .eq(2)
+        .children()
+        .eq(0)
+        .children()
+        .eq(1)
+        .should('contain', 'Ausgeglichen');
     });
   });
 });
