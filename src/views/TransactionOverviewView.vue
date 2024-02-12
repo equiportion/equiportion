@@ -337,7 +337,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               :placeholder-text="room?.getName() ?? '?'"
               class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
             />
-            <div class="mt-2">
+            <div>
               <!--edit mode with submit button and input fields-->
               <div
                 v-if="changeRoomData"
@@ -379,7 +379,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 ></RoundButton>
               </div>
               <!--room name and room topic-->
-              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3">
+              <div v-else class="flex flex-col items-center lg:items-start lg:ml-5">
                 <!--shows the room name if possible or the room id if not-->
                 <div class="flex flex-row space-x-4">
                   <h1 class="flex text-3xl font-bold text-gray-900 break-all items-center">
@@ -393,19 +393,20 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     ><i class="fa-solid fa-pen"></i
                   ></RoundButton>
                 </div>
-                <h2 class="flex text-2xl font-bold text-gray-800 break-all">
+
+                <h2 class="flex text-sm text-gray-500 break-all items-center">
                   {{ room?.getTopic() }}
                 </h2>
                 <RoundButton
                   id="changeRoomData"
-                  class="shadow-lg h-8 w-8 lg:hidden"
+                  class="shadow-lg h-8 w-8 lg:hidden mt-2"
                   @click="toggleChangeRoomData()"
                   ><i class="fa-solid fa-pen"></i
                 ></RoundButton>
 
                 <div
                   id="memberBadgesList"
-                  class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap"
+                  class="flex flex-row gap-2 justify-center lg:justify-start flex-wrap mt-2"
                 >
                   <!--shows the display names of all members in a room if possible or the member id if not-->
                   <template v-for="member in showUserBadges" :key="member.getUserId()">
