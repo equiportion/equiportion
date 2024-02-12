@@ -306,11 +306,13 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center"
             >
               <div>
-                <MxcOrPlaceholderImage
-                  :mxc-url="room?.getAvatarUrl() ?? ''"
-                  :placeholder-text="room?.getName() ?? '?'"
-                  class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
-                />
+                <div class="flex-shrink-0">
+                  <MxcOrPlaceholderImage
+                    :mxc-url="room?.getAvatarUrl() ?? ''"
+                    :placeholder-text="room?.getName() ?? '?'"
+                    class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+                  />
+                </div>
                 <label
                   class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
                   for="fileInput"
@@ -331,12 +333,13 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               </div>
             </div>
             <!--shows the room picture-->
-            <MxcOrPlaceholderImage
-              v-else
-              :mxc-url="room?.getAvatarUrl() ?? ''"
-              :placeholder-text="room?.getName() ?? '?'"
-              class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
-            />
+            <div v-else class="flex-shrink-0">
+              <MxcOrPlaceholderImage
+                :mxc-url="room?.getAvatarUrl() ?? ''"
+                :placeholder-text="room?.getName() ?? '?'"
+                class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+              />
+            </div>
             <div>
               <!--edit mode with submit button and input fields-->
               <div
@@ -353,13 +356,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     label=""
                     :error="error"
                   />
-                  <RoundButton
-                    id="changeRoomData"
-                    :loading="roomDataSetLoading"
-                    class="shadow-lg h-8 w-8 hidden lg:block"
-                    @click="setRoomData()"
-                    ><i class="fa-solid fa-check"></i
-                  ></RoundButton>
+                  <div class="flex-shrink-0">
+                    <RoundButton
+                      id="changeRoomData"
+                      :loading="roomDataSetLoading"
+                      class="shadow-lg h-8 w-8 hidden lg:block"
+                      @click="setRoomData()"
+                      ><i class="fa-solid fa-check"></i
+                    ></RoundButton>
+                  </div>
                 </div>
                 <InputFieldWithLabelAndError
                   id="roomTopic"
@@ -370,13 +375,15 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   label=""
                   :error="error"
                 />
-                <RoundButton
-                  id="changeRoomData"
-                  :loading="roomDataSetLoading"
-                  class="shadow-lg h-8 w-8 lg:hidden"
-                  @click="setRoomData()"
-                  ><i class="fa-solid fa-check"></i
-                ></RoundButton>
+                <div class="flex-shrink-0">
+                  <RoundButton
+                    id="changeRoomData"
+                    :loading="roomDataSetLoading"
+                    class="shadow-lg h-8 w-8 lg:hidden"
+                    @click="setRoomData()"
+                    ><i class="fa-solid fa-check"></i
+                  ></RoundButton>
+                </div>
               </div>
               <!--room name and room topic-->
               <div v-else class="flex flex-col items-center lg:items-start lg:ml-5">
@@ -386,23 +393,27 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     {{ room?.getName() ?? roomId }}
                   </h1>
                   <!--Change room data button-->
-                  <RoundButton
-                    id="changeRoomData"
-                    class="shadow-lg h-8 w-8 hidden lg:block"
-                    @click="toggleChangeRoomData()"
-                    ><i class="fa-solid fa-pen"></i
-                  ></RoundButton>
+                  <div class="flex-shrink-0">
+                    <RoundButton
+                      id="changeRoomData"
+                      class="shadow-lg h-8 w-8 hidden lg:block"
+                      @click="toggleChangeRoomData()"
+                      ><i class="fa-solid fa-pen"></i
+                    ></RoundButton>
+                  </div>
                 </div>
 
                 <h2 class="flex text-sm text-gray-500 break-all items-center">
                   {{ room?.getTopic() }}
                 </h2>
-                <RoundButton
-                  id="changeRoomData"
-                  class="shadow-lg h-8 w-8 lg:hidden mt-2"
-                  @click="toggleChangeRoomData()"
-                  ><i class="fa-solid fa-pen"></i
-                ></RoundButton>
+                <div class="flex-shrink-0">
+                  <RoundButton
+                    id="changeRoomData"
+                    class="shadow-lg h-8 w-8 lg:hidden mt-2"
+                    @click="toggleChangeRoomData()"
+                    ><i class="fa-solid fa-pen"></i
+                  ></RoundButton>
+                </div>
 
                 <div
                   id="memberBadgesList"
