@@ -331,13 +331,14 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
               </div>
             </div>
             <!--shows the room picture-->
-            <MxcOrPlaceholderImage
-              v-else
-              :mxc-url="room?.getAvatarUrl() ?? ''"
-              :placeholder-text="room?.getName() ?? '?'"
-              class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
-            />
-            <div class="mt-2">
+            <div v-else class="shrink-0">
+              <MxcOrPlaceholderImage
+                :mxc-url="room?.getAvatarUrl() ?? ''"
+                :placeholder-text="room?.getName() ?? '?'"
+                class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
+              />
+            </div>
+            <div>
               <!--edit mode with submit button and input fields-->
               <div
                 v-if="changeRoomData"
@@ -353,6 +354,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     label=""
                     :error="error"
                   />
+
                   <RoundButton
                     id="changeRoomData"
                     :loading="roomDataSetLoading"
@@ -379,21 +381,24 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 ></RoundButton>
               </div>
               <!--room name and room topic-->
-              <div v-else class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3">
+              <div v-else class="flex flex-col items-center lg:items-start lg:ml-5 gap-2 lg:gap-1">
                 <!--shows the room name if possible or the room id if not-->
                 <div class="flex flex-row space-x-4">
                   <h1 class="flex text-3xl font-bold text-gray-900 break-all items-center">
                     {{ room?.getName() ?? roomId }}
                   </h1>
                   <!--Change room data button-->
-                  <RoundButton
-                    id="changeRoomData"
-                    class="shadow-lg h-8 w-8 hidden lg:block"
-                    @click="toggleChangeRoomData()"
-                    ><i class="fa-solid fa-pen"></i
-                  ></RoundButton>
+                  <div class="shrink-0">
+                    <RoundButton
+                      id="changeRoomData"
+                      class="shadow-lg h-8 w-8 hidden lg:block"
+                      @click="toggleChangeRoomData()"
+                      ><i class="fa-solid fa-pen"></i
+                    ></RoundButton>
+                  </div>
                 </div>
-                <h2 class="flex text-2xl font-bold text-gray-800 break-all">
+
+                <h2 class="flex text-sm text-gray-500 break-all items-center">
                   {{ room?.getTopic() }}
                 </h2>
                 <RoundButton
@@ -506,10 +511,10 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
         class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
       >
         <div class="flex flex-row items-center justify-between">
-          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleMemberList()">
+          <RoundButton class="w-8 h-8 shrink-0 shadow-md" @click="toggleMemberList()">
             <i class="fa-solid fa-angles-right"></i>
           </RoundButton>
-          <RoundButton class="w-8 h-8 flex-shrink-0 shadow-md" @click="toggleInviteModal()">
+          <RoundButton class="w-8 h-8 shrink-0 shadow-md" @click="toggleInviteModal()">
             <i class="fa-solid fa-user-plus text-sm"></i>
           </RoundButton>
         </div>
