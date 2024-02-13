@@ -347,8 +347,8 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 <div class="flex flex-row gap-4 items-center w-full">
                   <InputFieldWithLabelAndError
                     id="roomName"
+                    v-model="newRoomName"
                     class="w-full lg:max-w-[400px]"
-                    v-model:model-value="newRoomName"
                     type="text"
                     name=""
                     placeholder="Name eingeben"
@@ -367,8 +367,8 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 </div>
                 <InputFieldWithLabelAndError
                   id="roomTopic"
+                  v-model="newRoomTopic"
                   class="w-full lg:max-w-[400px]"
-                  v-model:model-value="newRoomTopic"
                   type="text"
                   name=""
                   placeholder="Thema eingeben"
