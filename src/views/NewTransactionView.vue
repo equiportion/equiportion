@@ -49,7 +49,9 @@ function loadRoom() {
 waitForInitialSync().then(() => {
   loadRoom();
 
-  creditorVal.value = room.value?.getMembers()[loggedInUser.getUserId()];
+  creditorVal.value = room.value?.getMember(loggedInUser.getUserId());
+
+  prefillFromSessionStorage();
 });
 
 // update if room changes
@@ -219,6 +221,28 @@ async function submit() {
   router.push({name: 'transactions', params: {roomId: roomId.value}});
 }
 
+//takes compensation and participating user from session storage and prefills transaction refs with it
+function prefillFromSessionStorage() {
+  if (!sessionStorage.getItem('compensation')) {
+    return;
+  }
+
+  const compensation = parseInt(sessionStorage.getItem('compensation')!);
+  sessionStorage.removeItem('compensation');
+  const compensationUserId = sessionStorage.getItem('compensation_userId');
+  sessionStorage.removeItem('compensation_userId');
+
+  moneyVal.value = Math.abs(compensation);
+  reasonVal.value = 'Ausgleichszahlung';
+  if (compensation > 0) {
+    //creditor does not need to be set because the user is already set as creditor by default
+    addDebtor(room.value?.getMember(compensationUserId!)!);
+  } else {
+    creditorVal.value = room.value?.getMember(compensationUserId!);
+    addDebtor(room.value?.getMember(loggedInUser.getUserId())!);
+  }
+}
+
 /**
  * Generic Functions
  */
@@ -236,7 +260,7 @@ function centsPart(num: number): string {
     <!-- Submit Button (bottom right) -->
     <RoundButton
       id="submitButton"
-      class="fixed bottom-5 right-5 shadow-lg"
+      class="fixed bottom-5 right-5 shadow-lg z-50"
       :disabled="submitDisabled"
       :loading="submitLoading"
       @click="submit"

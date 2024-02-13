@@ -65,7 +65,7 @@ class MRoomTopicEvent extends StateEvent {
    */
   public toEventContent(): {} {
     return {
-      avatar_url: this.topic,
+      topic: this.topic,
     };
   }
 }

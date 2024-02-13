@@ -65,7 +65,7 @@ class MRoomAvatarEvent extends StateEvent {
    */
   public toEventContent(): {} {
     return {
-      avatar_url: this.avatarUrl,
+      url: this.avatarUrl,
     };
   }
 }

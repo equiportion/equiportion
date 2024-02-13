@@ -1,9 +1,14 @@
-import axios, {AxiosError, type AxiosInstance, type AxiosResponse} from 'axios';
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from 'axios';
 import MatrixError from '@/logic/models/clients/MatrixError';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
-import {type AxiosRequestConfig} from 'axios';
+import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /**
  * A client that can make requests to a matrix homeserver.
@@ -11,6 +16,7 @@ import {type AxiosRequestConfig} from 'axios';
 class MatrixClient {
   private homeserverUrl?: string;
   protected axiosInstance: AxiosInstance;
+  private supportedLoginFlows: string[] = [];
 
   /**
    * Creates a new client.
@@ -39,12 +45,40 @@ class MatrixClient {
   /**
    * Sets the homeserver url of this client.
    * @param {string} homeserverUrl the url to set
+   * @returns {Promise<void>} a promise that resolves when the homeserver url is set
    */
-  public setHomeserverUrl(homeserverUrl: string) {
+  public async setHomeserverUrl(homeserverUrl: string): Promise<void> {
     setCookie(cookieNames.homeserverUrl, homeserverUrl);
 
     this.homeserverUrl = homeserverUrl;
     this.axiosInstance.defaults.baseURL = homeserverUrl;
+
+    await this.fetchSupportedLoginFlows();
+  }
+
+  /**
+   * Gets the supported login flows of the homeserver of this client.
+   * @returns {Promise<void>} a promise that resolves when the supported login flows are fetched
+   */
+  private async fetchSupportedLoginFlows(): Promise<void> {
+    const response = await this.getRequest(apiEndpoints.login);
+
+    if (!response?.data.flows) {
+      throw new Error('No supported login flows found');
+    }
+
+    this.supportedLoginFlows = [];
+    response.data.flows.forEach((flow: {type: string}) => {
+      this.supportedLoginFlows?.push(flow.type);
+    });
+  }
+
+  /**
+   * Gets the supported login flows of the homeserver of this client.
+   * @returns {string[]} the supported login flows
+   */
+  public getSupportedLoginFlows(): string[] {
+    return this.supportedLoginFlows;
   }
 
   /**
@@ -92,11 +126,16 @@ class MatrixClient {
    * Sends a post request to the matrix homeserver.
    * @param url the endpoint to send the request to
    * @param data the data to send with the request
+   * @param config the config to use for the request
    * @returns {Promise<AxiosResponse | undefined>} a promise that resolves to the HTTP response or undefined if the request failed
    */
-  public async postRequest(url: string, data?: any): Promise<AxiosResponse | undefined> {
+  public async postRequest(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse | undefined> {
     try {
-      const response = await this.axiosInstance.post(url, data);
+      const response = await this.axiosInstance.post(url, data, config);
       return response;
     } catch (error) {
       this.handleRequestError(error);

@@ -15,6 +15,8 @@ import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import MatrixEvent from '@/logic/models/events/MatrixEvent';
+import InvitedRoomTile from '@/views/partials/InvitedRoomTile.vue';
 
 const clientStateStore = useClientStateStore();
 
@@ -22,12 +24,13 @@ const loggedInUserStore = useLoggedInUserStore();
 const loggedInUser = loggedInUserStore.user;
 
 const roomsStore = useRoomsStore();
-const rooms = roomsStore.rooms;
+const joinedRooms = roomsStore.joinedRooms;
+const invitedRooms = roomsStore.invitedRooms;
 
 const balance = ref(0);
 function calculateBalance() {
   let sum = 0;
-  for (const room of Object.values(rooms)) {
+  for (const room of Object.values(joinedRooms)) {
     if (room.isVisible() === false) {
       continue;
     }
@@ -43,7 +46,7 @@ function calculateBalance() {
 waitForInitialSync().then(() => {
   calculateBalance();
 });
-watch(rooms, () => {
+watch(joinedRooms, () => {
   calculateBalance();
 });
 
@@ -98,7 +101,7 @@ const roomSelectionDisabled = computed(() => {
 });
 
 const roomsAsOptions = computed(() => {
-  return Object.values(rooms)
+  return Object.values(joinedRooms)
     .filter((room) => !room.isVisible())
     .map((room) => {
       return {value: room.getRoomId(), label: room.getName() ?? room.getRoomId()};
@@ -133,7 +136,7 @@ async function makeRoomVisible() {
   roomsActionLoading.value = true;
 
   const newEquiportionSettingsEvent = new EquiPortionSettingsEvent(
-    '',
+    MatrixEvent.EVENT_ID_NEW,
     newRoomSelection.value,
     true
   );
@@ -205,12 +208,14 @@ watch(
           <div v-show="newRoomMethod != ''" class="w-full">
             <div v-if="newRoomMethod == 'new'" class="w-full flex flex-col gap-5">
               <InputFieldWithLabelAndError
+                id="roomNameInputField"
                 v-model="newRoomName"
                 label="Name des neuen Raums"
                 type="text"
                 class="w-full"
               />
               <StandardButton
+                id="createRoomButton"
                 :loading="roomsActionLoading"
                 :disabled="roomCreationDisabled"
                 @click="createNewRoom()"
@@ -256,13 +261,22 @@ watch(
         </span>
       </HeightFade>
       <span
-        v-show="clientStateStore.numberOfSyncs > 0 && rooms && Object.keys(rooms).length <= 0"
+        v-show="
+          clientStateStore.numberOfSyncs > 0 &&
+          joinedRooms &&
+          Object.keys(joinedRooms).length <= 0 &&
+          invitedRooms &&
+          Object.keys(invitedRooms).length <= 0
+        "
         id="no-rooms-message"
         class="text-sm text-gray-300"
       >
         Keine Räume gefunden - trete einem Raum bei, um Rechnungen aufzuteilen
       </span>
-      <template v-for="room in rooms" :key="room.id">
+      <template v-for="room in invitedRooms" :key="room.id">
+        <InvitedRoomTile :room="room" />
+      </template>
+      <template v-for="room in joinedRooms" :key="room.id">
         <RoomTile v-if="room.isVisible()" :room="room" />
       </template>
     </div>
