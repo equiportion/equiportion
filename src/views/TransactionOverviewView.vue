@@ -303,7 +303,7 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
             <!--shows the room picture when in edit mode-->
             <div
               v-if="changeRoomData"
-              class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center"
+              class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center shrink-0"
             >
               <div>
                 <MxcOrPlaceholderImage
@@ -338,16 +338,17 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                 class="rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
               />
             </div>
-            <div>
+            <div class="w-full">
               <!--edit mode with submit button and input fields-->
               <div
                 v-if="changeRoomData"
-                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 lg:gap-3"
+                class="flex flex-col items-center gap-2 lg:items-start lg:ml-4 mt-2 lg:mt-0 lg:gap-3 w-full"
               >
-                <div class="flex flex-row space-x-4 items-center">
+                <div class="flex flex-row gap-4 items-center w-full">
                   <InputFieldWithLabelAndError
                     id="roomName"
-                    v-model:model-value="newRoomName"
+                    v-model="newRoomName"
+                    class="w-full lg:max-w-[400px]"
                     type="text"
                     name=""
                     placeholder="Name eingeben"
@@ -360,12 +361,14 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                     :loading="roomDataSetLoading"
                     class="shadow-lg h-8 w-8 hidden lg:block"
                     @click="setRoomData()"
-                    ><i class="fa-solid fa-check"></i
-                  ></RoundButton>
+                  >
+                    <i class="fa-solid fa-check"></i>
+                  </RoundButton>
                 </div>
                 <InputFieldWithLabelAndError
                   id="roomTopic"
-                  v-model:model-value="newRoomTopic"
+                  v-model="newRoomTopic"
+                  class="w-full lg:max-w-[400px]"
                   type="text"
                   name=""
                   placeholder="Thema eingeben"
@@ -377,36 +380,39 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
                   :loading="roomDataSetLoading"
                   class="shadow-lg h-8 w-8 lg:hidden"
                   @click="setRoomData()"
-                  ><i class="fa-solid fa-check"></i
-                ></RoundButton>
+                >
+                  <i class="fa-solid fa-check"></i>
+                </RoundButton>
               </div>
               <!--room name and room topic-->
               <div v-else class="flex flex-col items-center lg:items-start lg:ml-5 gap-2 lg:gap-1">
                 <!--shows the room name if possible or the room id if not-->
-                <div class="flex flex-row space-x-4">
+                <div class="flex flex-row gap-3 items-center">
                   <h1 class="flex text-3xl font-bold text-gray-900 break-all items-center">
                     {{ room?.getName() ?? roomId }}
                   </h1>
                   <!--Change room data button-->
-                  <div class="shrink-0">
+                  <div class="shrink-0 hidden lg:block">
                     <RoundButton
                       id="changeRoomData"
-                      class="shadow-lg h-8 w-8 hidden lg:block"
+                      class="shadow-lg h-8 w-8"
                       @click="toggleChangeRoomData()"
-                      ><i class="fa-solid fa-pen"></i
-                    ></RoundButton>
+                    >
+                      <i class="fa-solid fa-pen"></i>
+                    </RoundButton>
                   </div>
                 </div>
 
-                <h2 class="flex text-sm text-gray-500 break-all items-center">
+                <span class="flex text-sm text-gray-500 break-all items-center lg:mb-2">
                   {{ room?.getTopic() }}
-                </h2>
+                </span>
                 <RoundButton
                   id="changeRoomData"
                   class="shadow-lg h-8 w-8 lg:hidden"
                   @click="toggleChangeRoomData()"
-                  ><i class="fa-solid fa-pen"></i
-                ></RoundButton>
+                >
+                  <i class="fa-solid fa-pen"></i>
+                </RoundButton>
 
                 <div
                   id="memberBadgesList"
