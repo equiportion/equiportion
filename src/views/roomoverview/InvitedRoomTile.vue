@@ -92,4 +92,3 @@ async function rejectInvite() {
     </div>
   </div>
 </template>
-@/logic/clients/AuthenticatedMatrixClient

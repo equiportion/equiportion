@@ -1,34 +1,51 @@
 <script setup lang="ts">
+/** Imports */
+// Layout and Components
 import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
-import RoundButton from '@/components/buttons/RoundButton.vue';
-import {useRoute} from 'vue-router';
 import TransactionTile from '@/views/transactionoverview/TransactionTile.vue';
-import {useRoomsStore} from '@/stores/rooms';
-import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
-import router from '@/router';
+import RoundButton from '@/components/buttons/RoundButton.vue';
 import UserBadge from '@/components/user/UserBadge.vue';
-import {computed, ref, watch, type Ref, onMounted} from 'vue';
-import type User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
-import {useLoggedInUserStore} from '@/stores/loggedInUser';
+
+// models
+import type User from '@/logic/models/User';
 import type Room from '@/logic/models/Room';
-import waitForInitialSync from '@/logic/utils/waitForSync';
-import {onIntersect} from '@/composables/useIntersectionObserver';
-import HeightFade from '@/components/transitions/HeightFade.vue';
-import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
-import BalanceSpan from '@/views/transactionoverview/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
-import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
-import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
+import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
+import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
+import MRoomAvatarEvent from '@/logic/models/events/matrix/MRoomAvatarEvent';
 import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';
+import HeightFade from '@/components/transitions/HeightFade.vue';
+import BalanceSpan from '@/views/transactionoverview/BalanceSpan.vue';
+import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
 import InviteModal from '@/views/transactionoverview/InviteModal.vue';
-import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
-import MRoomAvatarEvent from '@/logic/models/events/matrix/MRoomAvatarEvent';
 
+//composables
+import {onIntersect} from '@/composables/useIntersectionObserver';
+
+//clients
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
+
+//compensation
+import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
+
+// stores
+import {useRoomsStore} from '@/stores/rooms';
+import {useLoggedInUserStore} from '@/stores/loggedInUser';
+
+// utils
+import waitForInitialSync from '@/logic/utils/waitForSync';
+
+// framework and libraries
+import {computed, ref, watch, type Ref, onMounted} from 'vue';
+import {useRoute} from 'vue-router';
+import router from '@/router';
+
+/** Data */
 const roomId = ref(useRoute().params.roomId.toString());
 const roomsStore = useRoomsStore();
 const room: Ref<Room | undefined> = ref(undefined);
@@ -45,9 +62,11 @@ const observeRef = ref<HTMLElement | null>(null);
 const memberListOpen = ref(false);
 const inviteModalOpen = ref(false);
 
-function toggleInviteModal(): void {
-  inviteModalOpen.value = !inviteModalOpen.value;
-}
+const roomDataSetLoading = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+const selectedFile = ref<File | null>(null);
+
+/** Computed */
 
 const iconClasses = computed(() => {
   if (memberListOpen.value) {
@@ -80,6 +99,12 @@ const showUserBadges = computed(() => {
   return badgeList;
 });
 
+/** Functions */
+
+function toggleInviteModal(): void {
+  inviteModalOpen.value = !inviteModalOpen.value;
+}
+
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
@@ -104,21 +129,6 @@ waitForInitialSync().then(() => {
   updateNewRoomData();
 });
 
-// update if room changes
-watch(roomId, () => {
-  loadRooms();
-});
-
-watch(
-  room,
-  () => {
-    if (!roomDataSetLoading.value) {
-      updateNewRoomData();
-    }
-  },
-  {deep: true}
-);
-
 /**
  * Opens NewTransactionView of the room of this TransactionOverviewView.
  * @returns {void}
@@ -142,11 +152,6 @@ onMounted(() => {
   // start the intersection observer
   intersectPageEnd();
 });
-
-const roomDataSetLoading = ref(false);
-const fileInput = ref<HTMLInputElement | null>(null);
-const selectedFile = ref<File | null>(null);
-
 const handleFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files.length) {
@@ -277,6 +282,23 @@ function asTransactionEvent(event: MatrixEvent): TransactionEvent {
 function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
   return event as MRoomMemberEvent;
 }
+
+/** Watchers */
+
+// update if room changes
+watch(roomId, () => {
+  loadRooms();
+});
+
+watch(
+  room,
+  () => {
+    if (!roomDataSetLoading.value) {
+      updateNewRoomData();
+    }
+  },
+  {deep: true}
+);
 </script>
 
 <template>
@@ -610,4 +632,3 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
     </div>
   </MainLayout>
 </template>
-@/logic/clients/AuthenticatedMatrixClient

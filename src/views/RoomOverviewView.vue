@@ -268,4 +268,3 @@ watch(
     <!--End of rooms-->
   </MainLayout>
 </template>
-@/logic/clients/AuthenticatedMatrixClient

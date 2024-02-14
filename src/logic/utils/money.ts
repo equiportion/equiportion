@@ -36,4 +36,4 @@ function floatToCents(float: number): number {
   return Math.round(float * 100);
 }
 
-export {eurosPart, absEurosPart, centsPart, parseMoney, floatToCents}
+export {eurosPart, absEurosPart, centsPart, parseMoney, floatToCents};

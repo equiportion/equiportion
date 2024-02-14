@@ -134,4 +134,3 @@ async function sendInvitation() {
     </div>
   </ModalDialog>
 </template>
-@/logic/clients/AuthenticatedMatrixClient

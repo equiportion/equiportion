@@ -200,4 +200,3 @@ watch(
     </div>
   </LoginProcessBase>
 </template>
-@/logic/clients/MatrixClient@/logic/clients/LoginMatrixClient

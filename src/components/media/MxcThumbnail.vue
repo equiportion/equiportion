@@ -123,4 +123,3 @@ watch(
     <img v-show="!loading" :class="props.class" :src="imageUrl" :alt="alt" :title="title" />
   </div>
 </template>
-@/logic/clients/AuthenticatedMatrixClient
