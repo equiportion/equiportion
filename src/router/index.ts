@@ -6,7 +6,7 @@ import ProfilePageView from '@/views/ProfilePageView.vue';
 
 import NewTransactionView from '@/views/NewTransactionView.vue';
 import TransactionOverviewView from '@/views/TransactionOverviewView.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 
 import OfflineView from '@/views/OfflineView.vue';
 

@@ -12,7 +12,7 @@ import EquiPortionSettingsEvent from './custom/EquiPortionSetttingsEvent';
 /**
  * Parses events received from the Matrix API as json objects to MatrixEvent objects.
  * This class is a singleton for performance reasons.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 class EventParser {

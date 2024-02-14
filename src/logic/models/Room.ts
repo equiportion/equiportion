@@ -3,12 +3,12 @@ import type MatrixEvent from '@/logic/models/events/MatrixEvent';
 import User from '@/logic/models/User';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import validateTransactions from '@/logic/utils/validateTransactions';
-import AuthenticatedMatrixClient from './clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
 import apiEndpoints from '../constants/apiEndpoints';
 
 /**
  * A matrix room the logged in user has joined.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  * @author Jörn Mihatsch
  */

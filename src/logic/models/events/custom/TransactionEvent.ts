@@ -7,7 +7,7 @@ import Room from '@/logic/models/Room';
 
 /**
  * A transaction event modelled after this project's documentation.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  * @author Jörn Mihatsch
  */

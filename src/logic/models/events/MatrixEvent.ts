@@ -3,7 +3,7 @@ import type {AxiosResponse} from 'axios';
 /**
  * An event modelled after the matrix specs. All types of events inherit from this class.
  * The constructors of the class is defined by {@link MatrixEventConstructor}
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 abstract class MatrixEvent {

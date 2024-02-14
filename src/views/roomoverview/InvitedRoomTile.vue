@@ -3,7 +3,7 @@ import {type PropType, ref} from 'vue';
 import Room from '@/logic/models/Room';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 
 const props = defineProps({
   room: {
@@ -92,3 +92,4 @@ async function rejectInvite() {
     </div>
   </div>
 </template>
+@/logic/clients/AuthenticatedMatrixClient

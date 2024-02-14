@@ -3,7 +3,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import {useRoute} from 'vue-router';
-import TransactionTile from './partials/TransactionTile.vue';
+import TransactionTile from '@/views/transactionoverview/TransactionTile.vue';
 import {useRoomsStore} from '@/stores/rooms';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import router from '@/router';
@@ -17,7 +17,7 @@ import waitForInitialSync from '@/logic/utils/waitForSync';
 import {onIntersect} from '@/composables/useIntersectionObserver';
 import HeightFade from '@/components/transitions/HeightFade.vue';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
-import BalanceSpan from './partials/BalanceSpan.vue';
+import BalanceSpan from '@/views/transactionoverview/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
@@ -25,8 +25,8 @@ import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
 import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
-import InviteModal from './partials/InviteModal.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import InviteModal from '@/views/transactionoverview/InviteModal.vue';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import MRoomAvatarEvent from '@/logic/models/events/matrix/MRoomAvatarEvent';
 
 const roomId = ref(useRoute().params.roomId.toString());
@@ -610,3 +610,4 @@ function asMRoomMemberEvent(event: MatrixEvent): MRoomMemberEvent {
     </div>
   </MainLayout>
 </template>
+@/logic/clients/AuthenticatedMatrixClient

@@ -4,7 +4,7 @@ import {computed, ref, watch, type Ref, type PropType} from 'vue';
 import ModalDialog from '@/components/modals/ModalDialog.vue';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import regularExpressions from '@/logic/constants/regularExpressions';
@@ -134,3 +134,4 @@ async function sendInvitation() {
     </div>
   </ModalDialog>
 </template>
+@/logic/clients/AuthenticatedMatrixClient

@@ -5,7 +5,7 @@ import MatrixEvent from '../MatrixEvent';
 
 /**
  * A m.room.avatar event modelled after the matrix specs.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 class MRoomAvatarEvent extends StateEvent {

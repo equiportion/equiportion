@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-import RoomTile from '@/views/partials/RoomTile.vue';
+import RoomTile from '@/views/roomoverview/RoomTile.vue';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useRoomsStore} from '@/stores/rooms';
@@ -9,14 +9,14 @@ import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
-import InvitedRoomTile from '@/views/partials/InvitedRoomTile.vue';
+import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
 
 const clientStateStore = useClientStateStore();
 
@@ -283,3 +283,4 @@ watch(
     <!--End of rooms-->
   </MainLayout>
 </template>
+@/logic/clients/AuthenticatedMatrixClient

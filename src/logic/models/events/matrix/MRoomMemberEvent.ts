@@ -5,7 +5,7 @@ import MatrixEvent from '../MatrixEvent';
 
 /**
  * A m.room.member event modelled after the matrix specs.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 class MRoomMemberEvent extends StateEvent {
