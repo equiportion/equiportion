@@ -17,7 +17,7 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
-import { absEurosPart, centsPart } from '@/logic/utils/money';
+import {absEurosPart, centsPart} from '@/logic/utils/money';
 
 const clientStateStore = useClientStateStore();
 

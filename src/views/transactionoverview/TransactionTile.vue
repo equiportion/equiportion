@@ -12,7 +12,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
-import { centsPart, eurosPart } from '@/logic/utils/money';
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 import {computed} from 'vue';
 

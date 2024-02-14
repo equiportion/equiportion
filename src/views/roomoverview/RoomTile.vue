@@ -7,7 +7,7 @@ import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
-import { absEurosPart, centsPart } from '@/logic/utils/money';
+import {absEurosPart, centsPart} from '@/logic/utils/money';
 
 const props = defineProps({
   room: {

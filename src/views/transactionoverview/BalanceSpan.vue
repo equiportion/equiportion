@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { centsPart, eurosPart } from '@/logic/utils/money';
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 const props = defineProps({
   compensation: {

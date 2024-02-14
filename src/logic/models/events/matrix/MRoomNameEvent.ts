@@ -41,7 +41,11 @@ class MRoomNameEvent extends StateEvent {
       return undefined;
     }
 
-    return new MRoomNameEvent(rawMatrixEvent.event_id, roomId ?? rawMatrixEvent.room_id, rawMatrixEvent.content.name);
+    return new MRoomNameEvent(
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.name
+    );
   }
 
   /**

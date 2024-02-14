@@ -73,7 +73,10 @@ class EventParser {
    * @param rawMatrixEvent the event as a json object
    * @returns the MatrixEvent object
    */
-  private parseRawMatrixEvent(rawMatrixEvent: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
+  private parseRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
     try {
       const eventType = rawMatrixEvent.type as string;
       const implementation = this.eventImplementations[eventType];

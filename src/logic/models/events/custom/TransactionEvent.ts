@@ -4,7 +4,7 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import Room from '@/logic/models/Room';
-import { parseMoney } from '@/logic/utils/money';
+import {parseMoney} from '@/logic/utils/money';
 
 /**
  * A transaction event modelled after this project's documentation.

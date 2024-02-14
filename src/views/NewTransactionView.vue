@@ -21,7 +21,7 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
-import { centsPart, eurosPart } from '@/logic/utils/money';
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';

@@ -41,7 +41,11 @@ class MRoomAvatarEvent extends StateEvent {
       return undefined;
     }
 
-    return new MRoomAvatarEvent(rawMatrixEvent.event_id, roomId ?? rawMatrixEvent.room_id, rawMatrixEvent.content.url);
+    return new MRoomAvatarEvent(
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.url
+    );
   }
 
   /**
