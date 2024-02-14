@@ -17,6 +17,7 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
+import { absEurosPart, centsPart } from '@/logic/utils/money';
 
 const clientStateStore = useClientStateStore();
 
@@ -68,21 +69,6 @@ function generateGreeting() {
   greeting.value = greetings[randomIndex];
 }
 generateGreeting();
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  if (num < 0) {
-    // remove minus string
-    num = Math.abs(num);
-  }
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 
 /**
  * Room creation
@@ -173,11 +159,11 @@ watch(
 
         <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-200">
           <span v-if="balance > 0">
-            Du hast {{ eurosPart(balance) }},{{ centsPart(balance) }} € Schulden - beginne, Geld
+            Du hast {{ absEurosPart(balance) }},{{ centsPart(balance) }} € Schulden - beginne, Geld
             zurückzuzahlen!
           </span>
           <span v-else-if="balance < 0">
-            Du erhältst noch {{ eurosPart(balance) }},{{ centsPart(balance) }} € - gib deine
+            Du erhältst noch {{ absEurosPart(balance) }},{{ centsPart(balance) }} € - gib deine
             Zahlungsinformationen an, damit dir andere das Geld zurückzahlen können!
           </span>
           <span v-else>

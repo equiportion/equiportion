@@ -7,6 +7,7 @@ import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
+import { absEurosPart, centsPart } from '@/logic/utils/money';
 
 const props = defineProps({
   room: {
@@ -56,22 +57,8 @@ watch(
     deep: true,
   }
 );
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  if (num < 0) {
-    // remove minus string
-    num = Math.abs(num);
-  }
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 </script>
+
 <template>
   <div
     class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 transition"
@@ -113,11 +100,11 @@ function centsPart(num: number): string {
           </div>
           <div v-if="sum! > 0" class="flex flex-row gap-1 text-red-600">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du schuldest</span>
-            <span>{{ eurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+            <span>{{ absEurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
           </div>
           <div v-else-if="sum! < 0" class="flex flex-row gap-1 text-green-600">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du erhältst</span>
-            <span>{{ eurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+            <span>{{ absEurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
           </div>
           <div v-else class="flex flex-row gap-1 text-blue-600">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Ausgeglichen</span>

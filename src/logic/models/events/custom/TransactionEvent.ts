@@ -4,6 +4,7 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import Room from '@/logic/models/Room';
+import { parseMoney } from '@/logic/utils/money';
 
 /**
  * A transaction event modelled after this project's documentation.
@@ -138,42 +139,20 @@ class TransactionEvent extends StateEvent {
 
     const debtors: {userId: string; amount: number}[] = [];
     for (const debtor of rawMatrixEvent.content.debtors) {
-      debtors.push({userId: debtor.user, amount: this.parseMoney(debtor.amount)});
+      debtors.push({userId: debtor.user, amount: parseMoney(debtor.amount)});
     }
 
     return new TransactionEvent(
       rawMatrixEvent.event_id,
       roomId ?? rawMatrixEvent.room_id,
       rawMatrixEvent.content.purpose,
-      this.parseMoney(rawMatrixEvent.content.sum),
+      parseMoney(rawMatrixEvent.content.sum),
       rawMatrixEvent.content.creditor,
       debtors,
       rawMatrixEvent.content.balances,
       rawMatrixEvent.state_key!,
       rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined
     );
-  }
-
-  /**
-   * Function to allow both the old format (float as string) and the new format (amount in cents as number) for the sum and the debtors.
-   * @param {string|number} amount the amount to parse
-   * @returns {number} the parsed amount (in cents)
-   */
-  private static parseMoney(amount: string | number): number {
-    if (typeof amount === 'string') {
-      return this.floatToCents(parseFloat(amount));
-    } else {
-      return amount;
-    }
-  }
-
-  /**
-   * Converts a float (e.g. 12,34€) to cents.
-   * @param {number} float the float to convert
-   * @returns {number} the converted float
-   */
-  private static floatToCents(float: number): number {
-    return Math.round(float * 100);
   }
 
   /**
