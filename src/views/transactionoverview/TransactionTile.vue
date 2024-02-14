@@ -89,7 +89,6 @@ const mainClasses = computed(() => {
       <span class="underline">nicht in den aktuellen Schuldenstand eingerechnet</span>.<br />
       <strong>Was kann ich tun? </strong>Du kannst diese Transaktion erneut senden, um sie in den
       aktuellen Schuldenstand einzuberechnen.<br />
-      <i>In zukünfigten Versionen ist eine automatische Auflösung des Konflikts geplant.</i>
     </SystemAlert>
   </div>
 </template>

@@ -163,8 +163,7 @@ watch(
             zurückzuzahlen!
           </span>
           <span v-else-if="balance < 0">
-            Du erhältst noch {{ absEurosPart(balance) }},{{ centsPart(balance) }} € - gib deine
-            Zahlungsinformationen an, damit dir andere das Geld zurückzahlen können!
+            Du erhältst noch {{ absEurosPart(balance) }},{{ centsPart(balance) }} €
           </span>
           <span v-else>
             Du hast weder Schulden noch Guthaben - beginne, Transaktionen zu erstellen!
