@@ -22,7 +22,7 @@ import './commands';
 // require('./commands')
 
 beforeEach('dont use serviceworker', () => {
-  cy.intercept('/service-worker.js', {
+  cy.intercept('/sw.js', {
     body: undefined,
   });
 });
