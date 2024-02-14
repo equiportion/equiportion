@@ -83,10 +83,10 @@ const showUserBadges = computed(() => {
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
-  events.value = room.value?.getEvents()!;
+  events.value = room.value?.getTimelineEvents()!;
   events.value.reverse();
 
-  events.value = room.value?.getEvents() as (TransactionEvent | MRoomMemberEvent)[];
+  events.value = room.value?.getTimelineEvents() as (TransactionEvent | MRoomMemberEvent)[];
   events.value.reverse();
 
   const compensationCalculation = new BipartiteCompensation();
@@ -209,7 +209,7 @@ function intersectPageEnd() {
 async function loadMoreTransactions() {
   showTransactionsLoader.value = true;
 
-  const reloadAgain = await room.value?.loadPreviousEvents();
+  const reloadAgain = await room.value?.loadPreviousTimelineEvents();
   loadRooms();
 
   showTransactionsLoader.value = false;

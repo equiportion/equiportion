@@ -33,7 +33,7 @@ abstract class MessageEvent extends MatrixEvent {
     }
 
     this.setEventId(response.data.event_id);
-    room.addEvent(this);
+    room.addTimelineEvent(this);
 
     return response;
   }

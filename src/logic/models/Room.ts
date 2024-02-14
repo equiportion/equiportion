@@ -3,8 +3,9 @@ import type MatrixEvent from '@/logic/models/events/MatrixEvent';
 import User from '@/logic/models/User';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import validateTransactions from '@/logic/utils/validateTransactions';
-import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
-import apiEndpoints from '../constants/apiEndpoints';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
+import apiEndpoints from '@/logic/constants/apiEndpoints';
+import type StateEvent from '@/logic/models/events/StateEvent';
 
 /**
  * A matrix room the logged in user has joined.
@@ -21,11 +22,11 @@ class Room {
 
   private members: {[userId: string]: User} = {};
 
-  private eventIds: string[] = [];
-  private events: {[eventId: string]: MatrixEvent} = {};
+  private timelineEventIds: string[] = [];
+  private timelineEvents: {[eventId: string]: MatrixEvent} = {};
 
   private stateEventIds: string[] = [];
-  private stateEvents: {[eventId: string]: MatrixEvent} = {};
+  private stateEvents: {[eventId: string]: StateEvent} = {};
 
   private previousBatch?: string | null = '';
 
@@ -36,7 +37,7 @@ class Room {
    * @param {string} roomId the rooms id
    */
   constructor(roomId: string) {
-    this.eventIds.push();
+    this.timelineEventIds.push();
     this.roomId = roomId;
   }
 
@@ -45,9 +46,9 @@ class Room {
    * @param data the data from the sync-API
    */
   public sync(data: any) {
-    const stateEvents = data.state?.events;
-    const timelineEvents = data.timeline?.events;
-    const inviteEvents = data.invite_state?.events;
+    const stateEventsJson = data.state?.events;
+    const timelineEventsJson = data.timeline?.events;
+    const inviteEventsJson = data.invite_state?.events;
 
     const prevBatch = data.timeline?.prev_batch;
 
@@ -55,42 +56,42 @@ class Room {
       this.previousBatch = prevBatch;
     }
 
-    if (stateEvents) {
-      for (const stateEvent of stateEvents) {
-        const event = EventParser.jsonToEvent(stateEvent, this.getRoomId());
-        if (!event) {
+    if (stateEventsJson) {
+      for (const stateEventJson of stateEventsJson) {
+        const stateEvent = EventParser.jsonToEvent(stateEventJson, this.getRoomId()) as StateEvent;
+        if (!stateEvent) {
           continue;
         }
-        this.addStateEvent(event);
-        event.execute();
+        this.addStateEvent(stateEvent);
+        stateEvent.execute();
       }
-    } else if (inviteEvents) {
+    } else if (inviteEventsJson) {
       let i = 0;
-      for (const inviteEvent of inviteEvents) {
+      for (const inviteEventJson of inviteEventsJson) {
         // manually insert id as this is not provided by the server
-        const transformEvent = JSON.parse(JSON.stringify(inviteEvent));
+        const transformEvent = JSON.parse(JSON.stringify(inviteEventJson));
         transformEvent.event_id = 'invite_' + i;
 
         // convert to event and execute on room
-        const event = EventParser.jsonToEvent(transformEvent, this.getRoomId());
-        if (!event) {
+        const inviteEvent = EventParser.jsonToEvent(transformEvent, this.getRoomId()) as StateEvent;
+        if (!inviteEvent) {
           continue;
         }
-        this.addStateEvent(event);
-        event.execute();
+        this.addStateEvent(inviteEvent);
+        inviteEvent.execute();
 
         i++;
       }
     }
 
-    if (timelineEvents) {
-      for (const timelineEvent of timelineEvents) {
-        const event = EventParser.jsonToEvent(timelineEvent, this.getRoomId());
-        if (!event) {
+    if (timelineEventsJson) {
+      for (const timelineEventJson of timelineEventsJson) {
+        const timelineEvent = EventParser.jsonToEvent(timelineEventJson, this.getRoomId());
+        if (!timelineEvent) {
           continue;
         }
-        this.addEvent(event);
-        event.execute();
+        this.addTimelineEvent(timelineEvent);
+        timelineEvent.execute();
       }
     }
   }
@@ -101,7 +102,7 @@ class Room {
    * @async
    * @return {Promise<boolean>} true if there are more events to load, false otherwise
    */
-  public async loadPreviousEvents() {
+  public async loadPreviousTimelineEvents() {
     if (this.previousBatch == null) {
       return false;
     }
@@ -118,13 +119,13 @@ class Room {
       throw new Error('Error while loading previous events');
     }
 
-    response.data.chunk.forEach((eventData: any) => {
-      const event = EventParser.jsonToEvent(eventData, this.getRoomId());
-      if (!event) {
+    response.data.chunk.forEach((timelineEventJson: any) => {
+      const timelineEvent = EventParser.jsonToEvent(timelineEventJson, this.getRoomId());
+      if (!timelineEvent) {
         return;
       }
 
-      this.addEvent(event, true);
+      this.addTimelineEvent(timelineEvent, true);
     });
 
     if (!response.data.end) {
@@ -231,12 +232,14 @@ class Room {
    * @param [type] the type of event to get the eventIds for
    * @returns {string[]} the eventIds
    */
-  public getEventIds(type?: string): string[] {
+  public getTimelineEventIds(type?: string): string[] {
     if (!type) {
-      return this.eventIds;
+      return this.timelineEventIds;
     }
 
-    return this.eventIds.filter((eventId) => this.getEvent(eventId)!.getType() === type);
+    return this.timelineEventIds.filter(
+      (eventId) => this.getTimelineEvent(eventId)!.getType() === type
+    );
   }
 
   /**
@@ -244,14 +247,14 @@ class Room {
    * @param [type] the type of event to get
    * @returns {MatrixEvent[]} the events
    */
-  public getEvents(type?: string): MatrixEvent[] {
-    const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
+  public getTimelineEvents(type?: string): MatrixEvent[] {
+    const timelineEvents = this.timelineEventIds.map((eventId) => this.getTimelineEvent(eventId)!);
 
     if (!type) {
-      return events;
+      return timelineEvents;
     }
 
-    return events.filter((event) => event.getType() == type);
+    return timelineEvents.filter((timelineEvent) => timelineEvent.getType() == type);
   }
 
   /**
@@ -259,11 +262,11 @@ class Room {
    * @param [type] the type of event to get
    * @returns {MatrixEvent[]} the events found
    */
-  public getEventsWithStateEvents(type?: string): MatrixEvent[] {
-    const events = this.eventIds.map((eventId) => this.getEvent(eventId)!);
+  public getAllEvents(type?: string): MatrixEvent[] {
+    const timelineEvents = this.timelineEventIds.map((eventId) => this.getTimelineEvent(eventId)!);
     const stateEvents = this.stateEventIds.map((eventId) => this.getStateEvent(eventId)!);
 
-    const allEvents = stateEvents.concat(events);
+    const allEvents = (stateEvents as MatrixEvent[]).concat(timelineEvents);
 
     if (!type) {
       return allEvents;
@@ -277,8 +280,8 @@ class Room {
    * @param eventId the eventId of the event to get
    * @returns {MatrixEvent | undefined} the event if it exists and was loaded, undefinded otherwise
    */
-  public getEvent(eventId: string): MatrixEvent | undefined {
-    return this.events[eventId];
+  public getTimelineEvent(eventId: string): MatrixEvent | undefined {
+    return this.timelineEvents[eventId];
   }
 
   /**
@@ -286,51 +289,51 @@ class Room {
    * @param {string} eventId the eventId of the event to get
    * @returns {MatrixEvent|undefined} the event if it exists and was loaded, undefinded otherwise
    */
-  public getStateEvent(eventId: string): MatrixEvent | undefined {
+  public getStateEvent(eventId: string): StateEvent | undefined {
     return this.stateEvents[eventId];
   }
 
   /**
    * Adds a specific timeline event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
-   * @param event the event to add
+   * @param timelineEvent the event to add
    * @param before if true, the event gets added to the beginning of the timeline, otherwise to the end
    */
-  public addEvent(event: MatrixEvent, before: boolean = false) {
+  public addTimelineEvent(timelineEvent: MatrixEvent, before: boolean = false) {
     // remove from state events if it is one
-    const stateEventIndex = this.stateEventIds.indexOf(event.getEventId());
+    const stateEventIndex = this.stateEventIds.indexOf(timelineEvent.getEventId());
     if (stateEventIndex > -1) {
       this.stateEventIds.splice(stateEventIndex, 1);
     }
 
-    const eventId = event.getEventId();
+    const eventId = timelineEvent.getEventId();
 
-    if (!this.events[eventId]) {
+    if (!this.timelineEvents[eventId]) {
       if (before) {
-        this.eventIds.unshift(eventId);
+        this.timelineEventIds.unshift(eventId);
       } else {
-        this.eventIds.push(eventId);
+        this.timelineEventIds.push(eventId);
       }
     }
 
-    this.events[eventId] = event;
+    this.timelineEvents[eventId] = timelineEvent;
 
-    if (event.getType() == TransactionEvent.TYPE) {
+    if (timelineEvent.getType() == TransactionEvent.TYPE) {
       validateTransactions(this, true);
     }
   }
 
   /**
    * Adds a specific state event to this room if none with its eventId has been added yet, otherwise it gets overwritten.
-   * @param event the event to add
+   * @param stateEvent the state event to add
    */
-  public addStateEvent(event: MatrixEvent) {
-    const eventId = event.getEventId();
+  public addStateEvent(stateEvent: StateEvent) {
+    const eventId = stateEvent.getEventId();
 
     if (!this.stateEvents[eventId]) {
       this.stateEventIds.push(eventId);
     }
 
-    this.stateEvents[eventId] = event;
+    this.stateEvents[eventId] = stateEvent;
   }
 
   /**
@@ -343,7 +346,7 @@ class Room {
     // get all latest balances
     const latestTransactionEvents: {[stateKey: string]: TransactionEvent} = {};
 
-    (this.getEventsWithStateEvents(TransactionEvent.TYPE) as TransactionEvent[]).forEach(
+    (this.getAllEvents(TransactionEvent.TYPE) as TransactionEvent[]).forEach(
       (event: TransactionEvent) => {
         const stateKey = event.getStateKey();
 

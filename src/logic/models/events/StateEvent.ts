@@ -45,7 +45,7 @@ abstract class StateEvent extends MatrixEvent {
     }
 
     this.setEventId(response.data.event_id);
-    room.addEvent(this);
+    room.addTimelineEvent(this);
     this.execute();
 
     return response;
