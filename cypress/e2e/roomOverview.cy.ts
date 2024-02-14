@@ -1,8 +1,7 @@
 import {authenticated} from '../support/stubs';
 
 describe('/', () => {
-  // TODO fix
-  /* it('renders', () => {
+  it('renders', () => {
     authenticated(() => {
       cy.visit('http://localhost:5173/');
 
@@ -24,5 +23,5 @@ describe('/', () => {
         syncOption: 'norooms',
       }
     );
-  }); */
+  });
 });

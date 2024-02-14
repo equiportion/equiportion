@@ -145,10 +145,10 @@ watch(
             !showHomeserverWarning &&
             loginMatrixClient.getSupportedLoginFlows().includes('m.login.password')
           "
-          id="homeserver"
+          id="password"
           v-model:model-value="password"
           type="password"
-          name="homeserver"
+          name="password"
           placeholder="Matrix-Passwort eingeben..."
           label="Passwort"
           :error="error"
