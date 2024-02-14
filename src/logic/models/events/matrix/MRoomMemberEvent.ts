@@ -51,23 +51,26 @@ class MRoomMemberEvent extends StateEvent {
   /**
    * Tries to parse the given event into a MRoomMemberEvent.
    * @static
-   * @param {RawMatrixEvent} event the event to parse
+   * @param {RawMatrixEvent} rawMatrixEvent the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
    * @returns {MatrixEvent|undefined} Either the parsed event or undefined if the event could not be parsed (type missmatch)
    */
-  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    if (event.type !== this.TYPE) {
+  public static fromRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    if (rawMatrixEvent.type !== this.TYPE) {
       return undefined;
     }
 
     return new MRoomMemberEvent(
-      event.event_id,
-      roomId ?? event.room_id,
-      event.state_key!,
-      event.content.avatar_url,
-      event.content.displayname,
-      event.content.membership,
-      event.content.reason
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.state_key!,
+      rawMatrixEvent.content.avatar_url,
+      rawMatrixEvent.content.displayname,
+      rawMatrixEvent.content.membership,
+      rawMatrixEvent.content.reason
     );
   }
 

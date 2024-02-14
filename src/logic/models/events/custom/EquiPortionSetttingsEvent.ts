@@ -30,19 +30,22 @@ class EquiPortionSettingsEvent extends StateEvent {
   /**
    * Tries to parse the given event into a TransactionEvent.
    * @static
-   * @param {RawMatrixEvent} event the event to parse
+   * @param {RawMatrixEvent} rawMatrixEvent the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
    * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
-  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    if (event.type !== this.TYPE) {
+  public static fromRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    if (rawMatrixEvent.type !== this.TYPE) {
       return undefined;
     }
 
     return new EquiPortionSettingsEvent(
-      event.event_id,
-      roomId ?? event.room_id,
-      event.content.activate_app
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.activate_app
     );
   }
 

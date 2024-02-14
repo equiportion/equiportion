@@ -58,25 +58,28 @@ class EventParser {
    * Parses an event received from the Matrix API as a json object to a new MatrixEvent object.
    *
    * @static
-   * @param {RawMatrixEvent} eventJson the event as a json object
+   * @param {RawMatrixEvent} rawMatrixEvent the event as a json object
    * @returns {MatrixEvent|undefined} the MatrixEvent object
    */
-  public static jsonToEvent(eventJson: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    return EventParser.getInstance().parseEvent(eventJson, roomId);
+  public static rawMatrixEventToMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    return EventParser.getInstance().parseRawMatrixEvent(rawMatrixEvent, roomId);
   }
 
   /**
    * Parses an event received from the Matrix API as a json object to a new MatrixEvent object.
-   * @param eventJson the event as a json object
+   * @param rawMatrixEvent the event as a json object
    * @returns the MatrixEvent object
    */
-  private parseEvent(eventJson: any, roomId?: string): MatrixEvent | undefined {
+  private parseRawMatrixEvent(rawMatrixEvent: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
     try {
-      const eventType = eventJson.type as string;
+      const eventType = rawMatrixEvent.type as string;
       const implementation = this.eventImplementations[eventType];
 
       if (implementation) {
-        return implementation.fromEvent(eventJson, roomId);
+        return implementation.fromRawMatrixEvent(rawMatrixEvent, roomId);
       }
 
       return undefined;

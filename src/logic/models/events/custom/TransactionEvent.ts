@@ -124,30 +124,33 @@ class TransactionEvent extends StateEvent {
   /**
    * Tries to parse the given event into a TransactionEvent.
    * @static
-   * @param {RawMatrixEvent} event the event to parse
+   * @param {RawMatrixEvent} rawMatrixEvent the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
    * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
-  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    if (event.type !== this.TYPE) {
+  public static fromRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    if (rawMatrixEvent.type !== this.TYPE) {
       return undefined;
     }
 
     const debtors: {userId: string; amount: number}[] = [];
-    for (const debtor of event.content.debtors) {
+    for (const debtor of rawMatrixEvent.content.debtors) {
       debtors.push({userId: debtor.user, amount: this.parseMoney(debtor.amount)});
     }
 
     return new TransactionEvent(
-      event.event_id,
-      roomId ?? event.room_id,
-      event.content.purpose,
-      this.parseMoney(event.content.sum),
-      event.content.creditor,
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.purpose,
+      this.parseMoney(rawMatrixEvent.content.sum),
+      rawMatrixEvent.content.creditor,
       debtors,
-      event.content.balances,
-      event.state_key!,
-      event.content['m.relates_to']?.event_id ?? undefined
+      rawMatrixEvent.content.balances,
+      rawMatrixEvent.state_key!,
+      rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined
     );
   }
 

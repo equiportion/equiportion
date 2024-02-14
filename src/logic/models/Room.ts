@@ -58,7 +58,10 @@ class Room {
 
     if (stateEventsJson) {
       for (const stateEventJson of stateEventsJson) {
-        const stateEvent = EventParser.jsonToEvent(stateEventJson, this.getRoomId()) as StateEvent;
+        const stateEvent = EventParser.rawMatrixEventToMatrixEvent(
+          stateEventJson,
+          this.getRoomId()
+        ) as StateEvent;
         if (!stateEvent) {
           continue;
         }
@@ -73,7 +76,10 @@ class Room {
         transformEvent.event_id = 'invite_' + i;
 
         // convert to event and execute on room
-        const inviteEvent = EventParser.jsonToEvent(transformEvent, this.getRoomId()) as StateEvent;
+        const inviteEvent = EventParser.rawMatrixEventToMatrixEvent(
+          transformEvent,
+          this.getRoomId()
+        ) as StateEvent;
         if (!inviteEvent) {
           continue;
         }
@@ -86,7 +92,10 @@ class Room {
 
     if (timelineEventsJson) {
       for (const timelineEventJson of timelineEventsJson) {
-        const timelineEvent = EventParser.jsonToEvent(timelineEventJson, this.getRoomId());
+        const timelineEvent = EventParser.rawMatrixEventToMatrixEvent(
+          timelineEventJson,
+          this.getRoomId()
+        );
         if (!timelineEvent) {
           continue;
         }
@@ -120,7 +129,10 @@ class Room {
     }
 
     response.data.chunk.forEach((timelineEventJson: any) => {
-      const timelineEvent = EventParser.jsonToEvent(timelineEventJson, this.getRoomId());
+      const timelineEvent = EventParser.rawMatrixEventToMatrixEvent(
+        timelineEventJson,
+        this.getRoomId()
+      );
       if (!timelineEvent) {
         return;
       }
