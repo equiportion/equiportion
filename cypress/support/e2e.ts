@@ -13,12 +13,19 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import '@cypress/code-coverage/support';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-beforeEach('logs in', () => {
-  //do nothing
+beforeEach('dont use serviceworker', () => {
+  cy.intercept('/sw.js', {
+    body: undefined,
+  });
+  cy.intercept('workbox-*.js', {
+    body: undefined,
+  });
 });

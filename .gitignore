@@ -36,3 +36,6 @@ cypress/fixtures/test-accounts.json
 
 # webmanifest tests
 dev-dist/*
+
+# nyc files
+.nyc_output
