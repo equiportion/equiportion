@@ -25,4 +25,7 @@ beforeEach('dont use serviceworker', () => {
   cy.intercept('/sw.js', {
     body: undefined,
   });
+  cy.intercept('workbox-*.js', {
+    body: undefined,
+  });
 });
