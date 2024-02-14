@@ -14,7 +14,7 @@ import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
-import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
 

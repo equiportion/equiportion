@@ -19,7 +19,7 @@ import HeightFade from '@/components/transitions/HeightFade.vue';
 import MRoomMemberEvent from '@/logic/models/events/matrix/MRoomMemberEvent';
 import BalanceSpan from '@/views/transactionoverview/BalanceSpan.vue';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
-import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import MRoomNameEvent from '@/logic/models/events/matrix/MRoomNameEvent';
 import MRoomTopicEvent from '@/logic/models/events/matrix/MRoomTopicEvent';

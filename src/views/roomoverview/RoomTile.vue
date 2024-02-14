@@ -6,7 +6,7 @@ import router from '@/router';
 import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
-import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 
 const props = defineProps({
   room: {
