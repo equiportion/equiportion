@@ -21,6 +21,8 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-beforeEach('logs in', () => {
-  //do nothing
+beforeEach('dont use serviceworker', () => {
+  cy.intercept('/service-worker.js', {
+    body: undefined,
+  });
 });
