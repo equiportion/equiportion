@@ -13,7 +13,7 @@ function validateTransactions(room: Room, fullRevalidation: boolean = false) {
   const validEventIds: {[stateKey: string]: string | undefined} = {};
 
   // reverse loop over all timeline events
-  const transactionEvents: TransactionEvent[] = room.getEvents(
+  const transactionEvents: TransactionEvent[] = room.getTimelineEvents(
     TransactionEvent.TYPE
   ) as TransactionEvent[];
 

@@ -3,7 +3,7 @@ import cookieNames from '@/logic/constants/cookieNames';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /** Models */
-import MatrixClient from '@/logic/models/clients/MatrixClient';
+import MatrixClient from '@/logic/clients/MatrixClient';
 import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
 
@@ -25,7 +25,7 @@ import {getCookie} from '@/logic/utils/cookies';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 class AuthenticatedMatrixClient extends MatrixClient {

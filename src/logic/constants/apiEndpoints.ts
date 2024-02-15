@@ -1,6 +1,6 @@
 const apiEndpoints = {
   //Don't require authentification
-  versions: '',
+  versions: '/_matrix/client/versions',
   login: '/_matrix/client/v3/login',
   ssoRedirect: '/_matrix/client/v3/login/sso/redirect',
 

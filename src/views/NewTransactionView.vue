@@ -21,6 +21,7 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
@@ -233,7 +234,7 @@ function prefillFromSessionStorage() {
   sessionStorage.removeItem('compensation_userId');
 
   moneyVal.value = Math.abs(compensation);
-  reasonVal.value = 'Ausgleichszahlung';
+  reasonVal.value = 'Ausgleichs-Transaktion';
   if (compensation > 0) {
     //creditor does not need to be set because the user is already set as creditor by default
     addDebtor(room.value?.getMember(compensationUserId!)!);
@@ -241,17 +242,6 @@ function prefillFromSessionStorage() {
     creditorVal.value = room.value?.getMember(compensationUserId!);
     addDebtor(room.value?.getMember(loggedInUser.getUserId())!);
   }
-}
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
 }
 </script>
 

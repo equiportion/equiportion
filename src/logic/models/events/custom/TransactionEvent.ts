@@ -4,10 +4,11 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import Room from '@/logic/models/Room';
+import {parseMoney} from '@/logic/utils/money';
 
 /**
  * A transaction event modelled after this project's documentation.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  * @author Jörn Mihatsch
  */
@@ -72,9 +73,7 @@ class TransactionEvent extends StateEvent {
     creditor: string,
     debtors: {userId: string; amount: number}[]
   ): TransactionEvent {
-    const events: TransactionEvent[] = room.getEventsWithStateEvents(
-      this.TYPE
-    ) as TransactionEvent[];
+    const events: TransactionEvent[] = room.getAllEvents(this.TYPE) as TransactionEvent[];
 
     // get device id
     const deviceId = useClientStateStore().deviceId;
@@ -126,53 +125,34 @@ class TransactionEvent extends StateEvent {
   /**
    * Tries to parse the given event into a TransactionEvent.
    * @static
-   * @param {RawMatrixEvent} event the event to parse
+   * @param {RawMatrixEvent} rawMatrixEvent the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
    * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
-  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    if (event.type !== this.TYPE) {
+  public static fromRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    if (rawMatrixEvent.type !== this.TYPE) {
       return undefined;
     }
 
     const debtors: {userId: string; amount: number}[] = [];
-    for (const debtor of event.content.debtors) {
-      debtors.push({userId: debtor.user, amount: this.parseMoney(debtor.amount)});
+    for (const debtor of rawMatrixEvent.content.debtors) {
+      debtors.push({userId: debtor.user, amount: parseMoney(debtor.amount)});
     }
 
     return new TransactionEvent(
-      event.event_id,
-      roomId ?? event.room_id,
-      event.content.purpose,
-      this.parseMoney(event.content.sum),
-      event.content.creditor,
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.purpose,
+      parseMoney(rawMatrixEvent.content.sum),
+      rawMatrixEvent.content.creditor,
       debtors,
-      event.content.balances,
-      event.state_key!,
-      event.content['m.relates_to']?.event_id ?? undefined
+      rawMatrixEvent.content.balances,
+      rawMatrixEvent.state_key!,
+      rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined
     );
-  }
-
-  /**
-   * Function to allow both the old format (float as string) and the new format (amount in cents as number) for the sum and the debtors.
-   * @param {string|number} amount the amount to parse
-   * @returns {number} the parsed amount (in cents)
-   */
-  private static parseMoney(amount: string | number): number {
-    if (typeof amount === 'string') {
-      return this.floatToCents(parseFloat(amount));
-    } else {
-      return amount;
-    }
-  }
-
-  /**
-   * Converts a float (e.g. 12,34€) to cents.
-   * @param {number} float the float to convert
-   * @returns {number} the converted float
-   */
-  private static floatToCents(float: number): number {
-    return Math.round(float * 100);
   }
 
   /**

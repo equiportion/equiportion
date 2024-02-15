@@ -12,6 +12,7 @@ import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 import {computed} from 'vue';
 
@@ -26,14 +27,6 @@ const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(props.transaction.getRoomId());
 
 const creditor: User | undefined = room?.getMember(props.transaction.getCreditorId());
-
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 
 const mainClasses = computed(() => {
   const classes = 'flex flex-col w-full rounded-lg shadow-lg transition p-5 gap-2';
@@ -96,7 +89,6 @@ const mainClasses = computed(() => {
       <span class="underline">nicht in den aktuellen Schuldenstand eingerechnet</span>.<br />
       <strong>Was kann ich tun? </strong>Du kannst diese Transaktion erneut senden, um sie in den
       aktuellen Schuldenstand einzuberechnen.<br />
-      <i>In zukünfigten Versionen ist eine automatische Auflösung des Konflikts geplant.</i>
     </SystemAlert>
   </div>
 </template>

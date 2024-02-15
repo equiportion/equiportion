@@ -2,13 +2,13 @@
 import {ref, watch, type Ref, onMounted} from 'vue';
 
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
-import LoginProcessBase from '@/views/partials/LoginProcessBase.vue';
-import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
+import LoginProcessBase from '@/views/login/LoginProcessBase.vue';
+import LoginContinueButton from '@/views/login/LoginContinueButton.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
 
-import MatrixClient from '@/logic/models/clients/MatrixClient';
-import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient';
+import MatrixClient from '@/logic/clients/MatrixClient';
+import LoginMatrixClient from '@/logic/clients/LoginMatrixClient';
 import router from '@/router';
 
 const loading = ref(false);

@@ -1,5 +1,5 @@
-import MatrixClient from '@/logic/models/clients/MatrixClient';
-import MatrixError from '@/logic/models/clients/MatrixError';
+import MatrixClient from '@/logic/clients/MatrixClient';
+import MatrixError from '@/logic/clients/MatrixError';
 import {setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
 import apiEndpoints from '@/logic/constants/apiEndpoints';

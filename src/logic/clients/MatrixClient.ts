@@ -4,10 +4,10 @@ import axios, {
   type AxiosResponse,
   type AxiosRequestConfig,
 } from 'axios';
-import MatrixError from '@/logic/models/clients/MatrixError';
+import MatrixError from '@/logic/clients/MatrixError';
 import {getCookie, setCookie} from '@/logic/utils/cookies';
 import cookieNames from '@/logic/constants/cookieNames';
-import InvalidHomeserverUrlError from '@/logic/models/clients/InvalidHomeserverUrlError';
+import InvalidHomeserverUrlError from '@/logic/clients/InvalidHomeserverUrlError';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /**

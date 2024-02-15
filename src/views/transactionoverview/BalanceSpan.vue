@@ -1,14 +1,5 @@
 <script setup lang="ts">
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
+import {centsPart, eurosPart} from '@/logic/utils/money';
 
 const props = defineProps({
   compensation: {
