@@ -23,6 +23,7 @@ class TransactionEvent extends StateEvent {
   private balances: {[userIds: string]: number};
   private latestEventId: string | undefined;
   private transactionValid: boolean | undefined = undefined;
+  private receiptUrl: string | undefined = undefined;
 
   /**
    * Creates a new TransactionEvent
@@ -35,6 +36,7 @@ class TransactionEvent extends StateEvent {
    * @param {[userIds: string]: number} balances the balances as a map of two concatenated userIds and an integer representing the balance (see documentation)
    * @param {string} stateKey the state key of this event
    * @param {string} [latestEventId] the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances (optional, only to be set if this event didn't start with balances of 0)
+   * @param {string} [receipt_url] the mxc-url of the receipt (optional)
    */
   constructor(
     eventId: string,
@@ -46,7 +48,8 @@ class TransactionEvent extends StateEvent {
     debtors: {userId: string; amount: number}[],
     balances: {[userIds: string]: number},
     stateKey: string,
-    latestEventId?: string
+    latestEventId?: string,
+    receipt_url?: string
   ) {
     super(eventId, roomId, stateKey);
 
@@ -56,6 +59,7 @@ class TransactionEvent extends StateEvent {
     this.debtors = debtors;
     this.balances = balances;
     this.latestEventId = latestEventId;
+    this.receiptUrl = receipt_url;
   }
 
   /**
@@ -65,13 +69,15 @@ class TransactionEvent extends StateEvent {
    * @param {number} sum the total sum of the transaction
    * @param {string} creditor the userId of the creditor
    * @param {{userId: string; amount: number}[]} debtors all debtors with their amount
+   * @param {string} [receipt_url] the mxc-url of the receipt (optional)
    */
   public static newTransaction(
     room: Room,
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {userId: string; amount: number}[]
+    debtors: {userId: string; amount: number}[],
+    receipt_url?: string
   ): TransactionEvent {
     const events: TransactionEvent[] = room.getAllEvents(this.TYPE) as TransactionEvent[];
 
@@ -116,7 +122,8 @@ class TransactionEvent extends StateEvent {
       debtors,
       newBalances,
       stateKey,
-      clientsNewestTransactionEvent?.getEventId()
+      clientsNewestTransactionEvent?.getEventId(),
+      receipt_url
     );
 
     return newTransactionevent;
@@ -151,7 +158,8 @@ class TransactionEvent extends StateEvent {
       debtors,
       rawMatrixEvent.content.balances,
       rawMatrixEvent.state_key!,
-      rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined
+      rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined,
+      rawMatrixEvent.content.receipt_url ?? undefined
     );
   }
 
@@ -182,6 +190,7 @@ class TransactionEvent extends StateEvent {
       creditor: this.creditor,
       debtors: debtors,
       balances: this.balances,
+      receipt_url: this.receiptUrl,
     };
 
     if (this.latestEventId) {
@@ -265,6 +274,23 @@ class TransactionEvent extends StateEvent {
    */
   public setValid(valid: boolean): void {
     this.transactionValid = valid;
+  }
+
+  /**
+   * Gets the receipt url of this transaction.
+   * @returns {string|undefined} the receipt url (mxc) of this transaction
+   */
+  public getReceiptUrl(): string | undefined {
+    return this.receiptUrl;
+  }
+
+  /**
+   * Sets the receipt url of this transaction.
+   * @param {string} url the receipt url (mxc content url) of this transaction
+   * @returns {void}
+   */
+  public setReceiptUrl(url: string): void {
+    this.receiptUrl = url;
   }
 }
 

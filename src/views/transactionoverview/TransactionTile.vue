@@ -7,14 +7,16 @@
  * @prop {TransactionEvent} transaction - A transaction event of a transaction (sent into a room).
  */
 
+import ModalDialog from '@/components/modals/ModalDialog.vue';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 import {centsPart, eurosPart} from '@/logic/utils/money';
+import MxcImage from '@/components/media/MxcImage.vue';
 
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const props = defineProps({
   transaction: {
@@ -22,6 +24,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const viewReceipt = ref(false);
 
 const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(props.transaction.getRoomId());
@@ -47,14 +51,32 @@ const mainClasses = computed(() => {
     </h2>
 
     <div class="flex flex-col lg:flex-row w-full">
-      <!--Gläubiger-->
-      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
-        <UserBadge class="shadow-md" :user="creditor!" />
-        <span>
-          hat
-          <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
-          ausgegeben
-        </span>
+      <!--Gläubiger und Beleg-->
+      <div class="self-start flex flex-col gap-2 w-full">
+        <div class="flex flex-col lg:flex-row flex-wrap gap-1 items-center">
+          <UserBadge class="shadow-md" :user="creditor!" />
+          <span>
+            hat
+            <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
+            ausgegeben
+          </span>
+        </div>
+        <button
+          v-if="transaction.getReceiptUrl()"
+          class="cursor-pointer lg:text-start"
+          @click.stop="viewReceipt = true"
+        >
+          <i class="fa-solid fa-file-invoice"></i> Zahlungsbeleg anzeigen
+        </button>
+
+        <ModalDialog v-model:open="viewReceipt">
+          <div class="overflow-y-scroll">
+            <MxcImage
+              v-if="viewReceipt && transaction.getReceiptUrl()"
+              :mxc-url="transaction.getReceiptUrl()!"
+            />
+          </div>
+        </ModalDialog>
       </div>
 
       <!-- > -->
@@ -64,7 +86,7 @@ const mainClasses = computed(() => {
 
       <!--Schuldner-->
       <div
-        class="flex flex-col gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
+        class="flex flex-col justify-center gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
       >
         <div
           v-for="debtor in transaction.getDebtorIds()"
