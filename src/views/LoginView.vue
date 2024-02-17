@@ -119,11 +119,21 @@ watch(
     <SystemAlert v-show="showNewUserInfo" severity="info">
       <p class="font-bold">Registrierung bei einem Matrix-Homeserver</p>
       <p>
-        Falls du noch kein Konto hast, kannst du dich über einen Matrix-Homeserver registrieren, wie zum Beispiel matrix.org. Klicke <a href="https://app.element.io/#/register" target="_blank" class="text-blue-500 underline hover:text-blue-700">hier</a>, um dich zu registrieren.
+        Falls du noch kein Konto hast, kannst du dich über einen Matrix-Homeserver registrieren, wie
+        zum Beispiel matrix.org. Klicke
+        <a
+          href="https://app.element.io/#/register"
+          target="_blank"
+          class="text-blue-500 underline hover:text-blue-700"
+          >hier</a
+        >, um dich zu registrieren.
       </p>
       <p class="font-bold">Über SSO Anmelden</p>
       <p>
-        Alternativ kannst du dich auch über den Button "Mit SSO Anmelden" registrieren. Du kannst dich mit deinem Google-, GitHub-, GitLab- oder Facebook-Konto anmelden und ein Konto erstellen.</p>
+        Alternativ kannst du dich auch über den Button "Mit SSO Anmelden" registrieren. Du kannst
+        dich mit deinem Google-, GitHub-, GitLab- oder Facebook-Konto anmelden und ein Konto
+        erstellen.
+      </p>
     </SystemAlert>
     <div id="login-form" class="mt-8 flex flex-col gap-6 w-full">
       <span v-show="!showHomeserverWarning && homeserverChecking == 0" class="text-center">
