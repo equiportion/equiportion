@@ -1,14 +1,17 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
-
-import {unauthenticated} from '../support/stubs';
+import {unauthenticated, wellknownSearchFailing} from '../support/stubs';
 
 describe('login and logout', () => {
   it('wrong password does not login', () => {
     unauthenticated(() => {
-      cy.intercept({
-        url: '/_matrix/client/v3/login',
-        method: 'POST',
-      });
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/login',
+          method: 'POST',
+        },
+        {
+          fixure: 'login_not_successfull.json',
+        }
+      ).as('loginEventPost');
       cy.visit('http://localhost:5173/login');
       cy.get('#username').type('account-multiple-filled-rooms1:pse.dsn.kastel.kit.edu');
       cy.get('#password').type('Dieses Passwort ist falsch!');
@@ -19,23 +22,28 @@ describe('login and logout', () => {
   });
   it('correct password logs in', () => {
     unauthenticated(() => {
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/login',
+          method: 'POST',
+        },
+        {
+          fixture: 'login_successfull.json',
+        }
+      ).as('loginEventPost');
       cy.visit('http://localhost:5173/login');
       cy.get('#username').type('account-multiple-filled-rooms1:pse.dsn.kastel.kit.edu');
       cy.get('#password').type('Dieses Passwort ist richtig!');
       cy.get('#loginbutton').click();
-      //TODO stub server
-      //TODO check server request
-      //TODO send back login success
-      //TODO check front end
+      cy.get('#toolBar').should('exist');
     });
   });
   it('user gets error-message if the homeserver is invalid', () => {
-    unauthenticated(() => {
+    wellknownSearchFailing(() => {
       cy.visit('http://localhost:5173/login');
       cy.get('#username').type('account-empty-room:pse.');
       cy.get('#homeserverWarning').should('be.visible');
       cy.get('#loginbutton').should('be.disabled');
-      //TODO stub server
     });
   });
 });
