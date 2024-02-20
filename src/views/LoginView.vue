@@ -119,7 +119,7 @@ watch(
     <SystemAlert v-show="showNewUserInfo" severity="info">
       <p class="font-bold">Registrierung bei einem Matrix-Homeserver</p>
       <p>
-        Falls du noch kein Konto hast, kannst du dich über einen Matrix-Homeserver registrieren, wie
+        Falls du noch kein Konto hast, kannst du dich bei einem Matrix-Homeserver registrieren, wie
         zum Beispiel matrix.org. Klicke
         <a
           href="https://app.element.io/#/register"
@@ -128,6 +128,7 @@ watch(
           >hier</a
         >, um dich zu registrieren.
       </p>
+      <br />
       <p class="font-bold">Über SSO Anmelden</p>
       <p>
         Alternativ kannst du dich auch über den Button "Mit SSO Anmelden" registrieren. Du kannst
