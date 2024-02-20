@@ -1,0 +1,15 @@
+{
+  "access_token": "test-valid",
+  "device_id": "GHTYAJCE",
+  "expires_in_ms": 60000,
+  "refresh_token": "def456",
+  "user_id": "@cheeky_monkey:matrix.org",
+  "well_known": {
+    "m.homeserver": {
+      "base_url": "https://example.org"
+    },
+    "m.identity_server": {
+      "base_url": "https://id.example.org"
+    }
+  }
+}
