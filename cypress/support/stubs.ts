@@ -120,38 +120,4 @@ function unauthenticated(tests: Function) {
   tests();
 }
 
-function wellknownSearchFailing(tests: Function) {
-  cy.intercept(
-    {
-      method: 'GET',
-      url: '/_matrix/client/versions',
-    },
-    {
-      fixture: 'matrix_client_versions.json',
-    }
-  ).as('matrix_client_versions');
-
-  cy.intercept(
-    {
-      method: 'GET',
-      url: '/_matrix/client/v3/login',
-    },
-    {
-      fixture: 'fail_matrix_client_v3_login_get.json',
-    }
-  ).as('get_login');
-
-  cy.intercept(
-    {
-      method: 'GET',
-      url: '/_matrix/client/v3/account/whoami',
-    },
-    {
-      fixture: 'matrix_client_v3_account_whoami-unauthenticated.json',
-    }
-  ).as('whoami_unauthenticated');
-
-  tests();
-}
-
-export {standard, authenticated, unauthenticated, wellknownSearchFailing};
+export {standard, authenticated, unauthenticated};
