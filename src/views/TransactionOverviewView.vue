@@ -334,7 +334,7 @@ watch(
                   class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
                 />
                 <label
-                id="uploadLabel"
+                  id="uploadLabel"
                   class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
                   for="fileInput"
                 >
