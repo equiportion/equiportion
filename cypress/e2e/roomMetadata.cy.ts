@@ -15,10 +15,11 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
       cy.get('#changeRoomDataButtonSm').click();
-      cy.get('#roomName').type('{selectall}A');
+      cy.get('#roomName').invoke('val', 'newName'); //workaround for cypress bug
+      cy.get('#roomName').trigger('input');
       cy.get('#changeRoomDataSubmitSm').click();
       cy.wait('@MRoomNameEventPut').then(({request}) => {
-        expect(request.body.name).to.eq('A');
+        expect(request.body.name).to.eq('newName');
       });
     });
   });
@@ -36,10 +37,11 @@ describe('/', () => {
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
       cy.get('#changeRoomDataButtonSm').click();
-      cy.get('#roomTopic').type('{selectall}B');
+      cy.get('#roomTopic').invoke('val', 'newTopic');
+      cy.get('#roomTopic').trigger('input');
       cy.get('#changeRoomDataSubmitSm').click();
       cy.wait('@MRoomTopicEventPut').then(({request}) => {
-        expect(request.body.topic).to.eq('B');
+        expect(request.body.topic).to.eq('newTopic');
       });
     });
   });
