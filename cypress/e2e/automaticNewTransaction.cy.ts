@@ -7,7 +7,7 @@ describe('/', () => {
       cy.get('#rooms>div').eq(4).children().eq(1).children().eq(0).click();
       cy.get('#toggleMemberListButton').click();
       cy.get('#userTiles>div').eq(2).children().eq(1).click();
-      cy.get('#userTiles>div').eq(1).children().eq(1).children().eq(1).should('have.length', 1);
+      cy.get('#userTiles>div').eq(2).children().eq(1).children().eq(1).should('have.length', 1);
     });
   });
   it('automatic transaction positive balance', () => {
