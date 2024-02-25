@@ -18,6 +18,15 @@ describe('membership administration', () => {
   });
   it('user invitation leads to error when given user does not exist', () => {
     authenticated(() => {
+      cy.intercept(
+        {
+          url: ' /_matrix/client/v3/user_directory/search',
+          method: 'POST',
+        },
+        {
+          fixure: 'search_result.json',
+        }
+      ).as('userSearch');
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(4).click();
       cy.get('#toggleMemberListButton').click();
