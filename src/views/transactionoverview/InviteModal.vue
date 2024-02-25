@@ -99,6 +99,7 @@ async function sendInvitation() {
     </h3>
     <div class="flex flex-col items-center gap-2">
       <InputFieldWithLabelAndError
+        id="inputFieldForUserInvitation"
         v-model="userId"
         label="Matrix-ID"
         type="text"
@@ -124,6 +125,7 @@ async function sendInvitation() {
         </div>
       </div>
       <StandardButton
+        id="invitationSubmit"
         :disabled="!userIdValid && !inviteSuccess"
         :success="inviteSuccess"
         :loading="inviteLoading"
