@@ -1,7 +1,7 @@
 import {authenticated} from '../support/stubs';
 
 describe('membership administration', () => {
-  it('user leaves room', () => {
+  it('user leaves room event', () => {
     authenticated(() => {
       cy.intercept({
         url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/leave',
