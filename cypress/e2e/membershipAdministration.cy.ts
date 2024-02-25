@@ -22,7 +22,7 @@ describe('main layout: profile dropdown', () => {
       cy.get('#rooms>div').eq(4).click();
       cy.get('#toggleMemberListButton').click();
       cy.get('#addMemberButton').click();
-      cy.get('#inputFieldForUserInvitation').type('@test:huhrensohn.com');
+      cy.get('#inputFieldForUserInvitation').type('@test:example.com');
       cy.get('#invitationSubmit').click();
       cy.get('#inputFieldForUserInvitation').should(
         'contain',
