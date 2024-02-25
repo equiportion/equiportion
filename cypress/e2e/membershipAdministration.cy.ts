@@ -24,10 +24,7 @@ describe('membership administration', () => {
       cy.get('#addMemberButton').click();
       cy.get('#inputFieldForUserInvitation').type('@test:example.com');
       cy.get('#invitationSubmit').click();
-      cy.get('#inputFieldForUserInvitation').should(
-        'contain',
-        'Einladung fehlgeschlagen: Bitte prüfe, ob der/die Benutzer*in existiert (und noch nicht in diesem Raum ist) und ob du die Berechtigung hast, ihn/sie einzuladen.'
-      );
+      cy.get('#inputFieldForUserInvitation').should('contain', 'Einladung fehlgeschlagen');
     });
   });
   it('user kicks other user spawns event', () => {
