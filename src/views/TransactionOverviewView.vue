@@ -334,6 +334,7 @@ watch(
                   class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"
                 />
                 <label
+                  id="uploadLabel"
                   class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
                   for="fileInput"
                 >
@@ -379,7 +380,7 @@ watch(
                   />
 
                   <RoundButton
-                    id="changeRoomData"
+                    id="changeRoomDataSubmitLg"
                     :loading="roomDataSetLoading"
                     class="shadow-lg h-8 w-8 hidden lg:block"
                     @click="setRoomData()"
@@ -398,7 +399,7 @@ watch(
                   :error="error"
                 />
                 <RoundButton
-                  id="changeRoomData"
+                  id="changeRoomDataSubmitSm"
                   :loading="roomDataSetLoading"
                   class="shadow-lg h-8 w-8 lg:hidden"
                   @click="setRoomData()"
@@ -416,7 +417,7 @@ watch(
                   <!--Change room data button-->
                   <div class="shrink-0 hidden lg:block">
                     <RoundButton
-                      id="changeRoomData"
+                      id="changeRoomDataButtonLg"
                       class="shadow-lg h-8 w-8"
                       @click="toggleChangeRoomData()"
                     >
@@ -429,7 +430,7 @@ watch(
                   {{ room?.getTopic() }}
                 </span>
                 <RoundButton
-                  id="changeRoomData"
+                  id="changeRoomDataButtonSm"
                   class="shadow-lg h-8 w-8 lg:hidden"
                   @click="toggleChangeRoomData()"
                 >
