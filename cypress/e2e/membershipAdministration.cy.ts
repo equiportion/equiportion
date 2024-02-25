@@ -1,6 +1,6 @@
 import {authenticated} from '../support/stubs';
 
-describe('main layout: profile dropdown', () => {
+describe('membership administration', () => {
   it('user leaves room', () => {
     authenticated(() => {
       cy.intercept({
