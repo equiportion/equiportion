@@ -27,7 +27,7 @@ describe('membership administration', () => {
       cy.get('#inputFieldForUserInvitation').should('contain', 'Einladung fehlgeschlagen');
     });
   });
-  it('user kicks other user spawns event', () => {
+  it('user kicks other user sends event', () => {
     authenticated(() => {
       cy.intercept({
         url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/kick',
