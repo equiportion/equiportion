@@ -24,7 +24,7 @@ describe('membership administration', () => {
           method: 'POST',
         },
         {
-          fixure: 'search_result.json',
+          fixure: 'search_result_no_result.json',
         }
       ).as('userSearch');
       cy.visit('http://localhost:5173/');
