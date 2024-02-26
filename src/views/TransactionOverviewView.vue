@@ -543,7 +543,11 @@ watch(
           <RoundButton class="w-8 h-8 shrink-0 shadow-md" @click="toggleMemberList()">
             <i class="fa-solid fa-angles-right"></i>
           </RoundButton>
-          <RoundButton class="w-8 h-8 shrink-0 shadow-md" @click="toggleInviteModal()">
+          <RoundButton
+            id="addMemberButton"
+            class="w-8 h-8 shrink-0 shadow-md"
+            @click="toggleInviteModal()"
+          >
             <i class="fa-solid fa-user-plus text-sm"></i>
           </RoundButton>
         </div>
