@@ -93,7 +93,7 @@ async function sendInvitation() {
 }
 </script>
 <template>
-  <ModalDialog v-model:open="modalOpen">
+  <ModalDialog id="inviteModal" v-model:open="modalOpen">
     <h3 class="font-bold text-xl grow">
       <i class="fa-solid fa-user-plus"></i> In diesen Raum einladen
     </h3>

@@ -299,6 +299,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     const users: User[] = [];
+    if (!response.data.results) {
+      return [];
+    }
     for (const user of response.data.results) {
       users.push(new User(user.user_id, user.display_name, user.avatar_url));
     }

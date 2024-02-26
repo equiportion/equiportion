@@ -33,7 +33,7 @@ describe('membership administration', () => {
       cy.get('#addMemberButton').click();
       cy.get('#inputFieldForUserInvitation').type('@test:example.com');
       cy.get('#invitationSubmit').click();
-      cy.get('#inputFieldForUserInvitation').should('contain', 'Einladung fehlgeschlagen');
+      cy.get('#inviteModal').should('contain', 'Einladung fehlgeschlagen');
     });
   });
   it('user kicks other user sends event', () => {
