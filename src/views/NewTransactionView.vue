@@ -26,6 +26,9 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import {centsPart, eurosPart} from '@/logic/utils/money';
 
+// receipt analysis
+import ReceiptScanner from '@/logic/receiptanalysis/ReceiptScanner';
+
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
 import {useRoute} from 'vue-router';
@@ -280,6 +283,30 @@ const previewImageUrl = computed(() => {
   }
   return '';
 });
+
+/**
+ * Analyze Receipt with ReceiptScanner
+ */
+const receiptAnalysing = ref(false);
+const receiptAnalyseError = ref('');
+watch(selectedReceiptFile, async (file) => {
+  if (!file) {
+    return;
+  }
+
+  receiptAnalysing.value = true;
+
+  const scanner = new ReceiptScanner();
+  const result = await scanner.scan(file);
+
+  if (result) {
+    moneyVal.value = result.getSum();
+  } else {
+    receiptAnalyseError.value = 'Summe nicht automatisch erkannt';
+  }
+
+  receiptAnalysing.value = false;
+});
 </script>
 
 <template>
@@ -341,6 +368,7 @@ const previewImageUrl = computed(() => {
         </div>
       </div>
 
+      <!-- Receipt upload -->
       <div class="flex flex-col items-center">
         <div
           v-if="!selectedReceiptFile"
@@ -374,9 +402,20 @@ const previewImageUrl = computed(() => {
           <img
             :src="previewImageUrl"
             alt="Hochgeladener Beleg"
-            class="max-h-[70svh] lg:max-w-[50vw]"
+            class="max-h-[70svh] lg:max-w-[50vw] rounded-lg"
           />
+
+          <div
+            v-if="receiptAnalysing"
+            class="flex flex-col items-center gap-2 bg-gray-700 w-full rounded-lg p-2"
+          >
+            <i class="fa-solid fa-spinner text-white animate-spin"></i>
+            <span class="text-sm text-white">Beleg wird analysiert...</span>
+          </div>
           <span class="text-sm text-gray-500">Beleg</span>
+          <span v-if="receiptAnalyseError" class="text-red-600 text-sm break-words text-wrap">
+            {{ receiptAnalyseError }}
+          </span>
         </div>
 
         <input
