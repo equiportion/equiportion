@@ -40,7 +40,6 @@ class ReceiptScanner {
 
     // Split text into lines
     const lines = text.split('\n');
-    console.log('lines: ', lines);
 
     // Analyze receipt
     const receipt = await this.analyzeReceipt(lines);
@@ -59,7 +58,6 @@ class ReceiptScanner {
   private async analyzeReceipt(lines: string[]): Promise<Receipt | null> {
     for (const receiptType of this.receiptTypes) {
       if (receiptType.canAnalyze(lines)) {
-        console.log(receiptType, 'can analyze');
         return receiptType.analyze(lines);
       }
     }
