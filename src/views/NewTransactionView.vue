@@ -24,7 +24,7 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
-import {centsPart, eurosPart} from '@/logic/utils/money';
+import {absCentsPart, absEurosPart} from '@/logic/utils/money';
 
 // receipt analysis
 import ReceiptScanner from '@/logic/receiptanalysis/ReceiptScanner';
@@ -330,7 +330,7 @@ watch(selectedReceiptFile, async (file) => {
       <div id="toplevelCreditorDiv" class="flex flex-col items-center">
         <div
           v-if="!creditorVal"
-          class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
+          class="bg-gray-100 dark:bg-gray-600 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
         >
           <UserDropdown
             id="creditorUserDropdown"
@@ -349,22 +349,25 @@ watch(selectedReceiptFile, async (file) => {
                 >
                   <i class="fa-solid fa-user-plus"></i>
                 </RoundButton>
-                <span class="text-gray-600">Gläubiger*in</span>
+                <span class="text-gray-600 dark:text-gray-200">Gläubiger*in</span>
               </div>
             </template>
           </UserDropdown>
         </div>
-        <div v-else class="flex flex-col bg-gray-100 p-4 rounded-lg shadow-lg items-center gap-2">
+        <div
+          v-else
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg items-center gap-2"
+        >
           <div class="flex flex-row items-center gap-2">
             <i
               id="removeCreditor"
-              class="fa-solid fa-times text-xl text-gray-500 cursor-pointer"
+              class="fa-solid fa-times text-xl text-gray-500 dark:text-gray-300 cursor-pointer"
               @click="removeCreditor()"
             >
             </i>
             <UserTile :user="creditorVal" />
           </div>
-          <span class="text-sm text-gray-500">Gläubiger*in</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Gläubiger*in</span>
         </div>
       </div>
 
@@ -372,7 +375,7 @@ watch(selectedReceiptFile, async (file) => {
       <div class="flex flex-col items-center">
         <div
           v-if="!selectedReceiptFile"
-          class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
+          class="bg-gray-100 dark:bg-gray-600 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
         >
           <div
             class="flex flex-row items-center gap-2 cursor-pointer"
@@ -386,13 +389,16 @@ watch(selectedReceiptFile, async (file) => {
               <i class="fa-solid fa-file-invoice"></i> <i class="fa-solid fa-plus"></i>
             </RoundButton>
             <div class="flex flex-col">
-              <span>Beleg hochladen</span>
-              <span class="text-sm text-gray-500">(optional)</span>
+              <span class="dark:text-gray-300">Beleg hochladen</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">(optional)</span>
             </div>
           </div>
         </div>
 
-        <div v-else class="flex flex-col bg-gray-100 p-4 rounded-lg shadow-lg items-center gap-2">
+        <div
+          v-else
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg items-center gap-2"
+        >
           <i
             class="fa-solid fa-trash text-red-500 cursor-pointer"
             title="Beleg entfernen"
@@ -412,7 +418,7 @@ watch(selectedReceiptFile, async (file) => {
             <i class="fa-solid fa-spinner text-white animate-spin"></i>
             <span class="text-sm text-white">Beleg wird analysiert...</span>
           </div>
-          <span class="text-sm text-gray-500">Beleg</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Beleg</span>
           <span v-if="receiptAnalyseError" class="text-red-600 text-sm break-words text-wrap">
             {{ receiptAnalyseError }}
           </span>
@@ -458,7 +464,7 @@ watch(selectedReceiptFile, async (file) => {
         <div
           v-for="debtor in debtors"
           :key="debtor.user.getUserId()"
-          class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"
+          class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg"
         >
           <div class="flex flex-row gap-3 w-full lg:w-1/3 justify-between lg:justify-start">
             <UserTile :user="debtor.user" />
@@ -466,7 +472,9 @@ watch(selectedReceiptFile, async (file) => {
               class="flex flex-col lg:flex-row items-center text-center lg:order-first"
               @click="removeDebtor(debtor.user)"
             >
-              <i class="fa-solid fa-times text-xl text-gray-500 cursor-pointer"></i>
+              <i
+                class="fa-solid fa-times text-xl text-gray-500 dark:text-gray-300 cursor-pointer"
+              ></i>
             </div>
           </div>
           <MoneyInputWrapper v-model="debtor.fixedAmount">
@@ -536,12 +544,18 @@ watch(selectedReceiptFile, async (file) => {
         <!-- Rest-->
         <div
           id="rest"
-          class="flex flex-col bg-gray-100 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg"
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 dark:text-gray-200 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg"
         >
           <span class="text-xl">
-            Rest: <strong>{{ eurosPart(restSum) }},{{ centsPart(restSum) }} €</strong>
+            Rest:
+            <strong
+              >{{ restSum >= 0 ? '' : '-' }}{{ absEurosPart(restSum) }},{{
+                absCentsPart(restSum)
+              }}
+              €</strong
+            >
           </span>
-          <span class="text-sm text-gray-500">
+          <span class="text-sm text-gray-500 dark:text-gray-400">
             Wird gleichmäßig auf alle Schuldner*innen verteilt
           </span>
           <span v-if="fixedAmountError" class="text-sm text-red-500">
