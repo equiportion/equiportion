@@ -19,6 +19,7 @@
     "axios": "^1.6.2",
     "confetti-js": "^0.0.18",
     "pinia": "^2.1.7",
+    "tesseract.js": "^5.0.5",
     "vue": "^3.3.12",
     "vue-router": "^4.2.5"
   },

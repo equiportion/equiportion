@@ -21,6 +21,8 @@ const apiEndpoints = {
   ) => {
     return `/_matrix/media/v3/thumbnail/${serverName}/${mediaId}?width=${width}&height=${height}&method=${method}`;
   },
+  mediaGet: (serverName: string, mediaId: string) =>
+    `/_matrix/media/v3/download/${serverName}/${mediaId}`,
   roomMessagesGet(roomId: string, from: string, dir: string) {
     return `/_matrix/client/v3/rooms/${roomId}/messages?from=${from}&dir=${dir}`;
   },

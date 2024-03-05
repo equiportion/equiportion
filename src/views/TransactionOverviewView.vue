@@ -65,6 +65,7 @@ const inviteModalOpen = ref(false);
 const roomDataSetLoading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
+const previewUploadImage: Ref<string | null> = ref(null);
 
 /** Computed */
 
@@ -175,6 +176,8 @@ async function setRoomData(): Promise<void> {
     } catch (error) {
       console.error(error);
     }
+
+    previewUploadImage.value = null;
   }
 
   if (newRoomName.value != room.value?.getName()) {
@@ -197,6 +200,22 @@ async function setRoomData(): Promise<void> {
   changeRoomData.value = false;
   roomDataSetLoading.value = false;
 }
+
+/**
+ * Preview the selected image.
+ */
+watch(
+  () => selectedFile.value,
+  () => {
+    if (selectedFile.value) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        previewUploadImage.value = reader.result as string | null;
+      };
+      reader.readAsDataURL(selectedFile.value);
+    }
+  }
+);
 
 /**
  * Checks whether the user sees the "observeRef" element.
@@ -328,7 +347,14 @@ watch(
               class="w-16 h-16 lg:w-32 lg:h-32 relative justify-center items-center shrink-0"
             >
               <div>
+                <div
+                  v-if="previewUploadImage"
+                  alt="Hochgeladenes Bild"
+                  class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg bg-cover bg-center"
+                  :style="{'background-image': `url(${previewUploadImage})`}"
+                ></div>
                 <MxcOrPlaceholderImage
+                  v-else
                   :mxc-url="room?.getAvatarUrl() ?? ''"
                   :placeholder-text="room?.getName() ?? '?'"
                   class="absolute rounded-full w-16 h-16 lg:w-32 lg:h-32 shadow-lg"

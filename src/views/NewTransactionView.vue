@@ -15,6 +15,9 @@ import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 
+// client
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
+
 // stores
 import {useRoomsStore} from '@/stores/rooms';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
@@ -22,6 +25,9 @@ import {useLoggedInUserStore} from '@/stores/loggedInUser';
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import {centsPart, eurosPart} from '@/logic/utils/money';
+
+// receipt analysis
+import ReceiptScanner from '@/logic/receiptanalysis/ReceiptScanner';
 
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
@@ -200,14 +206,30 @@ const debtorList = computed(() => {
 
 // function to submit the transaction
 async function submit() {
+  if (submitDisabled.value) {
+    return;
+  }
+
+  submitLoading.value = true;
+
+  let receiptUrl: string | undefined = undefined;
+  if (selectedReceiptFile.value) {
+    // upload receipt
+    receiptUrl = await AuthenticatedMatrixClient.getClient().uploadFile(selectedReceiptFile.value);
+    if (!receiptUrl) {
+      submitError.value = 'Fehler beim Hochladen des Belegs';
+      return;
+    }
+  }
+
   const newTransaction = TransactionEvent.newTransaction(
     room.value!,
     reasonVal.value,
     moneyVal.value,
     creditorVal.value!.getUserId(),
-    debtorList.value
+    debtorList.value,
+    receiptUrl
   );
-  submitLoading.value = true;
 
   try {
     await newTransaction.publish();
@@ -243,6 +265,48 @@ function prefillFromSessionStorage() {
     addDebtor(room.value?.getMember(loggedInUser.getUserId())!);
   }
 }
+
+/**
+ * Reciept upload
+ */
+const selectedReceiptFile = ref<File | undefined>(undefined);
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length) {
+    selectedReceiptFile.value = input.files[0];
+  }
+};
+
+const previewImageUrl = computed(() => {
+  if (selectedReceiptFile.value) {
+    return URL.createObjectURL(selectedReceiptFile.value);
+  }
+  return '';
+});
+
+/**
+ * Analyze Receipt with ReceiptScanner
+ */
+const receiptAnalysing = ref(false);
+const receiptAnalyseError = ref('');
+watch(selectedReceiptFile, async (file) => {
+  if (!file) {
+    return;
+  }
+
+  receiptAnalysing.value = true;
+
+  const scanner = new ReceiptScanner();
+  const result = await scanner.scan(file);
+
+  if (result) {
+    moneyVal.value = result.getSum();
+  } else {
+    receiptAnalyseError.value = 'Summe nicht automatisch erkannt';
+  }
+
+  receiptAnalysing.value = false;
+});
 </script>
 
 <template>
@@ -302,6 +366,65 @@ function prefillFromSessionStorage() {
           </div>
           <span class="text-sm text-gray-500">Gläubiger*in</span>
         </div>
+      </div>
+
+      <!-- Receipt upload -->
+      <div class="flex flex-col items-center">
+        <div
+          v-if="!selectedReceiptFile"
+          class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
+        >
+          <div
+            class="flex flex-row items-center gap-2 cursor-pointer"
+            onclick="document.getElementById('fileInput').click()"
+          >
+            <RoundButton
+              class="lg:max-w-[200px]"
+              title="Dokument auswählen"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <i class="fa-solid fa-file-invoice"></i> <i class="fa-solid fa-plus"></i>
+            </RoundButton>
+            <div class="flex flex-col">
+              <span>Beleg hochladen</span>
+              <span class="text-sm text-gray-500">(optional)</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="flex flex-col bg-gray-100 p-4 rounded-lg shadow-lg items-center gap-2">
+          <i
+            class="fa-solid fa-trash text-red-500 cursor-pointer"
+            title="Beleg entfernen"
+            @click="selectedReceiptFile = undefined"
+          >
+          </i>
+          <img
+            :src="previewImageUrl"
+            alt="Hochgeladener Beleg"
+            class="max-h-[70svh] lg:max-w-[50vw] rounded-lg"
+          />
+
+          <div
+            v-if="receiptAnalysing"
+            class="flex flex-col items-center gap-2 bg-gray-700 w-full rounded-lg p-2"
+          >
+            <i class="fa-solid fa-spinner text-white animate-spin"></i>
+            <span class="text-sm text-white">Beleg wird analysiert...</span>
+          </div>
+          <span class="text-sm text-gray-500">Beleg</span>
+          <span v-if="receiptAnalyseError" class="text-red-600 text-sm break-words text-wrap">
+            {{ receiptAnalyseError }}
+          </span>
+        </div>
+
+        <input
+          id="fileInput"
+          type="file"
+          class="hidden"
+          accept="image/png, image/jpeg"
+          @change="handleFileChange"
+        />
       </div>
 
       <!-- Sum -->
