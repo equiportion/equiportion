@@ -14,6 +14,15 @@ function centsPart(num: number): string {
   return ('00' + (num % 100)).slice(-2);
 }
 
+function absCentsPart(num: number): string {
+  if (num < 0) {
+    // remove minus string
+    num = Math.abs(num);
+  }
+
+  return ('00' + (num % 100)).slice(-2);
+}
+
 /**
  * Function to allow both the old format (float as string) and the new format (amount in cents as number) for the sum and the debtors.
  * @param {string|number} amount the amount to parse
@@ -36,4 +45,4 @@ function floatToCents(float: number): number {
   return Math.round(float * 100);
 }
 
-export {eurosPart, absEurosPart, centsPart, parseMoney, floatToCents};
+export {eurosPart, absEurosPart, centsPart, absCentsPart, parseMoney, floatToCents};
