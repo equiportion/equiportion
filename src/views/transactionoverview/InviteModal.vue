@@ -94,7 +94,7 @@ async function sendInvitation() {
 </script>
 <template>
   <ModalDialog id="inviteModal" v-model:open="modalOpen">
-    <h3 class="font-bold text-xl grow">
+    <h3 class="font-bold text-xl dark:text-gray-300 grow">
       <i class="fa-solid fa-user-plus"></i> In diesen Raum einladen
     </h3>
     <div class="flex flex-col items-center gap-2">

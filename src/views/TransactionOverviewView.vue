@@ -364,7 +364,7 @@ watch(
                   class="rounded-full lg:opacity-0 backdrop-blur-md lg:backdrop-blur-none lg:hover:backdrop-blur-md lg:hover:opacity-95 absolute w-16 h-16 lg:h-32 lg:w-32 flex justify-center items-center cursor-pointer"
                   for="fileInput"
                 >
-                  <div class="flex flex-col absolute text-center">
+                  <div class="flex flex-col absolute text-center dark:text-gray-200">
                     <span><i class="fa-solid fa-upload"></i></span>
                     <span class="hidden lg:block">Bild hochladen</span>
                   </div>
@@ -437,7 +437,7 @@ watch(
               <div v-else class="flex flex-col items-center lg:items-start lg:ml-5 gap-2 lg:gap-1">
                 <!--shows the room name if possible or the room id if not-->
                 <div class="flex flex-row gap-3 items-center">
-                  <h1 class="flex text-3xl font-bold text-gray-900 break-all items-center">
+                  <h1 class="flex text-3xl font-bold text-gray-900 dark:text-gray-200 break-all items-center">
                     {{ room?.getName() ?? roomId }}
                   </h1>
                   <!--Change room data button-->
@@ -452,7 +452,7 @@ watch(
                   </div>
                 </div>
 
-                <span class="flex text-sm text-gray-500 break-all items-center lg:mb-2">
+                <span class="flex text-sm text-gray-500 dark:text-gray-400 break-all items-center lg:mb-2">
                   {{ room?.getTopic() }}
                 </span>
                 <RoundButton
@@ -488,7 +488,7 @@ watch(
           <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
             <div v-show="events && events.length <= 0">
-              <span id="no-transaction-message" class="text-sm text-gray-400 text-center">
+              <span id="no-transaction-message" class="text-sm text-gray-400 dark:text-gray-300 text-center">
                 Ganz schön leer hier... Füge weitere Personen hinzu und erstelle eine Transaktion!
               </span>
             </div>
@@ -518,25 +518,25 @@ watch(
                   <!-- string for which membership change was performed-->
                   <span
                     v-if="asMRoomMemberEvent(event).getMembershipType() == 'join'"
-                    class="italic text-gray-600 text-sm"
+                    class="italic text-gray-600 dark:text-gray-400 text-sm"
                   >
                     ist beigetreten
                   </span>
                   <span
                     v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'leave'"
-                    class="italic text-gray-600 text-sm"
+                    class="italic text-gray-600 dark:text-gray-400 text-sm"
                   >
                     hat den Raum verlassen
                   </span>
                   <span
                     v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'invite'"
-                    class="italic text-gray-600 text-sm"
+                    class="italic text-gray-600 dark:text-gray-400 text-sm"
                   >
                     wurde eingeladen
                   </span>
                   <span
                     v-else-if="asMRoomMemberEvent(event).getMembershipType() == 'ban'"
-                    class="italic text-gray-600 text-sm"
+                    class="italic text-gray-600 dark:text-gray-400 text-sm"
                   >
                     wurde aus dem Raum verbannt
                   </span>
@@ -563,7 +563,7 @@ watch(
       <div
         v-show="memberListOpen"
         id="memberList"
-        class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 my-5 p-5 gap-5"
+        class="flex flex-col flex-grow w-full lg:w-1/3 shadow-lg rounded-tl-lg rounded-bl-lg transition bg-gray-100 dark:bg-gray-700 my-5 p-5 gap-5"
       >
         <div class="flex flex-row items-center justify-between">
           <RoundButton class="w-8 h-8 shrink-0 shadow-md" @click="toggleMemberList()">
@@ -579,10 +579,10 @@ watch(
         </div>
         <div id="userTiles" class="flex flex-col gap-2">
           <!-- current user -->
-          <div class="flex items-center bg-gray-300 p-2 rounded-lg">
+          <div class="flex items-center bg-gray-300 dark:bg-gray-500 p-2 rounded-lg">
             <UserTile :user="room?.getMember(loggedInUser.getUserId())!" class="w-full" />
 
-            <button class="text-red-600" title="Raum verlassen" @click="leaveRoom()">
+            <button class="text-red-600 dark:text-red-500" title="Raum verlassen" @click="leaveRoom()">
               <i class="fa-solid fa-right-from-bracket"></i>
             </button>
           </div>
@@ -592,7 +592,7 @@ watch(
             <div
               v-show="member.getUserId() != ''"
               v-if="member.getUserId() != loggedInUser.getUserId()"
-              class="flex items-center bg-gray-300 p-2 rounded-lg"
+              class="flex items-center bg-gray-300 dark:bg-gray-500 p-2 rounded-lg"
             >
               <div class="flex flex-col items-center gap-1 w-full">
                 <UserTile :user="member" class="w-full" />
@@ -602,7 +602,7 @@ watch(
               <!-- dropdown menu for banning and creating compensation payments -->
               <DropdownMenu>
                 <template #trigger>
-                  <i class="fa-solid fa-ellipsis-vertical px-2"></i>
+                  <i class="fa-solid fa-ellipsis-vertical px-2 dark:text-gray-200"></i>
                 </template>
 
                 <DropdownButton
@@ -633,11 +633,11 @@ watch(
             "
             class="opacity-50"
           >
-            <span class="text-sm text-gray-800 items-center">Eingeladen</span>
+            <span class="text-sm text-gray-800 dark:text-gray-200 items-center">Eingeladen</span>
             <div
               v-for="member in room!.getMembers(['invite'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
+              class="flex flex-col items-center gap-1 bg-gray-300 dark:bg-gray-500 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
             </div>
@@ -648,11 +648,11 @@ watch(
             v-if="room?.getMembers(['left']) && Object.keys(room!.getMembers(['left'])).length > 0"
             class="opacity-50"
           >
-            <span class="text-sm text-gray-800 items-center">Ehemalige Mitglieder</span>
+            <span class="text-sm text-gray-800 dark:text-gray-200 items-center">Ehemalige Mitglieder</span>
             <div
               v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
-              class="flex flex-col items-center gap-1 bg-gray-300 p-2 rounded-lg mb-2"
+              class="flex flex-col items-center gap-1 bg-gray-300 dark:bg-gray-500 p-2 rounded-lg mb-2"
             >
               <UserTile :user="member" class="w-full" />
               <BalanceSpan :compensation="compensation[member.getUserId()]" />
