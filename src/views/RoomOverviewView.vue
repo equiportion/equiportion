@@ -17,7 +17,7 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
-import {absEurosPart, centsPart} from '@/logic/utils/money';
+import {absEurosPart, absCentsPart} from '@/logic/utils/money';
 
 const clientStateStore = useClientStateStore();
 
@@ -159,11 +159,11 @@ watch(
 
         <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-200">
           <span v-if="balance > 0">
-            Du hast {{ absEurosPart(balance) }},{{ centsPart(balance) }} € Schulden - beginne, Geld
+            Du hast {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} € Schulden - beginne, Geld
             zurückzuzahlen!
           </span>
           <span v-else-if="balance < 0">
-            Du erhältst noch {{ absEurosPart(balance) }},{{ centsPart(balance) }} €
+            Du erhältst noch {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} €
           </span>
           <span v-else>
             Du hast weder Schulden noch Guthaben - beginne, Transaktionen zu erstellen!
