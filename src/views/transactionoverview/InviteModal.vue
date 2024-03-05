@@ -113,14 +113,14 @@ async function sendInvitation() {
         <div
           v-for="user in autoCompleteUsers"
           :key="user.getUserId()"
-          class="flex items-center gap-2 p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer no-close"
+          class="flex items-center gap-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-500 cursor-pointer no-close"
           @click="userId = user.getUserId()"
         >
           <div class="flex-grow">
             <UserTile :user="user" />
           </div>
           <div>
-            <i class="fa-solid fa-turn-up"></i>
+            <i class="fa-solid fa-turn-up dark:text-gray-200"></i>
           </div>
         </div>
       </div>
