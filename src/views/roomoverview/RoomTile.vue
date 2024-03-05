@@ -7,7 +7,7 @@ import UserBadge from '@/components/user/UserBadge.vue';
 import {computed, watch, type Ref, ref} from 'vue';
 import type User from '@/logic/models/User';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
-import {absEurosPart, centsPart} from '@/logic/utils/money';
+import {absEurosPart, absCentsPart} from '@/logic/utils/money';
 
 const props = defineProps({
   room: {
@@ -61,7 +61,7 @@ watch(
 
 <template>
   <div
-    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 transition"
+    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 dark:bg-gray-700 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 dark:lg:hover:bg-gray-600 transition"
     @click="openTransactions()"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
@@ -75,16 +75,20 @@ watch(
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div class="flex flex-col">
-          <h2 class="text-2xl font-bold w-full text-center lg:text-start break-all">
+          <h2
+            class="text-2xl dark:text-gray-200 font-bold w-full text-center lg:text-start break-all"
+          >
             {{ room.getName() }}
           </h2>
-          <span class="text-sm text-gray-500 w-full text-center lg:text-start break-all">
+          <span
+            class="text-sm text-gray-500 dark:text-gray-400 w-full text-center lg:text-start break-all"
+          >
             {{ room.getTopic() }}
           </span>
         </div>
 
         <div
-          class="flex flex-col flex-wrap text-gray-700 gap-x-5 gap-y-2 items-center lg:items-start"
+          class="flex flex-col flex-wrap text-gray-700 dark:text-gray-200 gap-x-5 gap-y-2 items-center lg:items-start"
         >
           <div class="flex flex-row flex-wrap justify-center lg:justify-start gap-2">
             <span class="font-bold flex flex-row items-center">
@@ -100,13 +104,13 @@ watch(
           </div>
           <div v-if="sum! > 0" class="flex flex-row gap-1 text-red-600">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du schuldest</span>
-            <span>{{ absEurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+            <span>{{ absEurosPart(sum!) }},{{ absCentsPart(sum!) }} €</span>
           </div>
           <div v-else-if="sum! < 0" class="flex flex-row gap-1 text-green-600">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Du erhältst</span>
-            <span>{{ absEurosPart(sum!) }},{{ centsPart(sum!) }} €</span>
+            <span>{{ absEurosPart(sum!) }},{{ absCentsPart(sum!) }} €</span>
           </div>
-          <div v-else class="flex flex-row gap-1 text-blue-600">
+          <div v-else class="flex flex-row gap-1 text-blue-600 dark:text-blue-500">
             <span class="font-bold"><i class="fa-solid fa-coins fa-fw"></i> Ausgeglichen</span>
           </div>
         </div>

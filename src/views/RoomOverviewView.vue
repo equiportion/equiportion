@@ -176,7 +176,7 @@ watch(
     <!-- Toolbar -->
     <div id="toolBar" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <div
-        class="flex flex-col items-center lg:items-start justify-between w-full lg:max-w-[80%] gap-5 p-5 rounded-lg bg-gray-100 lg:hover:bg-gray-200 shadow-lg transition lg:hover:scale-[101%] no-close"
+        class="flex flex-col items-center lg:items-start justify-between w-full lg:max-w-[80%] gap-5 p-5 rounded-lg bg-gray-100 dark:bg-gray-700 lg:hover:bg-gray-200 dark:lg:hover:bg-gray-600 shadow-lg transition lg:hover:scale-[101%] no-close"
       >
         <ButtonSelect
           v-model="newRoomMethod"
@@ -224,7 +224,7 @@ watch(
                 </StandardButton>
               </template>
               <template v-else>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-gray-600 dark:text-gray-400">
                   Keine Matrix-Räume gefunden, die noch nicht in EquiPortion genutzt werden!
                 </span>
               </template>
