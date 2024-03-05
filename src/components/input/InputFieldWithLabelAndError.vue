@@ -65,6 +65,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  autocomplete: {
+    type: String,
+    required: false,
+    default: 'off',
+  },
 });
 
 const changeCounter = ref(0);
@@ -90,6 +95,7 @@ const inputValue = computed({
       :id="id"
       v-model="inputValue"
       class="mt-1 w-full"
+      :autocomplete="autocomplete"
       :type="type"
       :name="name"
       :placeholder="placeholder"

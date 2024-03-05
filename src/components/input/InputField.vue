@@ -53,6 +53,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  autocomplete: {
+    type: String,
+    required: false,
+    default: 'off',
+  },
 });
 
 const inputValue = ref('');
@@ -100,6 +105,7 @@ const classes = computed(() => {
     <input
       :id="id"
       v-model="inputValue"
+      :autocomplete="autocomplete"
       :type="type"
       :name="name"
       :class="classes"
