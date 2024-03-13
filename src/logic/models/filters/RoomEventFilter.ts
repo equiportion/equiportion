@@ -1,3 +1,8 @@
+/**
+ * Filter for room events
+ * 
+ * @author Clara Gießibl
+ */
 class RoomEventFilter {
   private limit?: number;
   private rooms?: string[];

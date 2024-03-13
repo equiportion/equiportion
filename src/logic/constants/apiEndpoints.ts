@@ -23,8 +23,8 @@ const apiEndpoints = {
   },
   mediaGet: (serverName: string, mediaId: string) =>
     `/_matrix/media/v3/download/${serverName}/${mediaId}`,
-  roomMessagesGet(roomId: string, from: string, dir: string) {
-    return `/_matrix/client/v3/rooms/${roomId}/messages?from=${from}&dir=${dir}`;
+  roomMessagesGet(roomId: string, from: string, dir: string, filter: string) {
+    return `/_matrix/client/v3/rooms/${roomId}/messages?from=${from}&dir=${dir}&filter=${filter}`;
   },
   roomCreate: '/_matrix/client/v3/createRoom',
   roomJoin: (roomId: string) => `/_matrix/client/v3/join/${roomId}`,

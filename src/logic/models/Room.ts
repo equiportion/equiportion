@@ -6,6 +6,7 @@ import validateTransactions from '@/logic/utils/validateTransactions';
 import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import type StateEvent from '@/logic/models/events/StateEvent';
+import getFilterJson from '@/logic/utils/filter';
 
 /**
  * A matrix room the logged in user has joined.
@@ -118,8 +119,15 @@ class Room {
 
     const client = AuthenticatedMatrixClient.getClient();
 
+    const filter = getFilterJson();
+
     const response = await client.getRequest(
-      apiEndpoints.roomMessagesGet(this.getRoomId(), this.previousBatch, 'b')
+      apiEndpoints.roomMessagesGet(
+        this.getRoomId(),
+        this.previousBatch,
+        'b',
+        JSON.stringify(filter)
+      )
     );
 
     if (!response) {
