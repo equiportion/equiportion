@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import RoomOverviewView from '../views/RoomOverviewView.vue';
-import LandingPageView from '@/views/LandingPageView.vue';
 import LoginView from '@/views/LoginView.vue';
 import ProfilePageView from '@/views/ProfilePageView.vue';
 
@@ -20,11 +19,6 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-    },
-    {
-      path: '/welcome',
-      name: 'landing-page',
-      component: LandingPageView,
     },
     {
       path: '/login',
