@@ -109,11 +109,7 @@ function toggleInviteModal(): void {
 // load rooms
 function loadRooms() {
   room.value = roomsStore.getRoom(roomId.value);
-  events.value = room.value?.getTimelineEvents()!;
-  events.value.reverse();
-
   events.value = room.value?.getTimelineEvents() as (TransactionEvent | MRoomMemberEvent)[];
-  events.value.reverse();
 
   const compensationCalculation = new BipartiteCompensation();
   compensation.value = compensationCalculation.calculateCompensation(room.value!);
@@ -128,6 +124,11 @@ function updateNewRoomData() {
 waitForInitialSync().then(() => {
   loadRooms();
   updateNewRoomData();
+});
+
+// reversed events
+const reversedEvents = computed(() => {
+  return events.value.slice().reverse();
 });
 
 /**
@@ -507,7 +508,7 @@ watch(
               class="flex flex-col justify-center gap-5"
             >
               <!--shows all transactions and membership events using the transacion tile partial / membership view -->
-              <template v-for="event in events" :key="event.getEventId()">
+              <template v-for="event in reversedEvents" :key="event.getEventId()">
                 <template v-if="!!(event instanceof TransactionEvent)">
                   <TransactionTile :transaction="asTransactionEvent(event)" />
                 </template>
