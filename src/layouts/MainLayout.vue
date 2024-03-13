@@ -2,6 +2,7 @@
 import {ref} from 'vue';
 import {RouterLink} from 'vue-router';
 import SearchField from '@/layouts/partials/SearchField.vue';
+import DarkLightSwitch from '@/layouts/partials/DarkLightSwitch.vue';
 import MenuProfilePicture from '@/layouts/partials/MenuProfilePicture.vue';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
 import DropdownButton from '@/components/dropdowns/DropdownButton.vue';
@@ -55,6 +56,8 @@ function logout() {
                 <i class="fa-solid fa-house-chimney fa-fw"></i>
               </div>
             </RouterLink>
+
+            <DarkLightSwitch />
 
             <!-- search -->
             <SearchField v-model="searchInputValue" />
