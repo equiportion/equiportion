@@ -159,8 +159,8 @@ watch(
 
         <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-200">
           <span v-if="balance > 0">
-            Du hast {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} € Schulden - beginne, Geld
-            zurückzuzahlen!
+            Du hast {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} € Schulden - beginne,
+            Geld zurückzuzahlen!
           </span>
           <span v-else-if="balance < 0">
             Du erhältst noch {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} €

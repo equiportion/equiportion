@@ -45,7 +45,9 @@ const descriptionText =
               <LogoSquare />
             </a>
 
-            <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl md:text-4xl">
+            <h1
+              class="mt-2 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl md:text-4xl"
+            >
               {{ headingText }}
             </h1>
 

@@ -40,7 +40,10 @@ watch(
       <div
         class="absolute top-2 right-2 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center lg:hover:scale-105"
       >
-        <button class="p-2 text-2xl text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100" @click="modalOpen = false">
+        <button
+          class="p-2 text-2xl text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+          @click="modalOpen = false"
+        >
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>

@@ -16,7 +16,10 @@ const loggedInUser = useLoggedInUserStore().user;
           <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-200 sm:text-3xl">
             {{ loggedInUser.getDisplayname() ?? loggedInUser.getUserId() }}
           </h1>
-          <span v-if="loggedInUser.getDisplayname()" class="text-md text-gray-500 dark:text-gray-400">
+          <span
+            v-if="loggedInUser.getDisplayname()"
+            class="text-md text-gray-500 dark:text-gray-400"
+          >
             {{ loggedInUser.getUserId() }}
           </span>
         </div>

@@ -67,10 +67,14 @@ async function rejectInvite() {
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div class="flex flex-col">
-          <span class="text-sm text-gray-500 dark:text-gray-400 w-full text-center lg:text-start break-all">
+          <span
+            class="text-sm text-gray-500 dark:text-gray-400 w-full text-center lg:text-start break-all"
+          >
             Du wurdest eingeladen:
           </span>
-          <h2 class="text-2xl dark:text-gray-200 font-bold w-full text-center lg:text-start break-all">
+          <h2
+            class="text-2xl dark:text-gray-200 font-bold w-full text-center lg:text-start break-all"
+          >
             {{ room.getName() }}
           </h2>
         </div>

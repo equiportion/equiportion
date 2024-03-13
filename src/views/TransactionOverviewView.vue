@@ -437,7 +437,9 @@ watch(
               <div v-else class="flex flex-col items-center lg:items-start lg:ml-5 gap-2 lg:gap-1">
                 <!--shows the room name if possible or the room id if not-->
                 <div class="flex flex-row gap-3 items-center">
-                  <h1 class="flex text-3xl font-bold text-gray-900 dark:text-gray-200 break-all items-center">
+                  <h1
+                    class="flex text-3xl font-bold text-gray-900 dark:text-gray-200 break-all items-center"
+                  >
                     {{ room?.getName() ?? roomId }}
                   </h1>
                   <!--Change room data button-->
@@ -452,7 +454,9 @@ watch(
                   </div>
                 </div>
 
-                <span class="flex text-sm text-gray-500 dark:text-gray-400 break-all items-center lg:mb-2">
+                <span
+                  class="flex text-sm text-gray-500 dark:text-gray-400 break-all items-center lg:mb-2"
+                >
                   {{ room?.getTopic() }}
                 </span>
                 <RoundButton
@@ -488,7 +492,10 @@ watch(
           <div v-show="room" class="flex flex-col mt-10 lg:mt-5">
             <!--default message if no transactions were made-->
             <div v-show="events && events.length <= 0">
-              <span id="no-transaction-message" class="text-sm text-gray-400 dark:text-gray-300 text-center">
+              <span
+                id="no-transaction-message"
+                class="text-sm text-gray-400 dark:text-gray-300 text-center"
+              >
                 Ganz schön leer hier... Füge weitere Personen hinzu und erstelle eine Transaktion!
               </span>
             </div>
@@ -582,7 +589,11 @@ watch(
           <div class="flex items-center bg-gray-300 dark:bg-gray-500 p-2 rounded-lg">
             <UserTile :user="room?.getMember(loggedInUser.getUserId())!" class="w-full" />
 
-            <button class="text-red-600 dark:text-red-500" title="Raum verlassen" @click="leaveRoom()">
+            <button
+              class="text-red-600 dark:text-red-500"
+              title="Raum verlassen"
+              @click="leaveRoom()"
+            >
               <i class="fa-solid fa-right-from-bracket"></i>
             </button>
           </div>
@@ -648,7 +659,9 @@ watch(
             v-if="room?.getMembers(['left']) && Object.keys(room!.getMembers(['left'])).length > 0"
             class="opacity-50"
           >
-            <span class="text-sm text-gray-800 dark:text-gray-200 items-center">Ehemalige Mitglieder</span>
+            <span class="text-sm text-gray-800 dark:text-gray-200 items-center"
+              >Ehemalige Mitglieder</span
+            >
             <div
               v-for="member in room!.getMembers(['left'])"
               :key="member.getUserId()"
