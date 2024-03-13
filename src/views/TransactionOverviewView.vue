@@ -514,7 +514,11 @@ watch(
                 </template>
 
                 <div
-                  v-else-if="!!(event instanceof MRoomMemberEvent)"
+                  v-else-if="
+                    !!(event instanceof MRoomMemberEvent) &&
+                    asMRoomMemberEvent(event).getPreviousMembership() !=
+                      asMRoomMemberEvent(event).getMembershipType()
+                  "
                   class="flex flex-row justify-center items-center gap-1"
                 >
                   <UserBadge
@@ -522,6 +526,8 @@ watch(
                     size="sm"
                     class="shadow-md"
                   />
+
+                  {{}}
 
                   <!-- string for which membership change was performed-->
                   <span
