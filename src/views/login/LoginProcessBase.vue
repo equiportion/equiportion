@@ -7,7 +7,7 @@ const descriptionText =
   'Aufteilen von Rechnungen war noch nie so einfach. Mit EquiPortion kannst du deine Rechnungen aufteilen und mit deinen Freunden teilen. Einfach, schnell und sicher über den Matrix-Server deines Vertrauens.';
 </script>
 <template>
-  <section class="bg-white">
+  <section class="bg-white dark:bg-gray-800">
     <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
       <section
         class="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
@@ -45,11 +45,11 @@ const descriptionText =
               <LogoSquare />
             </a>
 
-            <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
+            <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl md:text-4xl">
               {{ headingText }}
             </h1>
 
-            <p class="mt-4 leading-relaxed text-gray-500">
+            <p class="mt-4 leading-relaxed text-gray-500 dark:text-gray-300">
               {{ descriptionText }}
             </p>
           </div>
