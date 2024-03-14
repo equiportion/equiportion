@@ -8,6 +8,8 @@ import DropdownLink from '@/components/dropdowns/DropdownLink.vue';
 
 import LogoWide from '@/components/brand/LogoWide.vue';
 import LogoWideWhite from '@/components/brand/LogoWideWhite.vue';
+import LogoSquare from '@/components/brand/LogoSquare.vue';
+import LogoSquareWhite from '@/components/brand/LogoSquareWhite.vue';
 
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import cookieNames from '@/logic/constants/cookieNames';
@@ -31,11 +33,17 @@ function logout() {
   <div @click="emitClick($event)">
     <header class="fixed top-0 bg-gray-100 dark:bg-gray-900 w-full z-50 shadow-md">
       <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-end lg:justify-between">
+        <div class="flex items-center justify-between">
           <!-- Logo on the left sisde -->
           <RouterLink :to="{name: 'home'}">
-            <LogoWide class="hidden lg:flex dark:hidden h-10" />
-            <LogoWideWhite class="hidden lg:dark:flex h-10" />
+            <div class="flex dark:hidden">
+              <LogoWide class="hidden lg:flex h-10" />
+              <LogoSquare class="lg:hidden h-10" />
+            </div>
+            <div class="hidden dark:flex">
+              <LogoWideWhite class="hidden lg:flex h-10" />
+              <LogoSquareWhite class="lg:hidden h-10" />
+            </div>
           </RouterLink>
 
           <!-- Buttons, Search and Profile Picture on the right side -->
