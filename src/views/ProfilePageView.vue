@@ -5,6 +5,9 @@ import ProfileImage from '@/components/media/ProfileImage.vue';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 const loggedInUser = useLoggedInUserStore().user;
+
+const version = APP_VERSION;
+const buildTimestamp = BUILD_TIMESTAMP;
 </script>
 <template>
   <MainLayout>
@@ -23,6 +26,39 @@ const loggedInUser = useLoggedInUserStore().user;
             {{ loggedInUser.getUserId() }}
           </span>
         </div>
+      </div>
+
+      <!-- Version and License notices  -->
+      <div class="flex flex-col items-center text-sm mt-10 italic text-center">
+        <span class="text-gray-500 dark:text-gray-400 font-bold"> EquiPortion v{{ version }} </span>
+        <span class="text-gray-500 dark:text-gray-400">
+          Build vom {{ new Date(buildTimestamp).toLocaleString() }}
+        </span>
+        <span class="text-gray-500 dark:text-gray-400">
+          Diese Software ist frei und quelloffen unter
+          <a
+            href="https://github.com/equiportion/equiportion/blob/main/LICENSE"
+            class="underline"
+            target="_blank"
+          >
+            MIT-Lizenz
+          </a>
+          veröffentlicht.
+        </span>
+        <span class="text-gray-500 dark:text-gray-400">
+          <a
+            href="https://github.com/equiportion/equiportion.github.io/wiki/Datenschutzerkl%C3%A4rung"
+            target="_blank"
+            class="underline"
+          >
+            Hinweise zum Datenschutz
+          </a>
+          &nbsp;|&nbsp;
+          <a href="https://github.com/equiportion/equiportion/" target="_blank" class="underline">
+            Zum Projekt auf GitHub
+          </a>
+        </span>
+        <span class="text-gray-500 dark:text-gray-400"> </span>
       </div>
     </div>
   </MainLayout>
