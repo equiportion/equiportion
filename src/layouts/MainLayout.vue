@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue';
 import {RouterLink} from 'vue-router';
-import SearchField from '@/layouts/partials/SearchField.vue';
 import DarkLightSwitch from '@/layouts/partials/DarkLightSwitch.vue';
 import MenuProfilePicture from '@/layouts/partials/MenuProfilePicture.vue';
 import DropdownMenu from '@/components/dropdowns/DropdownMenu.vue';
@@ -16,9 +14,6 @@ import cookieNames from '@/logic/constants/cookieNames';
 import {setCookie} from '@/logic/utils/cookies';
 import router from '@/router';
 const {emitGlobal} = useGlobalEventBus();
-
-// TODO Suche implementieren
-const searchInputValue = ref('');
 
 function emitClick(event: Event) {
   const eventTarget = event.target! as HTMLElement;
@@ -60,7 +55,7 @@ function logout() {
             <DarkLightSwitch />
 
             <!-- search -->
-            <SearchField v-model="searchInputValue" />
+            <!-- <SearchField v-model="searchInputValue" /> -->
 
             <!-- profile pic & dropdown -->
             <DropdownMenu>
