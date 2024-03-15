@@ -220,7 +220,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const powerLevelContentOverride: {[key: string]: any} = {
       events: {},
       invite: 20,
-      users_defalt: 10,
+      users_default: 10,
     };
     powerLevelContentOverride.events[TransactionEvent.TYPE] = 10;
     powerLevelContentOverride.events[EquiPortionSettingsEvent.TYPE] = 80;
