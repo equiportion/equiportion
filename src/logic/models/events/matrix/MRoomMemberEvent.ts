@@ -67,6 +67,13 @@ class MRoomMemberEvent extends StateEvent {
       return undefined;
     }
 
+    let membership = undefined;
+    if (rawMatrixEvent.unsigned != undefined) {
+      if (rawMatrixEvent.unsigned.prev_content) {
+        membership = rawMatrixEvent.unsigned.prev_content.membership;
+      }
+    }
+
     return new MRoomMemberEvent(
       rawMatrixEvent.event_id,
       roomId ?? rawMatrixEvent.room_id,
@@ -75,7 +82,7 @@ class MRoomMemberEvent extends StateEvent {
       rawMatrixEvent.content.displayname,
       rawMatrixEvent.content.membership,
       rawMatrixEvent.content.reason,
-      rawMatrixEvent.unsigned.prev_content?.membership ?? undefined
+      membership
     );
   }
 
