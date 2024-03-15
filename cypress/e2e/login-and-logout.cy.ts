@@ -17,8 +17,7 @@ describe('login and logout', () => {
       cy.get('#username').type('@steffan-stub:stub.pse.dsn.kastel.kit.edu');
       cy.get('#password').type('Dieses Passwort ist falsch!');
       cy.get('#loginbutton').click();
-      cy.get('#login-form').children().eq(2).contains('Ungültiger Benutzername oder Passwort');
-      cy.get('#login-form').children().eq(3).contains('Ungültiger Benutzername oder Passwort');
+      cy.get('#login-form').contains('Ungültiger Benutzername oder Passwort');
     });
   });
   it('correct password logs in', () => {
