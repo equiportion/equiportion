@@ -2,7 +2,7 @@ import type RoomFilter from './RoomFilter';
 
 /**
  * Filter for Matrix event apis
- * 
+ *
  * @author Clara Gießibl
  */
 class Filter {

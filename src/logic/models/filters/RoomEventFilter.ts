@@ -1,6 +1,6 @@
 /**
  * Filter for room events
- * 
+ *
  * @author Clara Gießibl
  */
 class RoomEventFilter {

@@ -5,7 +5,7 @@ import StateFilter from './StateFilter';
 
 /**
  * Filter for initial synchronisations of Matrix clients
- * 
+ *
  * @author Clara Gießibl
  */
 class InitialSyncFilter extends Filter {

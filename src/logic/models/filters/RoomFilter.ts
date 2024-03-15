@@ -3,7 +3,7 @@ import StateFilter from './StateFilter';
 
 /**
  * Filters rooms
- * 
+ *
  * @author Clara Gießibl
  */
 class RoomFilter {
