@@ -300,6 +300,7 @@ watch(selectedReceiptFile, async (file) => {
   const result = await scanner.scan(file);
 
   if (result) {
+    receiptAnalyseError.value = '';
     moneyVal.value = result.getSum();
   } else {
     receiptAnalyseError.value = 'Summe nicht automatisch erkannt';
