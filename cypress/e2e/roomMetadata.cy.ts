@@ -23,9 +23,9 @@ describe('/', () => {
       ).as('MRoomAvatarEventPut');
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#changeRoomDataButtonSm').click();
+      cy.get('#editRoomDataSm').click();
       cy.get('#uploadLabel').selectFile('cypress/fixtures/cat.jpg');
-      cy.get('#changeRoomDataSubmitSm').click();
+      cy.get('#updateRoomDataSm').click();
       cy.wait('@uploadPost');
       cy.wait('@MRoomAvatarEventPut').then(({request}) => {
         expect(request.body.url).to.eq('mxc://example.com/AQwafuaFswefuhsfAFAgsw');
@@ -45,10 +45,10 @@ describe('/', () => {
       ).as('MRoomNameEventPut');
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#changeRoomDataButtonSm').click();
+      cy.get('#editRoomDataSm').click();
       cy.get('#roomName').invoke('val', 'newName'); //workaround for cypress bug
       cy.get('#roomName').trigger('input');
-      cy.get('#changeRoomDataSubmitSm').click();
+      cy.get('#updateRoomDataSm').click();
       cy.wait('@MRoomNameEventPut').then(({request}) => {
         expect(request.body.name).to.eq('newName');
       });
@@ -67,10 +67,10 @@ describe('/', () => {
       ).as('MRoomTopicEventPut');
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(0).click();
-      cy.get('#changeRoomDataButtonSm').click();
+      cy.get('#editRoomDataSm').click();
       cy.get('#roomTopic').invoke('val', 'newTopic');
       cy.get('#roomTopic').trigger('input');
-      cy.get('#changeRoomDataSubmitSm').click();
+      cy.get('#updateRoomDataSm').click();
       cy.wait('@MRoomTopicEventPut').then(({request}) => {
         expect(request.body.topic).to.eq('newTopic');
       });

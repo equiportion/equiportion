@@ -315,7 +315,7 @@ function toggleMemberList() {
 
           <!-- submit button on large screens -->
           <RoundButton
-            id="roomDataEditableSubmitLg"
+            id="updateRoomDataLg"
             :loading="updateRoomDataLoading"
             class="shadow-lg h-8 w-8 hidden lg:block"
             @click="updateRoomData()"
@@ -333,7 +333,7 @@ function toggleMemberList() {
           label=""
         />
         <RoundButton
-          id="roomDataEditableSubmitSm"
+          id="updateRoomDataSm"
           :loading="updateRoomDataLoading"
           class="shadow-lg h-8 w-8 lg:hidden"
           @click="updateRoomData()"
@@ -354,7 +354,7 @@ function toggleMemberList() {
           <!--Change room data button-->
           <div class="shrink-0 hidden lg:block">
             <RoundButton
-              id="roomDataEditableButtonLg"
+              id="editRoomDataLg"
               class="shadow-lg h-8 w-8"
               @click="toggleRoomDataEditable()"
             >
@@ -368,7 +368,7 @@ function toggleMemberList() {
         </span>
 
         <RoundButton
-          id="roomDataEditableButtonSm"
+          id="editRoomDataSm"
           class="shadow-lg h-8 w-8 lg:hidden"
           @click="toggleRoomDataEditable()"
         >
