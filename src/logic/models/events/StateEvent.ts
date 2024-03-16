@@ -1,12 +1,12 @@
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 import MatrixEvent from './MatrixEvent';
 import type {AxiosResponse} from 'axios';
-import AuthenticatedMatrixClient from '../clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '../../clients/AuthenticatedMatrixClient';
 import {useRoomsStore} from '@/stores/rooms';
 
 /**
  * A state event modelled after the matrix specs. All types of state events inherit from this class.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 abstract class StateEvent extends MatrixEvent {
@@ -45,7 +45,7 @@ abstract class StateEvent extends MatrixEvent {
     }
 
     this.setEventId(response.data.event_id);
-    room.addEvent(this);
+    room.addTimelineEvent(this);
     this.execute();
 
     return response;

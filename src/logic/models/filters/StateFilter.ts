@@ -1,3 +1,8 @@
+/**
+ * Filters state of rooms
+ *
+ * @author Clara Gießibl
+ */
 class StateFilter {
   private limit?: number;
   private rooms?: string[];

@@ -4,7 +4,7 @@ import {computed, ref, watch, type Ref, type PropType} from 'vue';
 import ModalDialog from '@/components/modals/ModalDialog.vue';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import User from '@/logic/models/User';
 import UserTile from '@/components/user/UserTile.vue';
 import regularExpressions from '@/logic/constants/regularExpressions';
@@ -93,12 +93,13 @@ async function sendInvitation() {
 }
 </script>
 <template>
-  <ModalDialog v-model:open="modalOpen">
-    <h3 class="font-bold text-xl grow">
+  <ModalDialog id="inviteModal" v-model:open="modalOpen">
+    <h3 class="font-bold text-xl dark:text-gray-300 grow">
       <i class="fa-solid fa-user-plus"></i> In diesen Raum einladen
     </h3>
     <div class="flex flex-col items-center gap-2">
       <InputFieldWithLabelAndError
+        id="inputFieldForUserInvitation"
         v-model="userId"
         label="Matrix-ID"
         type="text"
@@ -112,18 +113,19 @@ async function sendInvitation() {
         <div
           v-for="user in autoCompleteUsers"
           :key="user.getUserId()"
-          class="flex items-center gap-2 p-2 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer no-close"
+          class="flex items-center gap-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-500 cursor-pointer no-close"
           @click="userId = user.getUserId()"
         >
           <div class="flex-grow">
             <UserTile :user="user" />
           </div>
           <div>
-            <i class="fa-solid fa-turn-up"></i>
+            <i class="fa-solid fa-turn-up dark:text-gray-200"></i>
           </div>
         </div>
       </div>
       <StandardButton
+        id="invitationSubmit"
         :disabled="!userIdValid && !inviteSuccess"
         :success="inviteSuccess"
         :loading="inviteLoading"

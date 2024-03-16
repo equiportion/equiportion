@@ -27,7 +27,10 @@ const hopefullyUniqueId = () => Math.random().toString(36).substring(7);
 </script>
 <template>
   <div>
-    <label :for="'select-' + hopefullyUniqueId" class="block text-sm font-medium text-gray-700">
+    <label
+      :for="'select-' + hopefullyUniqueId"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+    >
       {{ label }}
     </label>
 
@@ -35,7 +38,7 @@ const hopefullyUniqueId = () => Math.random().toString(36).substring(7);
       :id="'select-' + hopefullyUniqueId"
       v-model="inputValue"
       :name="'select-' + hopefullyUniqueId"
-      class="mt-1 w-full rounded-md shadow-sm border-gray-200 text-gray-700 sm:text-sm"
+      class="mt-1 w-full rounded-md shadow-sm dark:bg-gray-600 border-gray-200 text-gray-700 dark:text-gray-200 sm:text-sm"
     >
       <option v-for="option in options" :key="option.value" :value="option.value">
         {{ option.label }}

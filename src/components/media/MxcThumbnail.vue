@@ -12,7 +12,7 @@
  * @prop {string} [method] - Method to use for thumbnail generation (optional, default: 'crop', options: crop, scale).
  */
 
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 import {ref, watch} from 'vue';

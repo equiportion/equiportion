@@ -53,7 +53,7 @@ watch(
 
 const inputClasses = computed(() => {
   const classes =
-    'w-full text-center border-0 p-0 border-transparent focus:border-transparent focus:ring-0 font-bold';
+    'w-full text-center border-0 p-0 border-transparent focus:border-transparent focus:ring-0 font-bold bg-transparent dark:text-gray-200';
 
   // calculate input length
   let inputLength;

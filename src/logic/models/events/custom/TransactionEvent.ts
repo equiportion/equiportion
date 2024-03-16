@@ -4,10 +4,11 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import Room from '@/logic/models/Room';
+import {parseMoney} from '@/logic/utils/money';
 
 /**
  * A transaction event modelled after this project's documentation.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  * @author Jörn Mihatsch
  */
@@ -22,6 +23,7 @@ class TransactionEvent extends StateEvent {
   private balances: {[userIds: string]: number};
   private latestEventId: string | undefined;
   private transactionValid: boolean | undefined = undefined;
+  private receiptUrl: string | undefined = undefined;
 
   /**
    * Creates a new TransactionEvent
@@ -34,6 +36,7 @@ class TransactionEvent extends StateEvent {
    * @param {[userIds: string]: number} balances the balances as a map of two concatenated userIds and an integer representing the balance (see documentation)
    * @param {string} stateKey the state key of this event
    * @param {string} [latestEventId] the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances (optional, only to be set if this event didn't start with balances of 0)
+   * @param {string} [receipt_url] the mxc-url of the receipt (optional)
    */
   constructor(
     eventId: string,
@@ -45,7 +48,8 @@ class TransactionEvent extends StateEvent {
     debtors: {userId: string; amount: number}[],
     balances: {[userIds: string]: number},
     stateKey: string,
-    latestEventId?: string
+    latestEventId?: string,
+    receipt_url?: string
   ) {
     super(eventId, roomId, stateKey);
 
@@ -55,6 +59,7 @@ class TransactionEvent extends StateEvent {
     this.debtors = debtors;
     this.balances = balances;
     this.latestEventId = latestEventId;
+    this.receiptUrl = receipt_url;
   }
 
   /**
@@ -64,17 +69,17 @@ class TransactionEvent extends StateEvent {
    * @param {number} sum the total sum of the transaction
    * @param {string} creditor the userId of the creditor
    * @param {{userId: string; amount: number}[]} debtors all debtors with their amount
+   * @param {string} [receipt_url] the mxc-url of the receipt (optional)
    */
   public static newTransaction(
     room: Room,
     purpose: string,
     sum: number,
     creditor: string,
-    debtors: {userId: string; amount: number}[]
+    debtors: {userId: string; amount: number}[],
+    receipt_url?: string
   ): TransactionEvent {
-    const events: TransactionEvent[] = room.getEventsWithStateEvents(
-      this.TYPE
-    ) as TransactionEvent[];
+    const events: TransactionEvent[] = room.getAllEvents(this.TYPE) as TransactionEvent[];
 
     // get device id
     const deviceId = useClientStateStore().deviceId;
@@ -117,7 +122,8 @@ class TransactionEvent extends StateEvent {
       debtors,
       newBalances,
       stateKey,
-      clientsNewestTransactionEvent?.getEventId()
+      clientsNewestTransactionEvent?.getEventId(),
+      receipt_url
     );
 
     return newTransactionevent;
@@ -126,53 +132,35 @@ class TransactionEvent extends StateEvent {
   /**
    * Tries to parse the given event into a TransactionEvent.
    * @static
-   * @param {RawMatrixEvent} event the event to parse
+   * @param {RawMatrixEvent} rawMatrixEvent the event to parse
    * @param {string} [roomId] the roomId of the room this event is published to
    * @returns {MatrixEvent|undefined} either the parsed event or undefined if the event could not be parsed (type mismatch)
    */
-  public static fromEvent(event: RawMatrixEvent, roomId?: string): MatrixEvent | undefined {
-    if (event.type !== this.TYPE) {
+  public static fromRawMatrixEvent(
+    rawMatrixEvent: RawMatrixEvent,
+    roomId?: string
+  ): MatrixEvent | undefined {
+    if (rawMatrixEvent.type !== this.TYPE) {
       return undefined;
     }
 
     const debtors: {userId: string; amount: number}[] = [];
-    for (const debtor of event.content.debtors) {
-      debtors.push({userId: debtor.user, amount: this.parseMoney(debtor.amount)});
+    for (const debtor of rawMatrixEvent.content.debtors) {
+      debtors.push({userId: debtor.user, amount: parseMoney(debtor.amount)});
     }
 
     return new TransactionEvent(
-      event.event_id,
-      roomId ?? event.room_id,
-      event.content.purpose,
-      this.parseMoney(event.content.sum),
-      event.content.creditor,
+      rawMatrixEvent.event_id,
+      roomId ?? rawMatrixEvent.room_id,
+      rawMatrixEvent.content.purpose,
+      parseMoney(rawMatrixEvent.content.sum),
+      rawMatrixEvent.content.creditor,
       debtors,
-      event.content.balances,
-      event.state_key!,
-      event.content['m.relates_to']?.event_id ?? undefined
+      rawMatrixEvent.content.balances,
+      rawMatrixEvent.state_key!,
+      rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined,
+      rawMatrixEvent.content.receipt_url ?? undefined
     );
-  }
-
-  /**
-   * Function to allow both the old format (float as string) and the new format (amount in cents as number) for the sum and the debtors.
-   * @param {string|number} amount the amount to parse
-   * @returns {number} the parsed amount (in cents)
-   */
-  private static parseMoney(amount: string | number): number {
-    if (typeof amount === 'string') {
-      return this.floatToCents(parseFloat(amount));
-    } else {
-      return amount;
-    }
-  }
-
-  /**
-   * Converts a float (e.g. 12,34€) to cents.
-   * @param {number} float the float to convert
-   * @returns {number} the converted float
-   */
-  private static floatToCents(float: number): number {
-    return Math.round(float * 100);
   }
 
   /**
@@ -202,6 +190,7 @@ class TransactionEvent extends StateEvent {
       creditor: this.creditor,
       debtors: debtors,
       balances: this.balances,
+      receipt_url: this.receiptUrl,
     };
 
     if (this.latestEventId) {
@@ -285,6 +274,23 @@ class TransactionEvent extends StateEvent {
    */
   public setValid(valid: boolean): void {
     this.transactionValid = valid;
+  }
+
+  /**
+   * Gets the receipt url of this transaction.
+   * @returns {string|undefined} the receipt url (mxc) of this transaction
+   */
+  public getReceiptUrl(): string | undefined {
+    return this.receiptUrl;
+  }
+
+  /**
+   * Sets the receipt url of this transaction.
+   * @param {string} url the receipt url (mxc content url) of this transaction
+   * @returns {void}
+   */
+  public setReceiptUrl(url: string): void {
+    this.receiptUrl = url;
   }
 }
 

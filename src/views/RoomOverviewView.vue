@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from '@/layouts/MainLayout.vue';
-import RoomTile from '@/views/partials/RoomTile.vue';
+import RoomTile from '@/views/roomoverview/RoomTile.vue';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import {useRoomsStore} from '@/stores/rooms';
@@ -9,14 +9,15 @@ import {watch, ref, computed} from 'vue';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import ButtonSelect from '@/components/input/ButtonSelect.vue';
 import SelectInput from '@/components/input/SelectInput.vue';
 import EquiPortionSettingsEvent from '@/logic/models/events/custom/EquiPortionSetttingsEvent';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
-import BipartiteCompensation from '@/logic/models/compensation/BipartiteCompensation';
+import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
-import InvitedRoomTile from '@/views/partials/InvitedRoomTile.vue';
+import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
+import {absEurosPart, absCentsPart} from '@/logic/utils/money';
 
 const clientStateStore = useClientStateStore();
 
@@ -68,21 +69,6 @@ function generateGreeting() {
   greeting.value = greetings[randomIndex];
 }
 generateGreeting();
-
-/**
- * Generic Functions
- */
-function eurosPart(num: number): string {
-  if (num < 0) {
-    // remove minus string
-    num = Math.abs(num);
-  }
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
 
 /**
  * Room creation
@@ -173,12 +159,11 @@ watch(
 
         <p v-if="loggedInUser.getUserId() != ''" class="mt-1.5 text-sm text-gray-200">
           <span v-if="balance > 0">
-            Du hast {{ eurosPart(balance) }},{{ centsPart(balance) }} € Schulden - beginne, Geld
-            zurückzuzahlen!
+            Du hast {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} € Schulden - beginne,
+            Geld zurückzuzahlen!
           </span>
           <span v-else-if="balance < 0">
-            Du erhältst noch {{ eurosPart(balance) }},{{ centsPart(balance) }} € - gib deine
-            Zahlungsinformationen an, damit dir andere das Geld zurückzahlen können!
+            Du erhältst noch {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} €
           </span>
           <span v-else>
             Du hast weder Schulden noch Guthaben - beginne, Transaktionen zu erstellen!
@@ -191,7 +176,7 @@ watch(
     <!-- Toolbar -->
     <div id="toolBar" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <div
-        class="flex flex-col items-center lg:items-start justify-between w-full lg:max-w-[80%] gap-5 p-5 rounded-lg bg-gray-100 lg:hover:bg-gray-200 shadow-lg transition lg:hover:scale-[101%] no-close"
+        class="flex flex-col items-center lg:items-start justify-between w-full lg:max-w-[80%] gap-5 p-5 rounded-lg bg-gray-100 dark:bg-gray-700 lg:hover:bg-gray-200 dark:lg:hover:bg-gray-600 shadow-lg transition lg:hover:scale-[101%] no-close"
       >
         <ButtonSelect
           v-model="newRoomMethod"
@@ -239,7 +224,7 @@ watch(
                 </StandardButton>
               </template>
               <template v-else>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-gray-600 dark:text-gray-400">
                   Keine Matrix-Räume gefunden, die noch nicht in EquiPortion genutzt werden!
                 </span>
               </template>

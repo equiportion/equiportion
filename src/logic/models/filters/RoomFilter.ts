@@ -1,6 +1,11 @@
 import type RoomEventFilter from './RoomEventFilter';
 import StateFilter from './StateFilter';
 
+/**
+ * Filters rooms
+ *
+ * @author Clara Gießibl
+ */
 class RoomFilter {
   private rooms?: string[];
   private state?: StateFilter;

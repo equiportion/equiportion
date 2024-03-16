@@ -30,7 +30,7 @@ watch(
 // classes for dropdown
 const classes = computed(() => {
   const classes =
-    'mt-2 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg';
+    'mt-2 divide-y divide-gray-100 dark:divide-gray-600 rounded-md border border-gray-100 dark:border-0 bg-white dark:bg-gray-700 shadow-lg';
 
   if (!props.inline) {
     return classes + ' absolute end-0 z-10 w-56';

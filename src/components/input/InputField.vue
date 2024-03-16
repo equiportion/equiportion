@@ -53,6 +53,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  autocomplete: {
+    type: String,
+    required: false,
+    default: 'off',
+  },
 });
 
 const inputValue = ref('');
@@ -74,12 +79,13 @@ watch(
 );
 
 const classes = computed(() => {
-  let classes = 'w-full rounded-md border-gray-200 text-sm text-gray-700 shadow-sm';
+  let classes =
+    'w-full rounded-md border-gray-200 text-sm text-gray-700 shadow-sm dark:text-gray-200 dark:placeholder:text-gray-400';
 
   if (props.disabled) {
-    classes += ' bg-gray-50';
+    classes += ' bg-gray-50 dark:bg-gray-400';
   } else {
-    classes += ' bg-white';
+    classes += ' bg-white dark:bg-gray-600';
   }
 
   return classes;
@@ -100,6 +106,7 @@ const classes = computed(() => {
     <input
       :id="id"
       v-model="inputValue"
+      :autocomplete="autocomplete"
       :type="type"
       :name="name"
       :class="classes"

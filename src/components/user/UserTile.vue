@@ -37,7 +37,7 @@ const displayNameClasses = computed(() => {
       />
     </div>
     <div class="flex flex-col overflow-hidden flex-shrink">
-      <div class="flex flex-row text-gray-900">
+      <div class="flex flex-row text-gray-900 dark:text-gray-200">
         <span :class="displayNameClasses">
           {{ user?.getDisplayname() ?? user?.getUserId() ?? 'unbekannter Benutzer' }}
         </span>
@@ -45,7 +45,7 @@ const displayNameClasses = computed(() => {
       </div>
       <span
         v-if="user?.getDisplayname()"
-        class="text-ellipsis overflow-hidden text-sm text-gray-500"
+        class="text-ellipsis overflow-hidden text-sm text-gray-500 dark:text-gray-300"
       >
         {{ user.getUserId() }}
       </span>

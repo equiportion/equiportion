@@ -7,13 +7,16 @@
  * @prop {TransactionEvent} transaction - A transaction event of a transaction (sent into a room).
  */
 
+import ModalDialog from '@/components/modals/ModalDialog.vue';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 import {useRoomsStore} from '@/stores/rooms';
 import User from '@/logic/models/User';
 import UserBadge from '@/components/user/UserBadge.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
+import {centsPart, eurosPart} from '@/logic/utils/money';
+import MxcImage from '@/components/media/MxcImage.vue';
 
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const props = defineProps({
   transaction: {
@@ -22,26 +25,26 @@ const props = defineProps({
   },
 });
 
+const viewReceipt = ref(false);
+
 const roomsStore = useRoomsStore();
 const room = roomsStore.getRoom(props.transaction.getRoomId());
 
 const creditor: User | undefined = room?.getMember(props.transaction.getCreditorId());
 
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
-
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
-
 const mainClasses = computed(() => {
   const classes = 'flex flex-col w-full rounded-lg shadow-lg transition p-5 gap-2';
 
-  if (props.transaction.isValid() == false) {
-    return classes + ' bg-red-200 lg:hover:bg-red-300';
+  if (props.transaction.isValid() === false) {
+    return (
+      classes +
+      ' bg-red-200 lg:hover:bg-red-300 dark:bg-red-700 dark:lg:hover:bg-red-600 dark:text-gray-200'
+    );
   } else {
-    return classes + ' bg-gray-100 lg:hover:bg-gray-200';
+    return (
+      classes +
+      ' bg-gray-100 lg:hover:bg-gray-200 dark:bg-gray-700 dark:lg:hover:bg-gray-600 dark:text-gray-200'
+    );
   }
 });
 </script>
@@ -54,14 +57,32 @@ const mainClasses = computed(() => {
     </h2>
 
     <div class="flex flex-col lg:flex-row w-full">
-      <!--Gläubiger-->
-      <div class="self-start flex flex-col lg:flex-row flex-wrap gap-1 items-center w-full">
-        <UserBadge class="shadow-md" :user="creditor!" />
-        <span>
-          hat
-          <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
-          ausgegeben
-        </span>
+      <!--Gläubiger und Beleg-->
+      <div class="self-start flex flex-col gap-2 w-full">
+        <div class="flex flex-col lg:flex-row flex-wrap gap-1 items-center">
+          <UserBadge class="shadow-md" :user="creditor!" />
+          <span>
+            hat
+            <b>{{ eurosPart(transaction.getSum()) }},{{ centsPart(transaction.getSum()) }}€</b>
+            ausgegeben
+          </span>
+        </div>
+        <button
+          v-if="transaction.getReceiptUrl()"
+          class="cursor-pointer lg:text-start"
+          @click.stop="viewReceipt = true"
+        >
+          <i class="fa-solid fa-file-invoice"></i> Zahlungsbeleg anzeigen
+        </button>
+
+        <ModalDialog v-model:open="viewReceipt">
+          <div class="overflow-y-scroll">
+            <MxcImage
+              v-if="viewReceipt && transaction.getReceiptUrl()"
+              :mxc-url="transaction.getReceiptUrl()!"
+            />
+          </div>
+        </ModalDialog>
       </div>
 
       <!-- > -->
@@ -71,7 +92,7 @@ const mainClasses = computed(() => {
 
       <!--Schuldner-->
       <div
-        class="flex flex-col gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
+        class="flex flex-col justify-center gap-5 lg:gap-2 w-full border-t-2 border-gray-400 pt-5 mt-5 lg:border-0 lg:pt-0 lg:mt-0"
       >
         <div
           v-for="debtor in transaction.getDebtorIds()"
@@ -86,7 +107,7 @@ const mainClasses = computed(() => {
       </div>
     </div>
 
-    <SystemAlert v-if="transaction.isValid() == false" class="text-black mt-2" severity="danger">
+    <SystemAlert v-if="transaction.isValid() === false" class="text-black mt-2" severity="danger">
       <span class="text-lg font-bold"> <i class="fa-solid fa-code-merge"></i>&nbsp;Konflikt </span>
       <br />
       Es gibt ein Problem beim Zusammenführen dieser Transaktion mit dem aktuellen Stand, der von
@@ -96,7 +117,6 @@ const mainClasses = computed(() => {
       <span class="underline">nicht in den aktuellen Schuldenstand eingerechnet</span>.<br />
       <strong>Was kann ich tun? </strong>Du kannst diese Transaktion erneut senden, um sie in den
       aktuellen Schuldenstand einzuberechnen.<br />
-      <i>In zukünfigten Versionen ist eine automatische Auflösung des Konflikts geplant.</i>
     </SystemAlert>
   </div>
 </template>

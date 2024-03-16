@@ -2,13 +2,13 @@
 import {ref, watch, type Ref, onMounted} from 'vue';
 
 import InputFieldWithLabelAndError from '@/components/input/InputFieldWithLabelAndError.vue';
-import LoginProcessBase from '@/views/partials/LoginProcessBase.vue';
-import LoginContinueButton from '@/views/partials/LoginContinueButton.vue';
+import LoginProcessBase from '@/views/login/LoginProcessBase.vue';
+import LoginContinueButton from '@/views/login/LoginContinueButton.vue';
 import SystemAlert from '@/components/messaging/SystemAlert.vue';
 import StandardButton from '@/components/buttons/StandardButton.vue';
 
-import MatrixClient from '@/logic/models/clients/MatrixClient';
-import LoginMatrixClient from '@/logic/models/clients/LoginMatrixClient';
+import MatrixClient from '@/logic/clients/MatrixClient';
+import LoginMatrixClient from '@/logic/clients/LoginMatrixClient';
 import router from '@/router';
 
 const loading = ref(false);
@@ -36,6 +36,7 @@ async function loginWithPassword() {
   loading.value = false;
 }
 
+const showNewUserInfo = ref(true);
 const showHomeserverWarning = ref(false);
 const homeserverChecking: Ref<number> = ref(0);
 
@@ -67,7 +68,7 @@ watch(
     if (loginToken) {
       return;
     }
-
+    showNewUserInfo.value = !userId.value;
     if (
       (userId.value.split(':').length != 2 || userId.value.split(':')[1].length == 0) &&
       !loginToken
@@ -116,7 +117,31 @@ watch(
 <template>
   <LoginProcessBase>
     <div id="login-form" class="mt-8 flex flex-col gap-6 w-full">
-      <span v-show="!showHomeserverWarning && homeserverChecking == 0" class="text-center">
+      <SystemAlert v-show="showNewUserInfo" severity="info">
+        <p class="font-bold">Registrierung bei einem Matrix-Homeserver</p>
+        <p>
+          Falls du noch kein Konto hast, kannst du dich bei einem Matrix-Homeserver registrieren,
+          wie zum Beispiel matrix.org. Klicke
+          <a
+            href="https://app.element.io/#/register"
+            target="_blank"
+            class="text-blue-500 underline hover:text-blue-700"
+            >hier</a
+          >, um dich zu registrieren.
+        </p>
+        <br />
+        <p class="font-bold">Über SSO Anmelden</p>
+        <p>
+          Alternativ kannst du dich auch über den Button "Mit SSO Anmelden" registrieren. Du kannst
+          dich mit deinem Google-, GitHub-, GitLab- oder Facebook-Konto anmelden und ein Konto
+          erstellen.
+        </p>
+      </SystemAlert>
+
+      <span
+        v-show="!showHomeserverWarning && homeserverChecking == 0"
+        class="text-center dark:text-white"
+      >
         Am Server "{{ loginMatrixClient.getHomeserverUrl()?.split('://')[1] }}" anmelden
       </span>
 
@@ -145,10 +170,10 @@ watch(
             !showHomeserverWarning &&
             loginMatrixClient.getSupportedLoginFlows().includes('m.login.password')
           "
-          id="homeserver"
+          id="password"
           v-model:model-value="password"
           type="password"
-          name="homeserver"
+          name="password"
           placeholder="Matrix-Passwort eingeben..."
           label="Passwort"
           :error="error"
@@ -176,9 +201,10 @@ watch(
               loginMatrixClient.getSupportedLoginFlows().includes('m.login.password') &&
               loginMatrixClient.getSupportedLoginFlows().includes('m.login.sso')
             "
-            class="text-sm text-gray-600"
-            >- oder -</span
+            class="text-sm text-gray-600 dark:text-gray-400"
           >
+            - oder -
+          </span>
 
           <StandardButton
             v-show="

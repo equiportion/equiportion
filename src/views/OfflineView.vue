@@ -34,9 +34,9 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <div class="flex flex-col w-full min-h-screen items-center gap-5 p-5">
+  <div class="flex flex-col w-full min-h-screen items-center gap-5 p-5 dark:bg-gray-900">
     <img src="@/assets/signal_searching.svg" alt="Offline" class="max-w-[80%] lg:max-w-[50%]" />
-    <p class="text-center">
+    <p class="text-center dark:text-gray-200">
       Du bist offline. Bitte überprüfe deine Internetverbindung und versuche es erneut.
     </p>
   </div>

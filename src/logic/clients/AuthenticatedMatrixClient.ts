@@ -3,7 +3,7 @@ import cookieNames from '@/logic/constants/cookieNames';
 import apiEndpoints from '@/logic/constants/apiEndpoints';
 
 /** Models */
-import MatrixClient from '@/logic/models/clients/MatrixClient';
+import MatrixClient from '@/logic/clients/MatrixClient';
 import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
 
@@ -22,10 +22,11 @@ import {useRoomsStore} from '@/stores/rooms';
 
 /** Utils */
 import {getCookie} from '@/logic/utils/cookies';
+import getFilterJson from '@/logic/utils/filter';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
- * @author Jakob Gießibl
+ * @author Clara Gießibl
  * @author Philipp Stappert
  */
 class AuthenticatedMatrixClient extends MatrixClient {
@@ -123,7 +124,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
   private async updateRooms(): Promise<void> {
     const clientStateStore = useClientStateStore();
 
-    const data: {since?: string; timeout: number} = {timeout: 10000};
+    const filter = getFilterJson();
+
+    const data: {since?: string; timeout: number; filter: string} = {
+      timeout: 10000,
+      filter: JSON.stringify(filter),
+    };
     if (this.nextBatch) {
       data.since = this.nextBatch;
     }
@@ -214,7 +220,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
     const powerLevelContentOverride: {[key: string]: any} = {
       events: {},
       invite: 20,
-      users_defalt: 10,
+      users_default: 10,
     };
     powerLevelContentOverride.events[TransactionEvent.TYPE] = 10;
     powerLevelContentOverride.events[EquiPortionSettingsEvent.TYPE] = 80;
@@ -299,6 +305,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
     }
 
     const users: User[] = [];
+    if (!response.data.results) {
+      return [];
+    }
     for (const user of response.data.results) {
       users.push(new User(user.user_id, user.display_name, user.avatar_url));
     }

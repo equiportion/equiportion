@@ -65,6 +65,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  autocomplete: {
+    type: String,
+    required: false,
+    default: 'off',
+  },
 });
 
 const changeCounter = ref(0);
@@ -85,11 +90,14 @@ const inputValue = computed({
 </script>
 <template>
   <div>
-    <label :for="id" class="block text-sm font-medium text-gray-700"> {{ label }} </label>
+    <label :for="id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      {{ label }}
+    </label>
     <InputField
       :id="id"
       v-model="inputValue"
       class="mt-1 w-full"
+      :autocomplete="autocomplete"
       :type="type"
       :name="name"
       :placeholder="placeholder"

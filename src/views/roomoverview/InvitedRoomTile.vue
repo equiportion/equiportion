@@ -3,7 +3,7 @@ import {type PropType, ref} from 'vue';
 import Room from '@/logic/models/Room';
 import RoundButton from '@/components/buttons/RoundButton.vue';
 import MxcOrPlaceholderImage from '@/components/media/MxcOrPlaceholderImage.vue';
-import AuthenticatedMatrixClient from '@/logic/models/clients/AuthenticatedMatrixClient';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 
 const props = defineProps({
   room: {
@@ -54,7 +54,7 @@ async function rejectInvite() {
 </script>
 <template>
   <div
-    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 transition"
+    class="flex flex-col items-center lg:items-start lg:flex-row justify-between w-full lg:max-w-[80%] gap-2 p-5 rounded-lg bg-gray-100 dark:bg-gray-700 cursor-pointer shadow-lg lg:hover:scale-105 lg:hover:bg-gray-200 dark:lg:hover:bg-gray-600 transition"
   >
     <div class="flex flex-col lg:flex-row items-center lg:items-start">
       <div class="flex-shrink-0">
@@ -67,10 +67,14 @@ async function rejectInvite() {
 
       <div class="lg:ml-5 flex flex-col gap-2">
         <div class="flex flex-col">
-          <span class="text-sm text-gray-500 w-full text-center lg:text-start break-all">
+          <span
+            class="text-sm text-gray-500 dark:text-gray-400 w-full text-center lg:text-start break-all"
+          >
             Du wurdest eingeladen:
           </span>
-          <h2 class="text-2xl font-bold w-full text-center lg:text-start break-all">
+          <h2
+            class="text-2xl dark:text-gray-200 font-bold w-full text-center lg:text-start break-all"
+          >
             {{ room.getName() }}
           </h2>
         </div>

@@ -15,12 +15,19 @@ import Room from '@/logic/models/Room';
 import User from '@/logic/models/User';
 import TransactionEvent from '@/logic/models/events/custom/TransactionEvent';
 
+// client
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
+
 // stores
 import {useRoomsStore} from '@/stores/rooms';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 
 // utils
 import waitForInitialSync from '@/logic/utils/waitForSync';
+import {absCentsPart, absEurosPart} from '@/logic/utils/money';
+
+// receipt analysis
+import ReceiptScanner from '@/logic/receiptanalysis/ReceiptScanner';
 
 // framework and libraries
 import {computed, ref, watch, type Ref} from 'vue';
@@ -199,14 +206,30 @@ const debtorList = computed(() => {
 
 // function to submit the transaction
 async function submit() {
+  if (submitDisabled.value) {
+    return;
+  }
+
+  submitLoading.value = true;
+
+  let receiptUrl: string | undefined = undefined;
+  if (selectedReceiptFile.value) {
+    // upload receipt
+    receiptUrl = await AuthenticatedMatrixClient.getClient().uploadFile(selectedReceiptFile.value);
+    if (!receiptUrl) {
+      submitError.value = 'Fehler beim Hochladen des Belegs';
+      return;
+    }
+  }
+
   const newTransaction = TransactionEvent.newTransaction(
     room.value!,
     reasonVal.value,
     moneyVal.value,
     creditorVal.value!.getUserId(),
-    debtorList.value
+    debtorList.value,
+    receiptUrl
   );
-  submitLoading.value = true;
 
   try {
     await newTransaction.publish();
@@ -233,7 +256,7 @@ function prefillFromSessionStorage() {
   sessionStorage.removeItem('compensation_userId');
 
   moneyVal.value = Math.abs(compensation);
-  reasonVal.value = 'Ausgleichszahlung';
+  reasonVal.value = 'Ausgleichs-Transaktion';
   if (compensation > 0) {
     //creditor does not need to be set because the user is already set as creditor by default
     addDebtor(room.value?.getMember(compensationUserId!)!);
@@ -244,15 +267,47 @@ function prefillFromSessionStorage() {
 }
 
 /**
- * Generic Functions
+ * Reciept upload
  */
-function eurosPart(num: number): string {
-  return Math.floor(num / 100).toString();
-}
+const selectedReceiptFile = ref<File | undefined>(undefined);
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length) {
+    selectedReceiptFile.value = input.files[0];
+  }
+};
 
-function centsPart(num: number): string {
-  return ('00' + (num % 100)).slice(-2);
-}
+const previewImageUrl = computed(() => {
+  if (selectedReceiptFile.value) {
+    return URL.createObjectURL(selectedReceiptFile.value);
+  }
+  return '';
+});
+
+/**
+ * Analyze Receipt with ReceiptScanner
+ */
+const receiptAnalysing = ref(false);
+const receiptAnalyseError = ref('');
+watch(selectedReceiptFile, async (file) => {
+  if (!file) {
+    return;
+  }
+
+  receiptAnalysing.value = true;
+
+  const scanner = new ReceiptScanner();
+  const result = await scanner.scan(file);
+
+  if (result) {
+    receiptAnalyseError.value = '';
+    moneyVal.value = result.getSum();
+  } else {
+    receiptAnalyseError.value = 'Summe nicht automatisch erkannt';
+  }
+
+  receiptAnalysing.value = false;
+});
 </script>
 
 <template>
@@ -273,10 +328,10 @@ function centsPart(num: number): string {
       <SystemAlert v-if="submitError" severity="danger">{{ submitError }}</SystemAlert>
 
       <!-- Creditor -->
-      <div class="flex flex-col items-center">
+      <div id="toplevelCreditorDiv" class="flex flex-col items-center">
         <div
           v-if="!creditorVal"
-          class="bg-gray-100 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
+          class="bg-gray-100 dark:bg-gray-600 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
         >
           <UserDropdown
             id="creditorUserDropdown"
@@ -295,23 +350,88 @@ function centsPart(num: number): string {
                 >
                   <i class="fa-solid fa-user-plus"></i>
                 </RoundButton>
-                <span class="text-gray-600">Gläubiger*in</span>
+                <span class="text-gray-600 dark:text-gray-200">Gläubiger*in</span>
               </div>
             </template>
           </UserDropdown>
         </div>
-        <div v-else class="flex flex-col bg-gray-100 p-4 rounded-lg shadow-lg items-center gap-2">
+        <div
+          v-else
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg items-center gap-2"
+        >
           <div class="flex flex-row items-center gap-2">
             <i
               id="removeCreditor"
-              class="fa-solid fa-times text-xl text-gray-500 cursor-pointer"
+              class="fa-solid fa-times text-xl text-gray-500 dark:text-gray-300 cursor-pointer"
               @click="removeCreditor()"
             >
             </i>
             <UserTile :user="creditorVal" />
           </div>
-          <span class="text-sm text-gray-500">Gläubiger*in</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Gläubiger*in</span>
         </div>
+      </div>
+
+      <!-- Receipt upload -->
+      <div class="flex flex-col items-center">
+        <div
+          v-if="!selectedReceiptFile"
+          class="bg-gray-100 dark:bg-gray-600 p-5 rounded-lg border-gray-300 border-2 border-dashed shadow-lg"
+        >
+          <div
+            class="flex flex-row items-center gap-2 cursor-pointer"
+            onclick="document.getElementById('fileInput').click()"
+          >
+            <RoundButton
+              class="lg:max-w-[200px]"
+              title="Dokument auswählen"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <i class="fa-solid fa-file-invoice"></i> <i class="fa-solid fa-plus"></i>
+            </RoundButton>
+            <div class="flex flex-col">
+              <span class="dark:text-gray-300">Beleg hochladen</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">(optional)</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-else
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg items-center gap-2"
+        >
+          <i
+            class="fa-solid fa-trash text-red-500 cursor-pointer"
+            title="Beleg entfernen"
+            @click="selectedReceiptFile = undefined"
+          >
+          </i>
+          <img
+            :src="previewImageUrl"
+            alt="Hochgeladener Beleg"
+            class="max-h-[70svh] lg:max-w-[50vw] rounded-lg"
+          />
+
+          <div
+            v-if="receiptAnalysing"
+            class="flex flex-col items-center gap-2 bg-gray-700 w-full rounded-lg p-2"
+          >
+            <i class="fa-solid fa-spinner text-white animate-spin"></i>
+            <span class="text-sm text-white">Beleg wird analysiert...</span>
+          </div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Beleg</span>
+          <span v-if="receiptAnalyseError" class="text-red-600 text-sm break-words text-wrap">
+            {{ receiptAnalyseError }}
+          </span>
+        </div>
+
+        <input
+          id="fileInput"
+          type="file"
+          class="hidden"
+          accept="image/png, image/jpeg"
+          @change="handleFileChange"
+        />
       </div>
 
       <!-- Sum -->
@@ -340,13 +460,12 @@ function centsPart(num: number): string {
         placeholder="z.B. Einkauf"
       />
 
-      <div class="flex flex-col mt-5 w-full items-center gap-5">
+      <div id="unevenSplitting" class="flex flex-col mt-5 w-full items-center gap-5">
         <!-- Uneven splitting -->
         <div
           v-for="debtor in debtors"
-          id="unevenSplitting"
           :key="debtor.user.getUserId()"
-          class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"
+          class="flex flex-col lg:flex-row w-full lg:max-w-[80%] gap-4 bg-gray-100 dark:bg-gray-600 p-4 rounded-lg shadow-lg"
         >
           <div class="flex flex-row gap-3 w-full lg:w-1/3 justify-between lg:justify-start">
             <UserTile :user="debtor.user" />
@@ -354,7 +473,9 @@ function centsPart(num: number): string {
               class="flex flex-col lg:flex-row items-center text-center lg:order-first"
               @click="removeDebtor(debtor.user)"
             >
-              <i class="fa-solid fa-times text-xl text-gray-500 cursor-pointer"></i>
+              <i
+                class="fa-solid fa-times text-xl text-gray-500 dark:text-gray-300 cursor-pointer"
+              ></i>
             </div>
           </div>
           <MoneyInputWrapper v-model="debtor.fixedAmount">
@@ -424,12 +545,18 @@ function centsPart(num: number): string {
         <!-- Rest-->
         <div
           id="rest"
-          class="flex flex-col bg-gray-100 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg"
+          class="flex flex-col bg-gray-100 dark:bg-gray-600 dark:text-gray-200 w-full lg:max-w-[80%] p-4 rounded-lg shadow-lg"
         >
           <span class="text-xl">
-            Rest: <strong>{{ eurosPart(restSum) }},{{ centsPart(restSum) }} €</strong>
+            Rest:
+            <strong
+              >{{ restSum >= 0 ? '' : '-' }}{{ absEurosPart(restSum) }},{{
+                absCentsPart(restSum)
+              }}
+              €</strong
+            >
           </span>
-          <span class="text-sm text-gray-500">
+          <span class="text-sm text-gray-500 dark:text-gray-400">
             Wird gleichmäßig auf alle Schuldner*innen verteilt
           </span>
           <span v-if="fixedAmountError" class="text-sm text-red-500">

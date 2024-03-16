@@ -1,27 +1,58 @@
-# codebase
+![Logo von EquiPortion](https://raw.githubusercontent.com/equiportion/equiportion/dev/src/assets/LogoWide.svg)
 
-This template should help get you started developing with Vue 3 in Vite.
+# EquiPortion
 
-## Recommended IDE Setup
+Aufteilen von Rechnungen war noch nie so einfach. Mit EquiPortion kannst du deine Rechnungen aufteilen und mit deinen Freunden teilen. Einfach, schnell und sicher über den Matrix-Server deines Vertrauens.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Nutzen
 
-## Type Support for `.vue` Imports in TS
+EquiPortion läuft in jedem modernen Browser.
+Keine Lust EquiPortion zu installieren? Wir haben EquiPortion für dich gehosted: <https://equiportion.github.io>
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+Außerdem findest du die Progressive Web App auch im Google Play Store: <https://play.google.com/store/apps/details?id=de.phsta.equiportion>
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+## Features
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+- Heller und dunkler Anzeigemodus
+- Plattformunabhängige PWA: Durch die Nutzung im Browser kann EquiPortion auf so gut wie jedem Gerät ausgeführt und installiert werden
+- Nutzung von Matrix als Datenbank: Such dir deinen eigenen Homeserver aus und kommuniziere dank Föderation trotzdem mit Nutzern von anderen Homeservern
+- Erstelle Räume und lade Nutzer dazu ein
+- Ausgaben pro Raum erfassen und auflisten
+- Minimierung der Zahlungen, die zum Ausgleich der Schulden notwendig sind
+- Belege zu Ausgabe hochladen
+- Automatische Erfassung des Gesamtbetrags aus hochgeladenen Belegen (mittels OCR)
 
-## Customize configuration
+## Screenshots
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+... folgen noch :)
 
-## Project Setup
+## Mithelfen / Contributing
+
+Contributions are always welcome!
+
+Just make a PR or contact us (via issues), if you have further ideas or want to know how to help.
+
+## Support
+
+For support, create an issue in our GitHub Repository (<https://github.com/equiportion/equiportion>).
+
+## Autoren
+
+- Clara Gießibl [@anonymous-froggo](https://github.com/anonymous-froggo)
+- Jörn Mihatsch [@jmih03](https://github.com/jmih03)
+- Leandro El Omari [@leandroelomari](https://github.com/leandroelomari)
+- Philipp Stappert [@philippstappert](https://github.com/philippstappert)
+- Yinlei Ba
+
+EquiPortion ist entstanden als Praxisprojekt (für Praxis der Softwareentwicklung) am KIT (Karlsruher Institut für Technologie), diese App und sämtliche Inhalte gehören aber der Gruppe an Personen, die das Projekt durchgeführt und eigenständig veröffentlicht haben.
+
+## Lizenz
+
+[MIT](https://github.com/equiportion/equiportion/blob/main/LICENSE)
+
+## Useful commands for developers
+
+### Install Dependencies / Project Setup
 
 ```sh
 npm install
@@ -54,7 +85,7 @@ npm run test:e2e:dev
 This runs the end-to-end tests against the Vite development server.
 It is much faster than the production build.
 
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
+For safety, you should run the tests against the build too.
 
 ```sh
 npm run build
@@ -65,4 +96,10 @@ npm run test:e2e
 
 ```sh
 npm run lint
+```
+
+### Check CodeStyle with [Prettier](https://prettier.io/)
+
+```sh
+npm run format
 ```
