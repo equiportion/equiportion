@@ -87,6 +87,7 @@ class EventParser {
 
       return undefined;
     } catch (error) {
+      console.error(error);
       throw new EventParseError();
     }
   }

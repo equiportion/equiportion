@@ -27,13 +27,14 @@ const searchValue = computed({
       <input
         id="search"
         v-model="searchValue"
-        class="h-10 w-full rounded-full border-none bg-white pe-10 ps-4 text-sm shadow-sm sm:w-56"
+        autocomplete="off"
+        class="h-10 w-full rounded-full border-none bg-white dark:bg-gray-600 dark:text-gray-200 dark:placeholder:text-gray-400 lg:hover:scale-105 pe-10 ps-4 text-sm shadow-sm sm:w-56"
         type="search"
         placeholder="Raum suchen..."
       />
 
       <div
-        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700"
+        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full bg-gray-100 dark:bg-gray-400 p-2 text-gray-600 dark:text-gray-200 transition hover:text-gray-700 dark:hover:text-gray-100"
       >
         <span class="sr-only">Suchen</span>
         <i class="block fa-solid fa-search fa-fw"></i>

@@ -6,10 +6,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "logo-1":"#98e9e1",
-        "logo-2":"#5f7885",
+        'logo-1': '#98e9e1',
+        'logo-2': '#5f7885',
       },
     },
   },
+  darkMode: 'selector',
   plugins: [require('@tailwindcss/forms')],
 };

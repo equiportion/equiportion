@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import RoomOverviewView from '../views/RoomOverviewView.vue';
-import LandingPageView from '@/views/LandingPageView.vue';
 import LoginView from '@/views/LoginView.vue';
 import ProfilePageView from '@/views/ProfilePageView.vue';
 
@@ -12,6 +11,9 @@ import OfflineView from '@/views/OfflineView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior() {
+    return {top: 0};
+  },
   routes: [
     {
       path: '/',
@@ -20,11 +22,6 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-    },
-    {
-      path: '/welcome',
-      name: 'landing-page',
-      component: LandingPageView,
     },
     {
       path: '/login',

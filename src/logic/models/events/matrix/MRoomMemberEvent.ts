@@ -17,6 +17,7 @@ class MRoomMemberEvent extends StateEvent {
   private displayname: string;
   private membership: string;
   private reason: string;
+  private previousMembership: string | undefined;
 
   /**
    * Creates a new state event with the given parameters
@@ -27,6 +28,7 @@ class MRoomMemberEvent extends StateEvent {
    * @param {string} displayname the value the member's displayname is set to via this event
    * @param {string} membership the value the member's membership status is set to via this event
    * @param {string} reason the reason for publishing this event
+   * @param {string} [previousMembership] the previous membership status of the member this event updates
    */
   constructor(
     eventId: string,
@@ -35,7 +37,8 @@ class MRoomMemberEvent extends StateEvent {
     avatarUrl: string,
     displayname: string,
     membership: string,
-    reason: string
+    reason: string,
+    previousMembership?: string
   ) {
     const stateKey = userId;
     super(eventId, roomId, stateKey);
@@ -46,6 +49,7 @@ class MRoomMemberEvent extends StateEvent {
     this.displayname = displayname;
     this.membership = membership;
     this.reason = reason;
+    this.previousMembership = previousMembership;
   }
 
   /**
@@ -63,6 +67,13 @@ class MRoomMemberEvent extends StateEvent {
       return undefined;
     }
 
+    let membership = undefined;
+    if (rawMatrixEvent.unsigned != undefined) {
+      if (rawMatrixEvent.unsigned.prev_content) {
+        membership = rawMatrixEvent.unsigned.prev_content.membership;
+      }
+    }
+
     return new MRoomMemberEvent(
       rawMatrixEvent.event_id,
       roomId ?? rawMatrixEvent.room_id,
@@ -70,7 +81,8 @@ class MRoomMemberEvent extends StateEvent {
       rawMatrixEvent.content.avatar_url,
       rawMatrixEvent.content.displayname,
       rawMatrixEvent.content.membership,
-      rawMatrixEvent.content.reason
+      rawMatrixEvent.content.reason,
+      membership
     );
   }
 
@@ -137,6 +149,14 @@ class MRoomMemberEvent extends StateEvent {
       membership: this.membership,
       reason: this.reason,
     };
+  }
+
+  /**
+   * Returns the previous membership status of the member this event updates
+   * @returns {string|undefined} the previous membership status of the member this event updates
+   */
+  public getPreviousMembership(): string | undefined {
+    return this.previousMembership;
   }
 }
 

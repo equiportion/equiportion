@@ -10,7 +10,10 @@ const props = defineProps({
 });
 </script>
 <template>
-  <span v-if="props.compensation && props.compensation > 0" class="text-sm text-red-600 font-bold">
+  <span
+    v-if="props.compensation && props.compensation > 0"
+    class="text-sm text-red-600 dark:text-red-500 font-bold"
+  >
     <i class="fa-solid fa-coins"></i>
     Du schuldest
     {{ eurosPart(props.compensation) }},{{ centsPart(props.compensation) }}
@@ -18,7 +21,7 @@ const props = defineProps({
   </span>
   <span
     v-else-if="props.compensation && props.compensation < 0"
-    class="text-sm text-green-600 font-bold"
+    class="text-sm text-green-600 dark:text-green-500 font-bold"
   >
     <i class="fa-solid fa-coins"></i>
     Schuldet dir
@@ -27,7 +30,7 @@ const props = defineProps({
     }}
     €
   </span>
-  <span v-else class="text-sm text-blue-600 font-bold">
+  <span v-else class="text-sm text-blue-600 dark:text-blue-500 font-bold">
     <i class="fa-solid fa-coins"></i>
     Ausgeglichen
   </span>

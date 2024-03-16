@@ -35,10 +35,16 @@ const creditor: User | undefined = room?.getMember(props.transaction.getCreditor
 const mainClasses = computed(() => {
   const classes = 'flex flex-col w-full rounded-lg shadow-lg transition p-5 gap-2';
 
-  if (props.transaction.isValid() == false) {
-    return classes + ' bg-red-200 lg:hover:bg-red-300';
+  if (props.transaction.isValid() === false) {
+    return (
+      classes +
+      ' bg-red-200 lg:hover:bg-red-300 dark:bg-red-700 dark:lg:hover:bg-red-600 dark:text-gray-200'
+    );
   } else {
-    return classes + ' bg-gray-100 lg:hover:bg-gray-200';
+    return (
+      classes +
+      ' bg-gray-100 lg:hover:bg-gray-200 dark:bg-gray-700 dark:lg:hover:bg-gray-600 dark:text-gray-200'
+    );
   }
 });
 </script>
@@ -101,7 +107,7 @@ const mainClasses = computed(() => {
       </div>
     </div>
 
-    <SystemAlert v-if="transaction.isValid() == false" class="text-black mt-2" severity="danger">
+    <SystemAlert v-if="transaction.isValid() === false" class="text-black mt-2" severity="danger">
       <span class="text-lg font-bold"> <i class="fa-solid fa-code-merge"></i>&nbsp;Konflikt </span>
       <br />
       Es gibt ein Problem beim Zusammenführen dieser Transaktion mit dem aktuellen Stand, der von

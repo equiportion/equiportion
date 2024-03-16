@@ -289,7 +289,7 @@ describe('/', () => {
       cy.get('#removeCreditor').click();
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
     });
   });
@@ -302,18 +302,18 @@ describe('/', () => {
       cy.get('#inputFieldPurpose').type('testzwecke');
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
       cy.get('#inputFieldSum').type('abc');
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
       cy.get('#inputFieldSum').type('{selectall}');
       cy.get('#inputFieldSum').type('abc');
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
     });
   });
@@ -328,7 +328,7 @@ describe('/', () => {
       cy.get('#inputFieldSum').type('2000');
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
     });
   });
@@ -341,7 +341,7 @@ describe('/', () => {
       cy.get('#noDebtorMessage').should('be.visible');
       cy.get('#submitButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
     });
   });
@@ -357,7 +357,7 @@ describe('/', () => {
       cy.get('#debtorUserDropdown>div').eq(1).children().eq(1).click();
       cy.get('#addDebtorButton').should(
         'have.class',
-        'disabled h-12 w-12 inline-block rounded-full border border-gray-200 bg-gray-400 text-white transition'
+        'disabled'
       );
     });
   });
