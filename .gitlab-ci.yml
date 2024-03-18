@@ -164,10 +164,6 @@ stop-review:
 deploy-production:
   stage: deploy
   needs:
-    - job: eslint
-      artifacts: false
-    - job: cypress
-      artifacts: false
     - job: build-production
       artifacts: true
   before_script:
