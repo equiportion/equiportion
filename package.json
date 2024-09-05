@@ -1,6 +1,6 @@
 {
   "name": "equiportion",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -17,8 +17,9 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
-    "axios": "^1.6.2",
+    "axios": "^1.7.7",
     "confetti-js": "^0.0.18",
+    "equiportion": "file:",
     "pinia": "^2.1.7",
     "tesseract.js": "^5.0.5",
     "vue": "^3.3.12",
