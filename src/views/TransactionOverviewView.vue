@@ -11,6 +11,7 @@ import RoundButton from '@/components/buttons/RoundButton.vue';
 import UserBadge from '@/components/user/UserBadge.vue';
 import MemberList from '@/views/transactionoverview/MemberList.vue';
 import RoomHeader from '@/views/transactionoverview/RoomHeader.vue';
+import ToPayWarning from '@/views/transactionoverview/ToPayWarning.vue';
 
 // models
 import type Room from '@/logic/models/Room';
@@ -117,10 +118,7 @@ function loadRooms() {
  * @returns {void}
  */
 function newTransaction(): void {
-  router.push({
-    name: 'new-transaction',
-    params: {roomId: roomId.value},
-  });
+  router.push({name: 'new-transaction', params: {roomId: roomId.value}});
 }
 
 /**
@@ -237,6 +235,9 @@ waitForInitialSync().then(() => {
               id="transactions"
               class="flex flex-col justify-center gap-5"
             >
+              <!--show a notification if you have to pay something-->
+              <ToPayWarning :room="room" />
+
               <!--shows all transactions and membership events using the transacion tile partial / membership view -->
               <template v-for="event in reversedEvents" :key="event.getEventId()">
                 <template v-if="!!(event instanceof TransactionEvent)">
