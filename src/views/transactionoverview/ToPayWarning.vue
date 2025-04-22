@@ -7,7 +7,7 @@
       Du schuldest noch {{ absEurosPart(balance) }},{{ absCentsPart(balance) }} €
     </h2>
 
-    <RoundButton title="Optimale Rückzahlung anzeigen">
+    <RoundButton title="Optimale Rückzahlung anzeigen" @click="emit('click')">
       <i class="fa-solid fa-eye"></i>
     </RoundButton>
   </div>
@@ -21,6 +21,7 @@ import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import waitForInitialSync from '@/logic/utils/waitForSync';
 
 const props = defineProps<{room: Room}>();
+const emit = defineEmits(['click']);
 
 const balance = ref(0);
 const balanceLoaded = ref(false);

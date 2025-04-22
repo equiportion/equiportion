@@ -241,7 +241,10 @@ waitForInitialSync().then(() => {
               <!--shows all transactions and membership events using the transacion tile partial / membership view -->
               <template v-for="event in reversedEvents" :key="event.getEventId()">
                 <template v-if="!!(event instanceof TransactionEvent)">
-                  <TransactionTile :transaction="asTransactionEvent(event)" />
+                  <TransactionTile
+                    :transaction="asTransactionEvent(event)"
+                    @click="memberListOpen = true"
+                  />
                 </template>
 
                 <div
