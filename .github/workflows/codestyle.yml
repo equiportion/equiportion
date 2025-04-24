@@ -19,7 +19,7 @@ jobs:
 
       - name: Run ESLint
         env:
-          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
+          SARIF_ESLINT_IGNORE_SUPPRESSED: 'true'
         run: npx eslint .
           --config .eslintrc.js
           --ext .js,.jsx,.ts,.tsx
@@ -32,3 +32,19 @@ jobs:
         with:
           sarif_file: eslint-results.sarif
           wait-for-processing: true
+
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          # This part is also where you can pass other options, for example:
+          prettier_options: --write **/*.{js,md}
