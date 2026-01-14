@@ -1,7 +1,3 @@
-#
-# CI-CD Pipeline für das PSE Matrix-basierte Micropayments
-#
-
 name: CI/CD Pipeline
 
 on:
@@ -13,10 +9,6 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  #
-  # Build Stage
-  #
-
   install-npm-dependencies:
     name: Install npm dependencies
     runs-on: ubuntu-latest

@@ -1,6 +1,3 @@
-#
-# Test Stage
-#
 name: Test Stage
 
 on:
