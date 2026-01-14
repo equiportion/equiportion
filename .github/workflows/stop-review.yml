@@ -1,0 +1,28 @@
+name: Stop Review Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name to remove'
+        required: true
+
+jobs:
+  stop-review:
+    runs-on: ubuntu-latest
+    environment:
+      name: review-${{ inputs.branch }}
+
+    steps:
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Remove review deployment
+        run: |
+          lftp -c "
+          set sftp:auto-confirm yes
+          open sftp://${{ secrets.FTP_HOST }}:${{ secrets.FTP_PORT }}
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          rm -r ${{ secrets.FTP_PATH }}/${{ inputs.branch }}
+          bye
+          "
