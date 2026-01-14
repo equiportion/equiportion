@@ -8,13 +8,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-env:
-  NODE_VERSION: 20
+  env:
+    NODE_VERSION: 20
 
-jobs:
-  #
-  # Build Stage
-  #
+  jobs:
+    #
+    # Build Stage
+    #
 
   install-npm-dependencies:
     name: Install npm dependencies
