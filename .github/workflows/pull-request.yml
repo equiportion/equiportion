@@ -10,6 +10,8 @@ on:
       - opened
       - synchronize
       - reopened
+    branches-ignore:
+      - main
 
 env:
   NODE_VERSION: 20
