@@ -103,7 +103,7 @@ jobs:
         with:
           name: node-modules
           path: node_modules/
-      - run: npx eslint .
+      - run: npm run lint-check
 
   prettier:
     name: Prettier
@@ -115,7 +115,7 @@ jobs:
         with:
           name: node-modules
           path: node_modules/
-      - run: npx prettier -c src/
+      - run: npm run format-check
 
   cypress:
     name: Cypress E2E
