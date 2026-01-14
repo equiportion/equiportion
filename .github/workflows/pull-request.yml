@@ -6,7 +6,6 @@ env:
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  push:
 
 jobs:
   install-npm-dependencies:
