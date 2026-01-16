@@ -3,10 +3,16 @@ import {authenticated} from '../support/stubs';
 describe('membership administration', () => {
   it('user leaves room event', () => {
     authenticated(() => {
-      cy.intercept({
-        url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/leave',
-        method: 'POST',
-      }).as('userLeavesRoomEvent');
+      cy.intercept(
+        {
+          url: '/_matrix/client/v3/rooms/!UwIPSjAeKraDVxRvWW:stub.pse.dsn.kastel.kit.edu/leave',
+          method: 'POST',
+        },
+        {
+          statusCode: 200,
+          body: {},
+        }
+      ).as('userLeavesRoomEvent');
       cy.visit('http://localhost:5173/');
       cy.get('#rooms>div').eq(4).click();
       cy.get('#toggleMemberListButton').click();

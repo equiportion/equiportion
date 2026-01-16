@@ -5,6 +5,8 @@ import initLocal from '@/logic/utils/local';
 import ReloadPrompt from '@/components/pwa/ReloadPrompt.vue';
 import router from '@/router';
 
+import '@fortawesome/fontawesome-free/css/all.css';
+
 onMounted(() => {
   initLocal();
 

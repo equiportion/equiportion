@@ -47,6 +47,8 @@ const mainClasses = computed(() => {
     );
   }
 });
+
+const timestampSent = new Date(props.transaction.getTimestamp()!);
 </script>
 
 <template>
@@ -105,6 +107,21 @@ const mainClasses = computed(() => {
           </span>
         </div>
       </div>
+    </div>
+
+    <div
+      class="flex flex-row flex-wrap gap-1 items-center justify-center lg:justify-end text-sm text-gray-500 dark:text-gray-400 mt-3"
+    >
+      <i class="fa-solid fa-paper-plane"></i>
+      <span>
+        {{ timestampSent.toLocaleDateString() }}, {{ timestampSent.toLocaleTimeString() }} Uhr
+      </span>
+      <span>von</span>
+      <UserBadge
+        v-if="transaction.getSender() != undefined"
+        :user="transaction.getSender()!"
+        size="sm"
+      />
     </div>
 
     <SystemAlert v-if="transaction.isValid() === false" class="text-black mt-2" severity="danger">
