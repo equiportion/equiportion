@@ -33,7 +33,11 @@ jobs:
         run: npm ci
       - name: Patch Vite base path
         run: |
-          echo "REF_SLUG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          PR_NUMBER="${GITHUB_REF#refs/pull/}"
+          PR_NUMBER="${PR_NUMBER%/merge}"
+          REF_SLUG="pr-$PR_NUMBER"
+
+          echo "REF_SLUG=$REF_SLUG" >> "$GITHUB_ENV"
           sed -i "s#base: '/'#base: '/$REF_SLUG/'#g" vite.config.ts
       - run: npm run build
       - uses: actions/upload-artifact@v4
