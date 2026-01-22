@@ -42,4 +42,4 @@ jobs:
   test:
     uses: ./.github/workflows/test-stage.yml
     with:
-      node-version: 20
+      node-version: '20'
