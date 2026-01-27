@@ -236,7 +236,7 @@ waitForInitialSync().then(() => {
               class="flex flex-col justify-center gap-5"
             >
               <!--show a notification if you have to pay something-->
-              <ToPayWarning v-if="room" :room="room" />
+              <ToPayWarning v-if="room" :room="room" @click="memberListOpen = true" />
 
               <!--shows all transactions and membership events using the transacion tile partial / membership view -->
               <template v-for="event in reversedEvents" :key="event.getEventId()">
