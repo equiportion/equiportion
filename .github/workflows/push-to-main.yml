@@ -43,3 +43,7 @@ jobs:
     uses: ./.github/workflows/test-stage.yml
     with:
       node-version: '20'
+
+  deploy:
+    needs: build-production
+    uses: ./.github/workflows/deploy-to-gh-pages.yml
