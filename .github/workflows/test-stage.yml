@@ -4,8 +4,15 @@ on:
   workflow_call:
     inputs:
       node-version:
+        description: Node.js version to use
         required: true
         type: string
+    secrets:
+      TEST_ACCOUNTS:
+        required: true
+
+env:
+  CI: true
 
 jobs:
   eslint:
@@ -15,10 +22,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs['node-version'] }}
+          node-version: ${{ inputs.node-version }}
       - name: Install dependencies
         run: npm ci
-      - run: npm run lint-check
+
+      - name: Run ESLint
+        run: npm run lint-check
 
   prettier:
     name: Prettier
@@ -27,32 +36,40 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs['node-version'] }}
+          node-version: ${{ inputs.node-version }}
       - name: Install dependencies
         run: npm ci
-      - run: npm run format-check
+
+      - name: Run Prettier
+        run: npm run format-check
 
   cypress:
     name: Cypress E2E
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs['node-version'] }}
+          node-version: ${{ inputs.node-version }}
+
       - name: Install dependencies
         run: npm ci
-      - uses: cypress-io/github-action@v6
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
         with:
           start: npm run dev
           wait-on: 'http://localhost:5173'
           background: true
         env:
           CYPRESS_TEST_ACCOUNTS: ${{ secrets.TEST_ACCOUNTS }}
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload coverage & Cypress artifacts
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-artifacts
+          name: coverage-and-cypress
           path: |
             coverage
             cypress/videos
