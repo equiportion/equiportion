@@ -383,7 +383,7 @@ function toggleMemberList() {
           <template v-for="member in shownUserBadges" :key="member.getUserId()">
             <UserBadge v-show="member.getUserId() != ''" :user="member" class="shadow-md" />
           </template>
-          <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3">...</span>
+          <span v-if="Object.keys(room?.getMembers() ?? {}).length > 3" class="dark:text-white">...</span>
 
           <RoundButton
             id="toggleMemberListButton"

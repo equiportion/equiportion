@@ -4,7 +4,9 @@ import type {RawMatrixEvent} from '../RawMatrixEvent';
 import {useClientStateStore} from '@/stores/clientState';
 import {useLoggedInUserStore} from '@/stores/loggedInUser';
 import Room from '@/logic/models/Room';
+import {useRoomsStore} from '@/stores/rooms';
 import {parseMoney} from '@/logic/utils/money';
+import User from '@/logic/models/User';
 
 /**
  * A transaction event modelled after this project's documentation.
@@ -24,6 +26,8 @@ class TransactionEvent extends StateEvent {
   private latestEventId: string | undefined;
   private transactionValid: boolean | undefined = undefined;
   private receiptUrl: string | undefined = undefined;
+  private sender: User | undefined = undefined;
+  private timestamp: number | undefined = undefined;
 
   /**
    * Creates a new TransactionEvent
@@ -37,6 +41,8 @@ class TransactionEvent extends StateEvent {
    * @param {string} stateKey the state key of this event
    * @param {string} [latestEventId] the eventId of the latest transaction event that was sent by this client and was the starting point for calculating the new balances (optional, only to be set if this event didn't start with balances of 0)
    * @param {string} [receipt_url] the mxc-url of the receipt (optional)
+   * @param {User} [sender] the user who sent this event (optional)
+   * @param {number} [timestamp] the timestamp of this event (optional)
    */
   constructor(
     eventId: string,
@@ -49,7 +55,9 @@ class TransactionEvent extends StateEvent {
     balances: {[userIds: string]: number},
     stateKey: string,
     latestEventId?: string,
-    receipt_url?: string
+    receipt_url?: string,
+    sender?: User,
+    timestamp?: number
   ) {
     super(eventId, roomId, stateKey);
 
@@ -60,6 +68,8 @@ class TransactionEvent extends StateEvent {
     this.balances = balances;
     this.latestEventId = latestEventId;
     this.receiptUrl = receipt_url;
+    this.sender = sender;
+    this.timestamp = timestamp;
   }
 
   /**
@@ -86,6 +96,9 @@ class TransactionEvent extends StateEvent {
 
     // get user id
     const userId = useLoggedInUserStore().user.getUserId();
+
+    // get current user
+    const user = useRoomsStore().getRoom(room.getRoomId())?.getMember(userId);
 
     // create state key
     const stateKey = `${deviceId}${userId}`;
@@ -123,7 +136,9 @@ class TransactionEvent extends StateEvent {
       newBalances,
       stateKey,
       clientsNewestTransactionEvent?.getEventId(),
-      receipt_url
+      receipt_url,
+      user,
+      Date.now()
     );
 
     return newTransactionevent;
@@ -149,6 +164,10 @@ class TransactionEvent extends StateEvent {
       debtors.push({userId: debtor.user, amount: parseMoney(debtor.amount)});
     }
 
+    const roomsStore = useRoomsStore();
+    const room = roomsStore.getRoom(roomId ?? rawMatrixEvent.room_id);
+    const sender = room?.getMember(rawMatrixEvent.sender);
+
     return new TransactionEvent(
       rawMatrixEvent.event_id,
       roomId ?? rawMatrixEvent.room_id,
@@ -159,7 +178,9 @@ class TransactionEvent extends StateEvent {
       rawMatrixEvent.content.balances,
       rawMatrixEvent.state_key!,
       rawMatrixEvent.content['m.relates_to']?.event_id ?? undefined,
-      rawMatrixEvent.content.receipt_url ?? undefined
+      rawMatrixEvent.content.receipt_url ?? undefined,
+      sender,
+      rawMatrixEvent.origin_server_ts
     );
   }
 
@@ -291,6 +312,22 @@ class TransactionEvent extends StateEvent {
    */
   public setReceiptUrl(url: string): void {
     this.receiptUrl = url;
+  }
+
+  /**
+   * Gets the sender of this transaction.
+   * @returns {User|undefined} the sender of this transaction
+   */
+  public getSender(): User | undefined {
+    return this.sender;
+  }
+
+  /**
+   * Gets the timestamp of this transaction.
+   * @returns {number|undefined} the timestamp of this transaction
+   */
+  public getTimestamp(): number | undefined {
+    return this.timestamp;
   }
 }
 
