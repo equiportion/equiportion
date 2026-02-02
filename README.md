@@ -55,31 +55,31 @@ EquiPortion ist entstanden als Praxisprojekt (für Praxis der Softwareentwicklun
 ### Install Dependencies / Project Setup
 
 ```sh
-npm install
+pnpm install
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+pnpm run dev
 ```
 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
-npm run build
+pnpm run build
 ```
 
 ### Run Headed Component Tests with [Cypress Component Testing](https://on.cypress.io/component)
 
 ```sh
-npm run test:unit:dev # or `npm run test:unit` for headless testing
+pnpm run test:unit:dev # or `pnpm run test:unit` for headless testing
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
 
 ```sh
-npm run test:e2e:dev
+pnpm run test:e2e:dev
 ```
 
 This runs the end-to-end tests against the Vite development server.
@@ -88,18 +88,18 @@ It is much faster than the production build.
 For safety, you should run the tests against the build too.
 
 ```sh
-npm run build
-npm run test:e2e
+pnpm run build
+pnpm run test:e2e
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
-npm run lint
+pnpm run lint
 ```
 
 ### Check CodeStyle with [Prettier](https://prettier.io/)
 
 ```sh
-npm run format
+pnpm run format
 ```
