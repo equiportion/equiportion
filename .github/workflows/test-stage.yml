@@ -20,6 +20,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
 
@@ -34,6 +38,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
 
