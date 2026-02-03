@@ -8,7 +8,7 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  install-npm-dependencies:
+  install-pnpm-dependencies:
     name: Install npm dependencies
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
   build-review:
     name: Build (Review)
     runs-on: ubuntu-latest
-    needs: install-npm-dependencies
+    needs: install-pnpm-dependencies
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
