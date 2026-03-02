@@ -292,12 +292,27 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Clears all cached Matrix data from localStorage.
+   * Clears all cached Matrix data from localStorage and resets the singleton client.
    * Should be called on logout.
    */
   public static clearCache(): void {
     localStorage.removeItem(CACHE_KEY_NEXT_BATCH);
     localStorage.removeItem(CACHE_KEY_ROOMS);
+
+    // Reset stores so old user data doesn't persist in memory
+    const roomsStore = useRoomsStore();
+    roomsStore.joinedRooms = {};
+    roomsStore.invitedRooms = {};
+
+    const clientStateStore = useClientStateStore();
+    clientStateStore.created = false;
+    clientStateStore.numberOfSyncs = 0;
+    clientStateStore.syncing = false;
+
+    useLoggedInUserStore().user = new User('');
+
+    // Reset the singleton so a fresh client is created on next login
+    AuthenticatedMatrixClient.client = undefined as unknown as AuthenticatedMatrixClient;
   }
 
   /**
