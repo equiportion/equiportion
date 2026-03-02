@@ -17,6 +17,7 @@ import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import BipartiteCompensation from '@/logic/compensation/BipartiteCompensation';
 import MatrixEvent from '@/logic/models/events/MatrixEvent';
 import InvitedRoomTile from '@/views/roomoverview/InvitedRoomTile.vue';
+import RoomTileSkeleton from '@/views/roomoverview/RoomTileSkeleton.vue';
 import {absEurosPart, absCentsPart} from '@/logic/utils/money';
 
 const clientStateStore = useClientStateStore();
@@ -44,11 +45,18 @@ function calculateBalance() {
   }
   balance.value = sum;
 }
+
+let balanceDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+function calculateBalanceDebounced() {
+  if (balanceDebounceTimer) clearTimeout(balanceDebounceTimer);
+  balanceDebounceTimer = setTimeout(calculateBalance, 300);
+}
+
 waitForInitialSync().then(() => {
   calculateBalance();
 });
 watch(joinedRooms, () => {
-  calculateBalance();
+  calculateBalanceDebounced();
 });
 
 const greeting = ref('');
@@ -238,12 +246,14 @@ watch(
     <!--Rooms-->
     <div id="rooms" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <HeightFade>
-        <span
-          v-show="clientStateStore.syncing && clientStateStore.numberOfSyncs < 1"
-          class="transition duration-700 text-3xl text-gray-300"
+        <div
+          v-show="clientStateStore.numberOfSyncs < 1 && Object.keys(joinedRooms).length === 0"
+          class="flex flex-col items-center gap-5 w-full"
         >
-          <i class="fa-solid fa-spinner animate-spin"></i>
-        </span>
+          <RoomTileSkeleton />
+          <RoomTileSkeleton />
+          <RoomTileSkeleton />
+        </div>
       </HeightFade>
       <span
         v-show="

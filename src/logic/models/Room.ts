@@ -33,6 +33,12 @@ class Room {
 
   private visible: boolean = false;
 
+  /** Cached result of getBalances(), invalidated when new TransactionEvents are added */
+  private cachedBalances?: {[userIds: string]: number};
+
+  /** Number of transaction events in this room (used as cheap change indicator) */
+  private transactionCount: number = 0;
+
   /**
    * Creates a new Room using data from the sync-API.
    * @param {string} roomId the rooms id
@@ -338,6 +344,9 @@ class Room {
     this.timelineEvents[eventId] = timelineEvent;
 
     if (timelineEvent.getType() == TransactionEvent.TYPE) {
+      // Invalidate balance cache when a new transaction is added
+      this.cachedBalances = undefined;
+      this.transactionCount++;
       validateTransactions(this, true);
     }
   }
@@ -357,10 +366,24 @@ class Room {
   }
 
   /**
+   * Gets the number of transaction events in this room.
+   * Useful as a cheap change indicator for watchers.
+   * @returns {number} the number of transaction events
+   */
+  public getTransactionCount(): number {
+    return this.transactionCount;
+  }
+
+  /**
    * Returns all balances between users in this room.
+   * Results are cached and invalidated when new TransactionEvents are added.
    * @returns {{[userIds: string]: number}} the balances between users in this room (userIds are sorted alphabetically and concatenated directly without a seperator)
    */
   public getBalances(): {[userIds: string]: number} {
+    if (this.cachedBalances) {
+      return this.cachedBalances;
+    }
+
     const balances: {[userIds: string]: number} = {};
 
     // get all latest balances
@@ -389,6 +412,7 @@ class Room {
       });
     });
 
+    this.cachedBalances = balances;
     return balances;
   }
 

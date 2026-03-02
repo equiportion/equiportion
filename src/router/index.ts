@@ -1,13 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import RoomOverviewView from '../views/RoomOverviewView.vue';
-import LoginView from '@/views/LoginView.vue';
-import ProfilePageView from '@/views/ProfilePageView.vue';
-
-import NewTransactionView from '@/views/NewTransactionView.vue';
-import TransactionOverviewView from '@/views/TransactionOverviewView.vue';
 import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
-
-import OfflineView from '@/views/OfflineView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +10,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: RoomOverviewView,
+      component: () => import('../views/RoomOverviewView.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -26,12 +18,12 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('@/views/LoginView.vue'),
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfilePageView,
+      component: () => import('@/views/ProfilePageView.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -39,7 +31,7 @@ const router = createRouter({
     {
       path: '/transactions/:roomId',
       name: 'transactions',
-      component: TransactionOverviewView,
+      component: () => import('@/views/TransactionOverviewView.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -47,7 +39,7 @@ const router = createRouter({
     {
       path: '/new-transaction/:roomId',
       name: 'new-transaction',
-      component: NewTransactionView,
+      component: () => import('@/views/NewTransactionView.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -55,7 +47,7 @@ const router = createRouter({
     {
       path: '/offline',
       name: 'offline',
-      component: OfflineView,
+      component: () => import('@/views/OfflineView.vue'),
     },
   ],
 });

@@ -14,6 +14,7 @@ import LogoSquareWhite from '@/components/brand/LogoSquareWhite.vue';
 import useGlobalEventBus from '@/composables/useGlobalEventBus';
 import cookieNames from '@/logic/constants/cookieNames';
 import {setCookie} from '@/logic/utils/cookies';
+import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
 import router from '@/router';
 const {emitGlobal} = useGlobalEventBus();
 
@@ -24,6 +25,7 @@ function emitClick(event: Event) {
 
 function logout() {
   setCookie(cookieNames.accessToken, '');
+  AuthenticatedMatrixClient.clearCache();
 
   router.push({name: 'login'});
 }

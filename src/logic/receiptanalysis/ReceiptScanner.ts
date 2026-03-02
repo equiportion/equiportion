@@ -2,8 +2,6 @@ import Receipt from '@/logic/receiptanalysis/Receipt';
 import {type IReceiptType} from '@/logic/receiptanalysis/types/IReceiptType';
 import {allReceiptTypesInOrder} from '@/logic/receiptanalysis/types/AllReceiptTypes';
 
-import {createWorker, PSM} from 'tesseract.js';
-
 /**
  * Logic for scanning a receipt image and extracting the relevant information with OCR.
  * @author Philipp Stappert
@@ -25,6 +23,9 @@ class ReceiptScanner {
    * @return the analyzed receipt or null if the receipt could not be analyzed
    */
   public async scan(image: File): Promise<Receipt | null> {
+    // Lazy-load tesseract.js only when actually scanning a receipt
+    const {createWorker, PSM} = await import('tesseract.js');
+
     // Init and configure Tesseract.js OCR worker
     const worker = await createWorker('deu');
     await worker.setParameters({
