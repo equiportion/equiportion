@@ -32,6 +32,9 @@ importers:
       vue-router:
         specifier: ^4.6.4
         version: 4.6.4(vue@3.5.27(typescript@5.2.2))
+      workbox-window:
+        specifier: ^7.4.0
+        version: 7.4.0
     devDependencies:
       '@cypress/code-coverage':
         specifier: ^3.14.7
@@ -5821,6 +5824,7 @@ snapshots:
       tesseract.js: 5.1.1
       vue: 3.5.27(typescript@5.2.2)
       vue-router: 4.6.4(vue@3.5.27(typescript@5.2.2))
+      workbox-window: 7.4.0
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug
