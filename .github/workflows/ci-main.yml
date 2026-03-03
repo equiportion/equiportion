@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  build-production:
+    name: Build (Production)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Build production
+        run: pnpm run build
+
+      - name: Preserve build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-production
+          path: dist/
+
+  test:
+    uses: ./.github/workflows/test-stage.yml
+    with:
+      node-version: '20'
+
+  deploy:
+    needs: build-production
+    uses: ./.github/workflows/deploy-to-gh-pages.yml

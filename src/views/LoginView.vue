@@ -9,7 +9,6 @@ import StandardButton from '@/components/buttons/StandardButton.vue';
 
 import MatrixClient from '@/logic/clients/MatrixClient';
 import LoginMatrixClient from '@/logic/clients/LoginMatrixClient';
-import router from '@/router';
 
 const loading = ref(false);
 
