@@ -46,6 +46,9 @@ class AuthenticatedMatrixClient extends MatrixClient {
   /** Retry backoff time in ms for sync errors */
   private syncRetryDelay: number = 100;
 
+  /** When true, the sync loop will terminate */
+  private stopped: boolean = false;
+
   /** Accumulated raw event data per room for cache persistence */
   private cachedJoinedRooms: {[roomId: string]: CachedRoom} = {};
   private cachedInvitedRooms: {[roomId: string]: CachedRoom} = {};
@@ -107,7 +110,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     loggedInUser.setUserId(userId as string);
     useClientStateStore().deviceId = response?.data.device_id;
 
-    // Restore full sync cache (rooms + events + nextBatch) for instant display and incremental sync
     try {
       this.restoreFromSyncCache(userId as string);
     } catch (error) {
@@ -125,9 +127,10 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the client has been synced
    */
   public async sync(): Promise<void> {
+    if (this.stopped) return;
+
     const clientStateStore = useClientStateStore();
     if (clientStateStore.syncing) {
-      //A sync is already in progress.
       return;
     }
 
@@ -145,15 +148,11 @@ class AuthenticatedMatrixClient extends MatrixClient {
       clientStateStore.numberOfSyncs++;
       clientStateStore.syncing = false;
 
-      // Reset retry delay on success
       this.syncRetryDelay = 100;
-
-      // Restart long poll immediately (the server long-poll timeout handles pacing)
       this.sync();
     } catch (error) {
       clientStateStore.syncing = false;
 
-      // Exponential backoff retry (100ms → 200ms → 400ms → ... → max 30s)
       const delay = this.syncRetryDelay;
       this.syncRetryDelay = Math.min(this.syncRetryDelay * 2, 30000);
       setTimeout(() => {
@@ -292,9 +291,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     this.cachedJoinedRooms = cache.joinedRooms;
     this.cachedInvitedRooms = cache.invitedRooms;
 
-    // Replay cached joined rooms through room.sync()
-    // IMPORTANT: Add room to store BEFORE calling sync() so that event.execute()
-    // can find the room via roomsStore.getRoom() (e.g. MRoomMemberEvent)
     const roomsStore = useRoomsStore();
     for (const roomId in cache.joinedRooms) {
       const cachedRoom = cache.joinedRooms[roomId];
@@ -332,6 +328,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     const loggedInUser = useLoggedInUserStore().user;
     const cacheData: SyncCacheData = {
+      version: 0, // Will be set by persistSyncCache
       nextBatch: this.nextBatch,
       joinedRooms: this.cachedJoinedRooms,
       invitedRooms: this.cachedInvitedRooms,
@@ -351,7 +348,11 @@ class AuthenticatedMatrixClient extends MatrixClient {
   public static clearCache(): void {
     clearSyncCache();
 
-    // Reset stores so old user data doesn't persist in memory
+    // Stop the running sync loop before resetting
+    if (AuthenticatedMatrixClient.client) {
+      AuthenticatedMatrixClient.client.stopped = true;
+    }
+
     const roomsStore = useRoomsStore();
     roomsStore.joinedRooms = {};
     roomsStore.invitedRooms = {};
@@ -363,7 +364,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     useLoggedInUserStore().user = new User('');
 
-    // Reset the singleton so a fresh client is created on next login
     AuthenticatedMatrixClient.client = undefined as unknown as AuthenticatedMatrixClient;
   }
 

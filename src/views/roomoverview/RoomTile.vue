@@ -42,7 +42,7 @@ const showUserBadges = computed(() => {
 const sum: Ref<number | undefined> = ref(undefined);
 
 watch(
-  () => props.room.getTransactionCount(),
+  () => props.room,
   () => {
     const compensationCalculation = new BipartiteCompensation();
     const compensation = compensationCalculation.calculateCompensation(props.room);
@@ -54,6 +54,7 @@ watch(
   },
   {
     immediate: true,
+    deep: true,
   }
 );
 </script>

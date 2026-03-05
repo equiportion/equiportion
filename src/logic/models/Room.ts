@@ -36,9 +36,6 @@ class Room {
   /** Cached result of getBalances(), invalidated when new TransactionEvents are added */
   private cachedBalances?: {[userIds: string]: number};
 
-  /** Number of transaction events in this room (used as cheap change indicator) */
-  private transactionCount: number = 0;
-
   /**
    * Creates a new Room using data from the sync-API.
    * @param {string} roomId the rooms id
@@ -344,9 +341,7 @@ class Room {
     this.timelineEvents[eventId] = timelineEvent;
 
     if (timelineEvent.getType() == TransactionEvent.TYPE) {
-      // Invalidate balance cache when a new transaction is added
       this.cachedBalances = undefined;
-      this.transactionCount++;
       validateTransactions(this, true);
     }
   }
@@ -363,15 +358,6 @@ class Room {
     }
 
     this.stateEvents[eventId] = stateEvent;
-  }
-
-  /**
-   * Gets the number of transaction events in this room.
-   * Useful as a cheap change indicator for watchers.
-   * @returns {number} the number of transaction events
-   */
-  public getTransactionCount(): number {
-    return this.transactionCount;
   }
 
   /**
