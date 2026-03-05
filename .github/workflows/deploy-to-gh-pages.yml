@@ -2,6 +2,11 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_call:
+    inputs:
+      target-repository:
+        description: 'Target GitHub Pages repository (owner/repo)'
+        required: true
+        type: string
 
 env:
   NODE_VERSION: 20
@@ -33,7 +38,7 @@ jobs:
       - name: Checkout GitHub Pages repository
         uses: actions/checkout@v4
         with:
-          repository: <TARGET_REPO_OWNER>/<TARGET_REPO_NAME>
+          repository: ${{ inputs.target-repository }}
           token: ${{ secrets.DEPLOY_TOKEN }}
           path: gh-pages-repo
 

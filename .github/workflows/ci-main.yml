@@ -43,3 +43,6 @@ jobs:
   deploy:
     needs: build-production
     uses: ./.github/workflows/deploy-to-gh-pages.yml
+    with:
+      target-repository: equiportion/equiportion.github.io
+    secrets: inherit

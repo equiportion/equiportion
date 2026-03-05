@@ -1,0 +1,14 @@
+name: Deploy to Staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy-to-gh-pages.yml
+    with:
+      target-repository: equiportion/staging.equiportion.github.io
+    secrets: inherit
