@@ -53,9 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    environment:
-      name: test
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
