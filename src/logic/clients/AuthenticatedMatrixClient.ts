@@ -23,10 +23,14 @@ import {useRoomsStore} from '@/stores/rooms';
 /** Utils */
 import {getCookie} from '@/logic/utils/cookies';
 import getFilterJson from '@/logic/utils/filter';
-
-/** Cache keys for localStorage */
-const CACHE_KEY_NEXT_BATCH = 'matrix_next_batch';
-const CACHE_KEY_ROOMS = 'matrix_rooms_cache';
+import {
+  accumulateRoomEvents,
+  persistSyncCache,
+  loadSyncCache,
+  clearSyncCache,
+  type CachedRoom,
+  type SyncCacheData,
+} from '@/logic/utils/syncCache';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
@@ -42,15 +46,16 @@ class AuthenticatedMatrixClient extends MatrixClient {
   /** Retry backoff time in ms for sync errors */
   private syncRetryDelay: number = 100;
 
+  /** Accumulated raw event data per room for cache persistence */
+  private cachedJoinedRooms: {[roomId: string]: CachedRoom} = {};
+  private cachedInvitedRooms: {[roomId: string]: CachedRoom} = {};
+
   /**
    * Private constructor for the singleton pattern. Should only be called from createClient().
    */
   private constructor() {
     super();
     this.accessToken = getCookie(cookieNames.accessToken);
-
-    // Restore cached nextBatch token for incremental sync
-    this.nextBatch = localStorage.getItem(CACHE_KEY_NEXT_BATCH) ?? undefined;
 
     //Set authorization header to enable this client to make authenticated requests
     this.axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
@@ -102,8 +107,13 @@ class AuthenticatedMatrixClient extends MatrixClient {
     loggedInUser.setUserId(userId as string);
     useClientStateStore().deviceId = response?.data.device_id;
 
-    // Restore cached rooms so the UI can show them immediately
-    this.restoreRoomsFromCache();
+    // Restore full sync cache (rooms + events + nextBatch) for instant display and incremental sync
+    try {
+      this.restoreFromSyncCache(userId as string);
+    } catch (error) {
+      console.error('Failed to restore sync cache, starting fresh sync:', error);
+      this.resetSyncState();
+    }
 
     useClientStateStore().numberOfSyncs = 0;
     this.sync();
@@ -179,9 +189,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
     // Save the next_batch token in order to tell the homeserver what the previous sync state was when syncing again
     this.nextBatch = response.data.next_batch;
 
-    // Persist nextBatch for faster startup on next visit
-    localStorage.setItem(CACHE_KEY_NEXT_BATCH, this.nextBatch!);
-
     const roomsStore = useRoomsStore();
     const joinedRooms = roomsStore.joinedRooms;
     const invitedRooms = roomsStore.invitedRooms;
@@ -194,6 +201,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
         // if the room is also in the invited rooms, remove it from there
         if (invitedRooms[roomId]) {
           delete invitedRooms[roomId];
+          delete this.cachedInvitedRooms[roomId];
         }
 
         // Create a new room if it doesn't exist yet
@@ -202,6 +210,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
         }
 
         joinedRooms[roomId].sync(joinedRoomsData[roomId]);
+
+        // Accumulate raw events for cache
+        this.cachedJoinedRooms[roomId] = accumulateRoomEvents(
+          this.cachedJoinedRooms[roomId],
+          joinedRoomsData[roomId]
+        );
       }
     }
 
@@ -213,11 +227,17 @@ class AuthenticatedMatrixClient extends MatrixClient {
         }
 
         invitedRooms[roomId].sync(invitedRoomsData[roomId]);
+
+        // Accumulate raw events for cache
+        this.cachedInvitedRooms[roomId] = accumulateRoomEvents(
+          this.cachedInvitedRooms[roomId],
+          invitedRoomsData[roomId]
+        );
       }
     }
 
-    // Persist room metadata to cache for instant display on next app start
-    this.persistRoomsToCache(joinedRooms);
+    // Persist full sync cache for instant restore on next app start
+    this.persistFullSyncCache();
   }
 
   /**
@@ -238,57 +258,90 @@ class AuthenticatedMatrixClient extends MatrixClient {
   }
 
   /**
-   * Persists basic room metadata to localStorage for instant display on next app start.
+   * Resets all sync-related state to allow a clean full sync.
    */
-  private persistRoomsToCache(joinedRooms: {[roomId: string]: Room}): void {
-    try {
-      const cache: {
-        [roomId: string]: {name?: string; avatarUrl?: string; topic?: string; visible: boolean};
-      } = {};
-      for (const roomId in joinedRooms) {
-        const room = joinedRooms[roomId];
-        cache[roomId] = {
-          name: room.getName(),
-          avatarUrl: room.getAvatarUrl(),
-          topic: room.getTopic(),
-          visible: room.isVisible(),
-        };
-      }
-      localStorage.setItem(CACHE_KEY_ROOMS, JSON.stringify(cache));
-    } catch {
-      // Ignore localStorage quota errors
+  private resetSyncState(): void {
+    clearSyncCache();
+    this.nextBatch = undefined;
+    this.cachedJoinedRooms = {};
+    this.cachedInvitedRooms = {};
+    const roomsStore = useRoomsStore();
+    roomsStore.joinedRooms = {};
+    roomsStore.invitedRooms = {};
+  }
+
+  /**
+   * Restores full room state from the sync cache.
+   * Replays cached raw events through room.sync() and restores the nextBatch token.
+   * @param currentUserId the user ID of the currently logged-in user (to validate cache belongs to same user)
+   */
+  private restoreFromSyncCache(currentUserId: string): void {
+    const cache = loadSyncCache();
+    if (!cache) return;
+
+    // Don't restore cache from a different user
+    if (cache.userProfile?.userId && cache.userProfile.userId !== currentUserId) {
+      clearSyncCache();
+      return;
+    }
+
+    // Restore nextBatch for incremental sync
+    this.nextBatch = cache.nextBatch;
+
+    // Restore accumulated raw events
+    this.cachedJoinedRooms = cache.joinedRooms;
+    this.cachedInvitedRooms = cache.invitedRooms;
+
+    // Replay cached joined rooms through room.sync()
+    // IMPORTANT: Add room to store BEFORE calling sync() so that event.execute()
+    // can find the room via roomsStore.getRoom() (e.g. MRoomMemberEvent)
+    const roomsStore = useRoomsStore();
+    for (const roomId in cache.joinedRooms) {
+      const cachedRoom = cache.joinedRooms[roomId];
+      const room = new Room(roomId);
+      roomsStore.joinedRooms[roomId] = room;
+      room.sync({
+        state: {events: cachedRoom.stateEvents},
+        timeline: {events: cachedRoom.timelineEvents},
+      });
+    }
+
+    // Replay cached invited rooms
+    for (const roomId in cache.invitedRooms) {
+      const cachedRoom = cache.invitedRooms[roomId];
+      const room = new Room(roomId);
+      roomsStore.invitedRooms[roomId] = room;
+      room.sync({
+        invite_state: {events: cachedRoom.stateEvents},
+      });
+    }
+
+    // Restore user profile
+    if (cache.userProfile) {
+      const loggedInUser = useLoggedInUserStore().user;
+      if (cache.userProfile.displayname) loggedInUser.setDisplayname(cache.userProfile.displayname);
+      if (cache.userProfile.avatarUrl) loggedInUser.setAvatarUrl(cache.userProfile.avatarUrl);
     }
   }
 
   /**
-   * Restores cached rooms from localStorage into the store for instant display.
-   * These are placeholder rooms that will be fully updated by the first sync.
+   * Persists the full sync cache (all raw events + nextBatch + user profile) to localStorage.
    */
-  private restoreRoomsFromCache(): void {
-    try {
-      const raw = localStorage.getItem(CACHE_KEY_ROOMS);
-      if (!raw) return;
+  private persistFullSyncCache(): void {
+    if (!this.nextBatch) return;
 
-      const cache = JSON.parse(raw) as {
-        [roomId: string]: {name?: string; avatarUrl?: string; topic?: string; visible: boolean};
-      };
-      const roomsStore = useRoomsStore();
-
-      for (const roomId in cache) {
-        if (roomsStore.joinedRooms[roomId]) {
-          continue;
-        }
-        const entry = cache[roomId];
-        const room = new Room(roomId);
-        if (entry.name) room.setName(entry.name);
-        if (entry.avatarUrl) room.setAvatarUrl(entry.avatarUrl);
-        if (entry.topic) room.setTopic(entry.topic);
-        if (entry.visible) room.setVisible(entry.visible);
-        roomsStore.joinedRooms[roomId] = room;
-      }
-    } catch {
-      // Ignore parse errors from corrupted cache
-    }
+    const loggedInUser = useLoggedInUserStore().user;
+    const cacheData: SyncCacheData = {
+      nextBatch: this.nextBatch,
+      joinedRooms: this.cachedJoinedRooms,
+      invitedRooms: this.cachedInvitedRooms,
+      userProfile: {
+        userId: loggedInUser.getUserId(),
+        displayname: loggedInUser.getDisplayname(),
+        avatarUrl: loggedInUser.getAvatarUrl(),
+      },
+    };
+    persistSyncCache(cacheData);
   }
 
   /**
@@ -296,8 +349,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * Should be called on logout.
    */
   public static clearCache(): void {
-    localStorage.removeItem(CACHE_KEY_NEXT_BATCH);
-    localStorage.removeItem(CACHE_KEY_ROOMS);
+    clearSyncCache();
 
     // Reset stores so old user data doesn't persist in memory
     const roomsStore = useRoomsStore();

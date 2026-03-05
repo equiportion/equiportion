@@ -1,5 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import AuthenticatedMatrixClient from '@/logic/clients/AuthenticatedMatrixClient';
+import {getCookie} from '@/logic/utils/cookies';
+import cookieNames from '@/logic/constants/cookieNames';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,7 +62,16 @@ router.beforeEach((to) => {
     return;
   }
 
-  AuthenticatedMatrixClient.createClient().catch(() => {
+  // Quick synchronous check: if no access token cookie exists, redirect to login immediately
+  if (!getCookie(cookieNames.accessToken)) {
+    return {name: 'login'};
+  }
+
+  // Create client in the background (non-blocking). If auth turns out to be
+  // invalid (e.g. expired token), the sync loop will fail and the user stays
+  // on an empty skeleton view until they manually log out / token refreshes.
+  AuthenticatedMatrixClient.createClient().catch((error) => {
+    console.error('Authentication failed:', error);
     router.push({name: 'login'});
   });
 });
