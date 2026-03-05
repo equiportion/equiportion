@@ -1,0 +1,88 @@
+name: Test Stage
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to use
+        required: true
+        type: string
+
+env:
+  CI: true
+
+jobs:
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm run lint-check
+
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Run Prettier
+        run: pnpm run format-check
+
+  cypress:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    environment:
+      name: test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: pnpm run dev
+          wait-on: 'http://localhost:5173'
+          background: true
+        env:
+          CYPRESS_TEST_ACCOUNTS: ${{ secrets.TEST_ACCOUNTS }}
+
+      - name: Upload coverage & Cypress artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-and-cypress
+          path: |
+            coverage
+            cypress/videos
+            cypress/screenshots
