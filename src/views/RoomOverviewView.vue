@@ -247,7 +247,7 @@ watch(
     <div id="rooms" class="flex flex-col items-center gap-5 p-2 lg:p-5">
       <HeightFade>
         <div
-          v-show="clientStateStore.numberOfSyncs < 1 && Object.keys(joinedRooms).length === 0"
+          v-if="clientStateStore.numberOfSyncs < 1 && Object.keys(joinedRooms).length === 0"
           class="flex flex-col items-center gap-5 w-full"
         >
           <RoomTileSkeleton />

@@ -149,7 +149,11 @@ class AuthenticatedMatrixClient extends MatrixClient {
       clientStateStore.syncing = false;
 
       this.syncRetryDelay = 100;
-      this.sync();
+
+      // Delay before next sync to prevent tight loops when long-polling is not supported (e.g. in tests)
+      setTimeout(() => {
+        this.sync();
+      }, 1000);
     } catch (error) {
       clientStateStore.syncing = false;
 
