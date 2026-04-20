@@ -23,6 +23,14 @@ import {useRoomsStore} from '@/stores/rooms';
 /** Utils */
 import {getCookie} from '@/logic/utils/cookies';
 import getFilterJson from '@/logic/utils/filter';
+import {
+  accumulateRoomEvents,
+  persistSyncCache,
+  loadSyncCache,
+  clearSyncCache,
+  type CachedRoom,
+  type SyncCacheData,
+} from '@/logic/utils/syncCache';
 
 /**
  * A client that can be used to get data from the logged in matrix user. Uses the singleton pattern.
@@ -34,6 +42,16 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
   private accessToken?: string;
   private nextBatch?: string;
+
+  /** Retry backoff time in ms for sync errors */
+  private syncRetryDelay: number = 100;
+
+  /** When true, the sync loop will terminate */
+  private stopped: boolean = false;
+
+  /** Accumulated raw event data per room for cache persistence */
+  private cachedJoinedRooms: {[roomId: string]: CachedRoom} = {};
+  private cachedInvitedRooms: {[roomId: string]: CachedRoom} = {};
 
   /**
    * Private constructor for the singleton pattern. Should only be called from createClient().
@@ -84,11 +102,19 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     const response = await this.getRequest(apiEndpoints.whoami);
     const userId = response?.data.user_id;
+
     if (!userId) {
-      //TODO: Error
-    } else {
-      loggedInUser.setUserId(userId as string);
-      useClientStateStore().deviceId = response?.data.device_id;
+      throw new Error('No user_id in response from /whoami endpoint');
+    }
+
+    loggedInUser.setUserId(userId as string);
+    useClientStateStore().deviceId = response?.data.device_id;
+
+    try {
+      this.restoreFromSyncCache(userId as string);
+    } catch (error) {
+      console.error('Failed to restore sync cache, starting fresh sync:', error);
+      this.resetSyncState();
     }
 
     useClientStateStore().numberOfSyncs = 0;
@@ -101,20 +127,42 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the client has been synced
    */
   public async sync(): Promise<void> {
+    if (this.stopped) return;
+
     const clientStateStore = useClientStateStore();
     if (clientStateStore.syncing) {
-      //A sync is already in progress.
       return;
     }
 
-    await Promise.all([this.updateLoggedInUser(), this.updateRooms()]).then(() => {
-      clientStateStore.numberOfSyncs++;
+    clientStateStore.syncing = true;
 
-      // restart long poll, but after a second to prevent too many requests when long polling is unsupported
+    try {
+      // Only fetch user profile on the first sync; afterwards profile updates come via m.room.member events
+      const tasks: Promise<void>[] = [this.updateRooms()];
+      if (clientStateStore.numberOfSyncs === 0) {
+        tasks.push(this.updateLoggedInUser());
+      }
+
+      await Promise.all(tasks);
+
+      clientStateStore.numberOfSyncs++;
+      clientStateStore.syncing = false;
+
+      this.syncRetryDelay = 100;
+
+      // Delay before next sync to prevent tight loops when long-polling is not supported (e.g. in tests)
       setTimeout(() => {
         this.sync();
       }, 1000);
-    });
+    } catch (error) {
+      clientStateStore.syncing = false;
+
+      const delay = this.syncRetryDelay;
+      this.syncRetryDelay = Math.min(this.syncRetryDelay * 2, 30000);
+      setTimeout(() => {
+        this.sync();
+      }, delay);
+    }
   }
 
   /**
@@ -122,8 +170,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the rooms have been updated
    */
   private async updateRooms(): Promise<void> {
-    const clientStateStore = useClientStateStore();
-
     const filter = getFilterJson();
 
     const data: {since?: string; timeout: number; filter: string} = {
@@ -136,8 +182,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     // Send a request to the homeserver to get the latest events (and do error handling)
     const response = await this.getRequest(apiEndpoints.sync, data);
-
-    clientStateStore.syncing = true;
 
     if (!response) {
       throw new Error('No response from homeserver');
@@ -160,6 +204,7 @@ class AuthenticatedMatrixClient extends MatrixClient {
         // if the room is also in the invited rooms, remove it from there
         if (invitedRooms[roomId]) {
           delete invitedRooms[roomId];
+          delete this.cachedInvitedRooms[roomId];
         }
 
         // Create a new room if it doesn't exist yet
@@ -168,6 +213,12 @@ class AuthenticatedMatrixClient extends MatrixClient {
         }
 
         joinedRooms[roomId].sync(joinedRoomsData[roomId]);
+
+        // Accumulate raw events for cache
+        this.cachedJoinedRooms[roomId] = accumulateRoomEvents(
+          this.cachedJoinedRooms[roomId],
+          joinedRoomsData[roomId]
+        );
       }
     }
 
@@ -179,10 +230,17 @@ class AuthenticatedMatrixClient extends MatrixClient {
         }
 
         invitedRooms[roomId].sync(invitedRoomsData[roomId]);
+
+        // Accumulate raw events for cache
+        this.cachedInvitedRooms[roomId] = accumulateRoomEvents(
+          this.cachedInvitedRooms[roomId],
+          invitedRoomsData[roomId]
+        );
       }
     }
 
-    clientStateStore.syncing = false;
+    // Persist full sync cache for instant restore on next app start
+    this.persistFullSyncCache();
   }
 
   /**
@@ -191,9 +249,6 @@ class AuthenticatedMatrixClient extends MatrixClient {
    * @returns {Promise<void>} a promise that resolves when the user has been updated
    */
   private async updateLoggedInUser(): Promise<void> {
-    const clientStateStore = useClientStateStore();
-    clientStateStore.syncing = true;
-
     const loggedInUser = useLoggedInUserStore().user;
 
     const response = await this.getRequest(apiEndpoints.profile(loggedInUser.getUserId()));
@@ -203,8 +258,117 @@ class AuthenticatedMatrixClient extends MatrixClient {
 
     loggedInUser.setDisplayname(displayname);
     loggedInUser.setAvatarUrl(avatarUrl);
+  }
 
+  /**
+   * Resets all sync-related state to allow a clean full sync.
+   */
+  private resetSyncState(): void {
+    clearSyncCache();
+    this.nextBatch = undefined;
+    this.cachedJoinedRooms = {};
+    this.cachedInvitedRooms = {};
+    const roomsStore = useRoomsStore();
+    roomsStore.joinedRooms = {};
+    roomsStore.invitedRooms = {};
+  }
+
+  /**
+   * Restores full room state from the sync cache.
+   * Replays cached raw events through room.sync() and restores the nextBatch token.
+   * @param currentUserId the user ID of the currently logged-in user (to validate cache belongs to same user)
+   */
+  private restoreFromSyncCache(currentUserId: string): void {
+    const cache = loadSyncCache();
+    if (!cache) return;
+
+    // Don't restore cache from a different user
+    if (cache.userProfile?.userId && cache.userProfile.userId !== currentUserId) {
+      clearSyncCache();
+      return;
+    }
+
+    // Restore nextBatch for incremental sync
+    this.nextBatch = cache.nextBatch;
+
+    // Restore accumulated raw events
+    this.cachedJoinedRooms = cache.joinedRooms;
+    this.cachedInvitedRooms = cache.invitedRooms;
+
+    const roomsStore = useRoomsStore();
+    for (const roomId in cache.joinedRooms) {
+      const cachedRoom = cache.joinedRooms[roomId];
+      const room = new Room(roomId);
+      roomsStore.joinedRooms[roomId] = room;
+      room.sync({
+        state: {events: cachedRoom.stateEvents},
+        timeline: {events: cachedRoom.timelineEvents},
+      });
+    }
+
+    // Replay cached invited rooms
+    for (const roomId in cache.invitedRooms) {
+      const cachedRoom = cache.invitedRooms[roomId];
+      const room = new Room(roomId);
+      roomsStore.invitedRooms[roomId] = room;
+      room.sync({
+        invite_state: {events: cachedRoom.stateEvents},
+      });
+    }
+
+    // Restore user profile
+    if (cache.userProfile) {
+      const loggedInUser = useLoggedInUserStore().user;
+      if (cache.userProfile.displayname) loggedInUser.setDisplayname(cache.userProfile.displayname);
+      if (cache.userProfile.avatarUrl) loggedInUser.setAvatarUrl(cache.userProfile.avatarUrl);
+    }
+  }
+
+  /**
+   * Persists the full sync cache (all raw events + nextBatch + user profile) to localStorage.
+   */
+  private persistFullSyncCache(): void {
+    if (!this.nextBatch) return;
+
+    const loggedInUser = useLoggedInUserStore().user;
+    const cacheData: SyncCacheData = {
+      version: 0, // Will be set by persistSyncCache
+      nextBatch: this.nextBatch,
+      joinedRooms: this.cachedJoinedRooms,
+      invitedRooms: this.cachedInvitedRooms,
+      userProfile: {
+        userId: loggedInUser.getUserId(),
+        displayname: loggedInUser.getDisplayname(),
+        avatarUrl: loggedInUser.getAvatarUrl(),
+      },
+    };
+    persistSyncCache(cacheData);
+  }
+
+  /**
+   * Clears all cached Matrix data from localStorage and resets the singleton client.
+   * Should be called on logout.
+   */
+  public static clearCache(): void {
+    clearSyncCache();
+
+    // Stop the running sync loop before resetting
+    if (AuthenticatedMatrixClient.client) {
+      AuthenticatedMatrixClient.client.stopped = true;
+    }
+
+    const roomsStore = useRoomsStore();
+    roomsStore.joinedRooms = {};
+    roomsStore.invitedRooms = {};
+
+    const clientStateStore = useClientStateStore();
+    clientStateStore.created = false;
+    clientStateStore.numberOfSyncs = 0;
     clientStateStore.syncing = false;
+
+    useLoggedInUserStore().user = new User('');
+
+    AuthenticatedMatrixClient.client = undefined as unknown as AuthenticatedMatrixClient;
   }
 
   /**

@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import {onMounted} from 'vue';
 import {RouterView} from 'vue-router';
-import initLocal from '@/logic/utils/local';
 import ReloadPrompt from '@/components/pwa/ReloadPrompt.vue';
 import router from '@/router';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 
 onMounted(() => {
-  initLocal();
-
   window.addEventListener('offline', () => {
     router.push({name: 'offline'});
   });
